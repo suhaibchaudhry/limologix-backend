@@ -1,3 +1,5 @@
-# backend
+![LimoLogix](assets/images/limologix-logo_0.png)
 
-a [Sails](http://sailsjs.org) application
+# Limo Logix - Web App
+
+## Front End Notes
