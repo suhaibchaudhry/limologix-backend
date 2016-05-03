@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 
 # Server Stack
-gem 'rails', '4.2.4'
+gem 'rails', '4.2.6'
 gem 'thin'
 gem 'mysql2'
 
 # Authentication & Authorization
-gem 'devise'
+gem "bcrypt"
 
 # API
 gem 'grape'
@@ -28,7 +28,7 @@ gem 'settingslogic'
 # gem 'uglifier', '>= 1.3.0'
 
 # Uploads & Imports
-gem 'carrierwave-aws'
+gem 'carrierwave'
 gem 'mini_magick'
 
 group :development, :test do
