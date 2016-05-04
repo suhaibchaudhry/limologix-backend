@@ -10,14 +10,14 @@ module V1
           params[:company][:logo] = ActionDispatch::Http::UploadedFile.new(params[:company][:logo])
           ActionController::Parameters.new(params).require(:company).permit(:uid, :name,
             :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
-            address: [:street, :city, :zipcode, :state_id, :country_id] )
+            address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
         end
       end
 
       namespace :users do
         desc 'Creates an admin account with company details' do
-          detail 'success {status: "success", message: "Registration successfull", data: {auth_token: "HDGHSDGSD4454"}},n
-          failure { message: "Validations failed", user: "" }'
+          detail 'success => {status: "success", message: "Registration successfull", data: {auth_token: "HDGHSDGSD4454"}},n
+          failure => { message: "Validations failed", user: "", company: "" }'
         end
         params do
           requires :user, type: Hash do
@@ -39,31 +39,25 @@ module V1
               requires :street, type: String, allow_blank: false
               requires :city, type: String, allow_blank: false
               requires :zipcode, type: Integer, allow_blank: false
-              requires :state_id, type: Integer, allow_blank: false
-              requires :country_id, type: Integer, allow_blank: false
+              requires :state_code, type: String, allow_blank: false
+              requires :country_code, type: String, allow_blank: false
             end
           end
         end
-        post 'registration' do
+        post 'sign_up' do
           user = User.new(user_params)
           company = LimoCompany.new(company_params)
-          # byebug
           if user.valid? && company.valid?
             user.limo_company = company
-            company.save
             user.save
-            {
-              status: "success",
-              message: "Registration successfull",
-              data: {
+            success_json("Registration successfull", {
                 auth_token: user.auth_token
-              }
-            }
+              })
           else
-            error!({ message: 'Validations failed', data: {
+            error_json(401, 'Validations failed', {
               user: user.errors.messages,
               company: company.errors.messages
-              }}, 401)
+              })
           end
         end
       end

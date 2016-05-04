@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 20160502140628) do
     t.string   "street",           limit: 255
     t.string   "city",             limit: 255
     t.integer  "zipcode",          limit: 4
-    t.integer  "state_id",         limit: 4
-    t.integer  "country_id",       limit: 4
+    t.string   "state_code",       limit: 255
+    t.string   "country_code",     limit: 255
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
@@ -44,17 +44,19 @@ ActiveRecord::Schema.define(version: 20160502140628) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "first_name",            limit: 255
-    t.string   "last_name",             limit: 255
-    t.string   "user_name",             limit: 255
-    t.string   "password",              limit: 255
-    t.string   "mobile_number",         limit: 255
-    t.string   "auth_token",            limit: 255
+    t.string   "first_name",             limit: 255
+    t.string   "last_name",              limit: 255
+    t.string   "user_name",              limit: 255
+    t.string   "password",               limit: 255
+    t.string   "mobile_number",          limit: 255
+    t.string   "auth_token",             limit: 255
     t.datetime "auth_token_expires_at"
-    t.integer  "limo_company_id",       limit: 4
-    t.integer  "role_id",               limit: 4
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.string   "reset_password_token",   limit: 255
+    t.datetime "reset_password_sent_at"
+    t.integer  "limo_company_id",        limit: 4
+    t.integer  "role_id",                limit: 4
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
 end

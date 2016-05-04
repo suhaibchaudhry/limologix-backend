@@ -13,10 +13,8 @@ gem 'grape'
 gem 'grape-swagger'
 gem 'hashie-forbidden_attributes'
 
-
 # Config
 gem 'paper_trail', '~> 4.0.0'
-gem 'settingslogic'
 
 # View
 # gem 'coffee-rails', '~> 4.1.0'
@@ -26,6 +24,7 @@ gem 'settingslogic'
 # gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'turbolinks'
 # gem 'uglifier', '>= 1.3.0'
+gem 'city-state'
 
 # Uploads & Imports
 gem 'carrierwave'

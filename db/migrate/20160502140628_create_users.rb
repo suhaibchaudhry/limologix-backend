@@ -8,6 +8,8 @@ class CreateUsers < ActiveRecord::Migration
       t.string :mobile_number
       t.string :auth_token
       t.datetime :auth_token_expires_at
+      t.string   :reset_password_token
+      t.datetime :reset_password_sent_at
       t.references :limo_company
       t.references :role
 
