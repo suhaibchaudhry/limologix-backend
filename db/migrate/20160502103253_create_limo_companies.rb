@@ -11,5 +11,7 @@ class CreateLimoCompanies < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+    add_index :limo_companies, :email, unique: true
+    add_index :limo_companies, :uid, unique: true
   end
 end

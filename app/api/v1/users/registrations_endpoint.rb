@@ -3,7 +3,7 @@ module V1
     class RegistrationsEndpoint < Root
       helpers do
         def user_params
-          ActionController::Parameters.new(params).require(:user).permit(:first_name, :last_name, :user_name, :password, :mobile_number )
+          ActionController::Parameters.new(params).require(:user).permit(:first_name, :last_name, :user_name, :password, :email, :mobile_number )
         end
 
         def company_params
@@ -26,6 +26,7 @@ module V1
             requires :user_name, type: String, allow_blank: false
             requires :password, type: String, allow_blank: false
             requires :mobile_number, type: String, allow_blank: false
+            requires :email, type: String, allow_blank: false
           end
           requires :company, type: Hash do
             requires :uid, type: String, allow_blank: false
@@ -48,6 +49,7 @@ module V1
           user = User.new(user_params)
           company = LimoCompany.new(company_params)
           if user.valid? && company.valid?
+            user.role = Role.find_by_name("admin")
             user.limo_company = company
             user.save
             success_json("Registration successfull", {
@@ -57,6 +59,33 @@ module V1
             error_json(401, 'Validations failed', {
               user: user.errors.messages,
               company: company.errors.messages
+              })
+          end
+        end
+
+        desc "Create a manager "
+        params do
+          requires :auth_token, type: String, allow_blank: false
+          requires :user, type: Hash do
+            requires :first_name, type: String, allow_blank: false
+            requires :last_name, type: String, allow_blank: false
+            requires :user_name, type: String, allow_blank: false
+            requires :password, type: String, allow_blank: false
+            requires :mobile_number, type: String, allow_blank: false
+            requires :email, type: String, allow_blank: false
+          end
+        end
+        post'create_manager' do
+          authenticate!
+          user = User.new(user_params)
+          if user.valid?
+            user.role = Role.find_by_name("manager")
+            user.admin = current_user
+            user.save
+            success_json("Manager account created successfully")
+          else
+            error_json(401, 'Validations failed', {
+              user: user.errors.messages,
               })
           end
         end

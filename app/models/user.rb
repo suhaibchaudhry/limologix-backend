@@ -4,11 +4,14 @@ class User < ActiveRecord::Base
   belongs_to :role
   belongs_to :limo_company
 
+  has_many :managers, class_name: :User, foreign_key: :admin_id
+  belongs_to :admin, class_name: :User
+
   validates :first_name, :last_name, :user_name, :password, :mobile_number, :auth_token, presence: true
   validates :user_name, :password, :mobile_number, :auth_token, uniqueness: true
 
-  before_create :encrypt_password
-  before_validation :generate_auth_token
+  before_validation :set_auth_token
+  before_save :set_password, if: Proc.new { |user| user.password_changed?}
 
   def verify_password?(password)
     Password.new(self.password) == password
@@ -18,24 +21,45 @@ class User < ActiveRecord::Base
     DateTime.now >= self.auth_token_expires_at
   end
 
-  def update_auth_token
-    generate_auth_token
+  def password_token_expired?
+    DateTime.now >= self.reset_password_sent_at+1.day
+  end
+
+  def update_auth_token!
+    set_auth_token
+    save
+  end
+
+  def update_reset_password_token!
+    set_password_token
     save
   end
 
   private
 
-  def encrypt_password
-    self.password = Password.create(password)if password.present?
+  def set_password
+    self.password = encrypt_password(password)
   end
 
-  def generate_auth_token
+  def set_auth_token
+    self.auth_token = generate_unique_token_for("auth_token")
+    self.auth_token_expires_at = DateTime.now+1.day
+  end
+
+  def set_password_token
+    self.reset_password_token = generate_unique_token_for("reset_password_token")
+    self.reset_password_sent_at = DateTime.now
+  end
+
+  def encrypt_password(password)
+    Password.create(password)if password.present?
+  end
+
+  def generate_unique_token_for(attribute)
     token = nil
     loop do
       token = SecureRandom.hex
-      break token unless User.where(auth_token: token).first
+      break token unless User.send("find_by_#{attribute}", token).present?
     end
-    self.auth_token = token if token.present?
-    self.auth_token_expires_at = DateTime.now+1.day
   end
 end

@@ -2,6 +2,9 @@
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
 # Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+
+  ROLES = ["Manager", "admin"]
+  ROLES.each do |role|
+    Role.find_or_create_by(name: role)
+    puts "One role is created with title #{role}"
+  end
