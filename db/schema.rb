@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160502140628) do
+ActiveRecord::Schema.define(version: 20160505071628) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -26,6 +26,18 @@ ActiveRecord::Schema.define(version: 20160502140628) do
   end
 
   add_index "addresses", ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
+
+  create_table "drivers", force: :cascade do |t|
+    t.string   "first_name",             limit: 255
+    t.string   "last_name",              limit: 255
+    t.string   "password",               limit: 255
+    t.string   "email",                  limit: 255
+    t.string   "mobile_number",          limit: 255
+    t.string   "auth_token",             limit: 255
+    t.datetime "auth_token_expires_at"
+    t.string   "reset_password_token",   limit: 255
+    t.datetime "reset_password_sent_at"
+  end
 
   create_table "limo_companies", force: :cascade do |t|
     t.string   "uid",                    limit: 255
@@ -46,6 +58,14 @@ ActiveRecord::Schema.define(version: 20160502140628) do
     t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+  end
+
+  create_table "trips", force: :cascade do |t|
+    t.string   "start_destination", limit: 255
+    t.string   "end_destination",   limit: 255
+    t.datetime "pick_up_at"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -73,5 +93,22 @@ ActiveRecord::Schema.define(version: 20160502140628) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
   add_index "users", ["user_name"], name: "index_users_on_user_name", unique: true, using: :btree
+
+  create_table "vehicle_types", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  create_table "vehicles", force: :cascade do |t|
+    t.string   "number",          limit: 255
+    t.integer  "limo_company_id", limit: 4
+    t.integer  "vehicle_type_id", limit: 4
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "vehicles", ["limo_company_id"], name: "index_vehicles_on_limo_company_id", using: :btree
+  add_index "vehicles", ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id", using: :btree
 
 end

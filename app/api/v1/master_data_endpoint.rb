@@ -6,13 +6,13 @@ module V1
       end
       post 'countries' do
         success_json("Countries list",{
-            US: "United States",
-            CA: "Canada"
-          })
+          US: "United States",
+          CA: "Canada"
+        })
       end
 
       desc 'Returns list of states in country' do
-        detail 'success => {status: "success", message: "Country list", data: {}}'
+        detail 'success => {status: "success", message: "States list", data: {}}'
       end
       params do
         requires :country_code, type: String, allow_blank: false

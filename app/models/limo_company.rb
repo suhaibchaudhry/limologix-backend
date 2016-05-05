@@ -1,9 +1,9 @@
 class LimoCompany < ActiveRecord::Base
   has_many :users
   has_one :address, as: :addressable, dependent: :destroy
+
   validates :name, :uid, :email, :primary_phone_number, :logo, presence: true
   validates :email, :uid, uniqueness: true
-
   validate :logo_size
 
   mount_uploader :logo, LogoUploader

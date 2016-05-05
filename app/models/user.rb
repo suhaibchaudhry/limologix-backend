@@ -1,11 +1,11 @@
 require 'bcrypt'
 class User < ActiveRecord::Base
   include BCrypt
+
   belongs_to :role
   belongs_to :limo_company
-
-  has_many :managers, class_name: :User, foreign_key: :admin_id
   belongs_to :admin, class_name: :User
+  has_many :managers, class_name: :User, foreign_key: :admin_id
 
   validates :first_name, :last_name, :user_name, :password, :mobile_number, :auth_token, presence: true
   validates :user_name, :password, :mobile_number, :auth_token, uniqueness: true
@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   end
 
   def password_token_expired?
-    DateTime.now >= self.reset_password_sent_at+1.day
+    DateTime.now >= self.reset_password_sent_at + 1.day
   end
 
   def update_auth_token!
@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
 
   def set_auth_token
     self.auth_token = generate_unique_token_for("auth_token")
-    self.auth_token_expires_at = DateTime.now+1.day
+    self.auth_token_expires_at = DateTime.now + 1.day
   end
 
   def set_password_token
@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   end
 
   def encrypt_password(password)
-    Password.create(password)if password.present?
+    Password.create(password) if password.present?
   end
 
   def generate_unique_token_for(attribute)

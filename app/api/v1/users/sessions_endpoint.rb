@@ -2,7 +2,7 @@ module V1
   module Users
     class SessionsEndpoint < Root
       namespace :users do
-        desc 'Admin login' do
+        desc 'User login' do
           detail 'success => {status: "success", message: "Login successfull", data: {auth_token: "HDGHSDGSD4454"}},
           failure => { message: Invalid credentails"}'
         end

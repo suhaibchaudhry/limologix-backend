@@ -16,7 +16,7 @@ module V1
 
       namespace :users do
         desc 'Creates an admin account with company details' do
-          detail 'success => {status: "success", message: "Registration successfull", data: {auth_token: "HDGHSDGSD4454"}},n
+          detail 'success => {status: "success", message: "Registration successfull", data: {auth_token: "HDGHSDGSD4454"}},
           failure => { message: "Validations failed", user: "", company: "" }'
         end
         params do
@@ -28,14 +28,17 @@ module V1
             requires :mobile_number, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
           end
+
           requires :company, type: Hash do
             requires :uid, type: String, allow_blank: false
             requires :name, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
             requires :primary_phone_number, type: String, allow_blank: false
+            requires :logo, type: Rack::Multipart::UploadedFile, allow_blank: false
+
             optional :secondary_phone_number, type: String, allow_blank: false
             optional :fax, type: String, allow_blank: false
-            requires :logo, type: Rack::Multipart::UploadedFile, allow_blank: false
+
             requires :address_attributes, type: Hash do
               requires :street, type: String, allow_blank: false
               requires :city, type: String, allow_blank: false
@@ -48,22 +51,36 @@ module V1
         post 'sign_up' do
           user = User.new(user_params)
           company = LimoCompany.new(company_params)
+
           if user.valid? && company.valid?
             user.role = Role.find_by_name("admin")
             user.limo_company = company
             user.save
             success_json("Registration successfull", {
-                auth_token: user.auth_token
-              })
+              auth_token: user.auth_token
+            })
           else
             error_json(401, 'Validations failed', {
               user: user.errors.messages,
               company: company.errors.messages
-              })
+            })
           end
         end
 
-        desc "Create a manager "
+        desc "Verify's whether user_name exists in system"
+        params do
+          requires :user_name, type: String, allow_blank: false
+        end
+        post'verify_user_name' do
+          user = User.find_by(user_name: params[:user_name])
+          unless user.present?
+            success_json("User name not exists")
+          else
+            error_json(401, 'User name already exists')
+          end
+        end
+
+        desc "Creates a manager "
         params do
           requires :auth_token, type: String, allow_blank: false
           requires :user, type: Hash do
@@ -86,9 +103,10 @@ module V1
           else
             error_json(401, 'Validations failed', {
               user: user.errors.messages,
-              })
+            })
           end
         end
+
       end
     end
   end

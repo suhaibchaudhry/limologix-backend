@@ -11,7 +11,9 @@ module V1
 
       def current_user
         return false unless params[:auth_token].present?
+
         user = User.find_by(auth_token: params[:auth_token])
+
         (user.present? && !user.auth_token_expired?) ? user : nil
       end
 
@@ -32,6 +34,7 @@ module V1
     mount V1::Users::SessionsEndpoint
     mount V1::Users::PasswordsEndpoint
     mount V1::MasterDataEndpoint
+
     add_swagger_documentation
   end
 end
