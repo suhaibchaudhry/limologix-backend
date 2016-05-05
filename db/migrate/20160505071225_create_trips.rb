@@ -4,6 +4,7 @@ class CreateTrips < ActiveRecord::Migration
       t.string :start_destination
       t.string :end_destination
       t.datetime :pick_up_at
+
       t.timestamps null: false
     end
   end

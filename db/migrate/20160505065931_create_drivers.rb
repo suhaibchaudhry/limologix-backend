@@ -6,10 +6,25 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :password
       t.string :email
       t.string :mobile_number
+      t.date :dob
+      t.string :home_phone_number
+      t.string :fax_number
+      t.string :social_security_number
+      t.string :display_name
+      t.string :license_number
+      t.string :license_image
+      t.string :license_expiry_date
+      t.string :badge_number
+      t.string :badge_expiry_date
+      t.string :ara_number
+      t.string :ara_image
+      t.string :ara_exp_date
       t.string :auth_token
       t.datetime :auth_token_expires_at
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
+
+
     end
   end
 end
