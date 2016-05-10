@@ -20,6 +20,7 @@ module V1
     mount V1::Users::RegistrationsEndpoint
     mount V1::Users::SessionsEndpoint
     mount V1::Users::PasswordsEndpoint
+    mount V1::Users::CompanyEndpoint
     mount V1::MasterDataEndpoint
     mount V1::VehiclesEndpoint
   end

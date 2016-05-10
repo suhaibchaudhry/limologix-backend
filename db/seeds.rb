@@ -3,7 +3,7 @@
 #
 # Examples:
 
-  ROLES = ["Manager", "admin"]
+  ROLES = ["manager", "admin"]
   ROLES.each do |role|
     Role.find_or_create_by(name: role)
     puts "One role is created with title #{role}"

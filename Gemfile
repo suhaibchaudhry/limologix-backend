@@ -13,7 +13,6 @@ gem 'grape'
 gem 'grape-swagger'
 gem 'hashie-forbidden_attributes'
 gem 'grape-active_model_serializers'
-# gem 'active_model_serializers'
 gem 'grape-kaminari'
 
 # Config

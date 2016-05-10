@@ -3,38 +3,29 @@ module V1
     class RegistrationsEndpoint < Root
       helpers do
         def user_params
-          ActionController::Parameters.new(params).require(:user).permit(:first_name, :last_name, :user_name, :password, :email, :mobile_number )
+          ActionController::Parameters.new(params).require(:user).permit(:user_name, :password, :email)
         end
 
         def company_params
-          params[:company][:logo] = ActionDispatch::Http::UploadedFile.new(params[:company][:logo]) if params[:company][:logo]
-          ActionController::Parameters.new(params).require(:company).permit(:uid, :name,
-            :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
-            address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
+          ActionController::Parameters.new(params).require(:company).permit(:name, :email)
         end
       end
 
       namespace :users do
-        desc 'Creates an admin account with company details' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+        desc 'Company registration.' do
+          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
             { code: 401,
               message: {
                 status: 'error',
-                message: 'Validations failed',
+                message: 'Validations failed.',
                 data: {
                   user: {
                     user_name: [
-                      'has already been taken'
-                    ],
-                    mobile_number: [
                       'has already been taken'
                     ]
                   },
                   company: {
                     email: [
-                      'has already been taken'
-                    ],
-                    uid: [
                       'has already been taken'
                     ]
                   }
@@ -45,49 +36,33 @@ module V1
         end
         params do
           requires :user, type: Hash do
-            requires :first_name, type: String, allow_blank: false
-            requires :last_name, type: String, allow_blank: false
             requires :user_name, type: String, allow_blank: false
             requires :password, type: String, allow_blank: false
-            requires :mobile_number, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
           end
 
           requires :company, type: Hash do
-            requires :uid, type: String, allow_blank: false
             requires :name, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
-            requires :primary_phone_number, type: String, allow_blank: false
-            optional :logo, type: Rack::Multipart::UploadedFile, allow_blank: false
-
-            optional :secondary_phone_number, type: String, allow_blank: false
-            optional :fax, type: String, allow_blank: false
-
-            requires :address_attributes, type: Hash do
-              requires :street, type: String, allow_blank: false
-              requires :city, type: String, allow_blank: false
-              requires :zipcode, type: Integer, allow_blank: false
-              requires :state_code, type: String, allow_blank: false
-              requires :country_code, type: String, allow_blank: false
-            end
           end
         end
-        post 'sign_up' do
+        post 'registration' do
           user = User.new(user_params)
           company = LimoCompany.new(company_params)
 
           if user.valid? & company.valid?
-            user.role = Role.find_by_name('admin')
+            user.role = Role.admin
             user.limo_company = company
             user.save
+
             {
-              message: 'Registration successfull',
+              message: 'Registration successfull.',
               data: {
                 auth_token: user.auth_token
               }
             }
           else
-            error!({ message: 'Validations failed', data:{
+            error!({ message: 'Validations failed.', data:{
               user: user.errors.messages,
               company: company.errors.messages
             }}, 401)
@@ -95,7 +70,8 @@ module V1
         end
 
         desc 'Verify\'s whether user_name exists in system' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'User name already exists' }.to_json }]
+          http_codes [ { code: 201, message: { status: 'success', message: 'User name is unique.' }.to_json },
+            { code: 401, message: { status: 'error', message: 'User name already exists.' }.to_json }]
         end
         params do
           requires :user_name, type: String, allow_blank: false
@@ -103,55 +79,9 @@ module V1
         post 'verify_user_name' do
           user = User.find_by(user_name: params[:user_name])
           unless user.present?
-            { message: 'User name is unique' }
+            { message: 'User name is unique.' }
           else
-            error!('User name already exists', 401)
-          end
-        end
-
-        desc 'Creates a manager' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Manager account created successfully' }.to_json },
-            { code: 401,
-              message: {
-                status: 'error',
-                message: 'Validations failed',
-                data: {
-                  user: {
-                    user_name: [
-                      'has already been taken'
-                    ],
-                    mobile_number: [
-                      'has already been taken'
-                    ]
-                  }
-                }
-              }.to_json
-            }
-          ]
-        end
-        params do
-          requires :auth_token, type: String, allow_blank: false
-          requires :user, type: Hash do
-            requires :first_name, type: String, allow_blank: false
-            requires :last_name, type: String, allow_blank: false
-            requires :user_name, type: String, allow_blank: false
-            requires :password, type: String, allow_blank: false
-            requires :mobile_number, type: String, allow_blank: false
-            requires :email, type: String, allow_blank: false
-          end
-        end
-        post'create_manager' do
-          authenticate!
-          user = User.new(user_params)
-          if user.valid?
-            user.role = Role.find_by_name('manager')
-            user.admin = current_user
-            user.save
-            { message: 'Manager account created successfully' }
-          else
-            error!({ message: 'Validations failed', data: {
-              user: user.errors.messages,
-            }}, 401)
+            error!('User name already exists.', 401)
           end
         end
 

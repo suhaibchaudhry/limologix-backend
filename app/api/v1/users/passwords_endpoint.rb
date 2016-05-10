@@ -2,7 +2,10 @@ module V1
   module Users
     class PasswordsEndpoint < Root
       namespace :users do
-        desc 'Verifies email and send reset password mail'
+        desc 'Verifies email and send reset password mail' do
+          http_codes [ { code: 201, message: { status: 'success', message: 'Email has been sent to registered email address.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+            { code: 401, message: { status: 'error', message: 'Email not found.' }.to_json }]
+        end
         params do
           requires :email, type: String, allow_blank: false
         end
@@ -11,13 +14,28 @@ module V1
 
           if user.present?
             user.update_reset_password_token!
-            success!('Email has been sent to registered email address')
+            { message: 'Email has been sent to registered email address.' }
           else
-            error!('Email not found', 404)
+            error!('Email not found.', 404)
           end
         end
 
-        desc 'Creates new password by verifying password token'
+        desc 'Creates new password by verifying password token' do
+          http_codes [ { code: 201, message: { status: 'success', message: 'Password has been set successfully.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+            { code: 401,
+              message: {
+                status: 'error',
+                message: 'Validations failed.',
+                data: {
+                  user: {
+                    password: [
+                      'not valid password'
+                    ]
+                  }
+                }
+              }.to_json
+            }]
+        end
         params do
           requires :password, type: String, allow_blank: false
           requires :reset_password_token, type: String, allow_blank: false
@@ -27,9 +45,9 @@ module V1
 
           if user.present? && !user.password_token_expired?
             if user.update(password: params[:password], reset_password_token: nil)
-              success!('Password has been set successfully')
+              { message: 'Password has been set successfully.' }
             else
-              error!({ message: 'Validations failed', data: {
+              error!({ message: 'Validations failed.', data: {
                 user: user.errors.messages,
               }}, 403)
             end
