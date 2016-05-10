@@ -3,8 +3,8 @@ module V1
     class SessionsEndpoint < Root
       namespace :users do
         desc 'User login' do
-          detail 'success => {status: "success", message: "Login successfull", data: {auth_token: "HDGHSDGSD4454"}},
-          failure => { message: Invalid credentails"}'
+          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+            { code: 401, message: { status: 'error', message: 'Invalid credentails' }.to_json }]
         end
         params do
           requires :user_name, type: String, allow_blank: false
@@ -14,11 +14,14 @@ module V1
           user = User.find_by(user_name: params[:user_name])
            if user.present? && user.verify_password?(params[:password])
             user.update_auth_token!
-            success_json("Login successfull", {
+            {
+              message: 'Login successfull',
+              data: {
                 auth_token: user.auth_token
-              })
+              }
+            }
            else
-            error_json(401, 'Invalid credentails')
+            error!('Invalid credentails', 401)
            end
         end
       end

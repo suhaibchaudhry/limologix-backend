@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160505071628) do
+ActiveRecord::Schema.define(version: 20160505124016) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -33,6 +33,20 @@ ActiveRecord::Schema.define(version: 20160505071628) do
     t.string   "password",               limit: 255
     t.string   "email",                  limit: 255
     t.string   "mobile_number",          limit: 255
+    t.string   "user_name",              limit: 255
+    t.date     "dob"
+    t.string   "home_phone_number",      limit: 255
+    t.string   "fax_number",             limit: 255
+    t.string   "social_security_number", limit: 255
+    t.string   "display_name",           limit: 255
+    t.string   "license_number",         limit: 255
+    t.string   "license_image",          limit: 255
+    t.string   "license_expiry_date",    limit: 255
+    t.string   "badge_number",           limit: 255
+    t.string   "badge_expiry_date",      limit: 255
+    t.string   "ara_number",             limit: 255
+    t.string   "ara_image",              limit: 255
+    t.string   "ara_exp_date",           limit: 255
     t.string   "auth_token",             limit: 255
     t.datetime "auth_token_expires_at"
     t.string   "reset_password_token",   limit: 255
@@ -94,6 +108,15 @@ ActiveRecord::Schema.define(version: 20160505071628) do
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
   add_index "users", ["user_name"], name: "index_users_on_user_name", unique: true, using: :btree
 
+  create_table "vehicle_models", force: :cascade do |t|
+    t.string   "name",            limit: 255
+    t.integer  "vehicle_type_id", limit: 4
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "vehicle_models", ["vehicle_type_id"], name: "index_vehicle_models_on_vehicle_type_id", using: :btree
+
   create_table "vehicle_types", force: :cascade do |t|
     t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
@@ -101,14 +124,18 @@ ActiveRecord::Schema.define(version: 20160505071628) do
   end
 
   create_table "vehicles", force: :cascade do |t|
-    t.string   "number",          limit: 255
-    t.integer  "limo_company_id", limit: 4
-    t.integer  "vehicle_type_id", limit: 4
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.string   "color",                limit: 255
+    t.string   "hll_number",           limit: 255
+    t.string   "license_plate_number", limit: 255
+    t.string   "year_of_purchase",     limit: 255
+    t.integer  "owner_id",             limit: 4
+    t.string   "owner_type",           limit: 255
+    t.integer  "vehicle_model_id",     limit: 4
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
-  add_index "vehicles", ["limo_company_id"], name: "index_vehicles_on_limo_company_id", using: :btree
-  add_index "vehicles", ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id", using: :btree
+  add_index "vehicles", ["owner_type", "owner_id"], name: "index_vehicles_on_owner_type_and_owner_id", using: :btree
+  add_index "vehicles", ["vehicle_model_id"], name: "index_vehicles_on_vehicle_model_id", using: :btree
 
 end

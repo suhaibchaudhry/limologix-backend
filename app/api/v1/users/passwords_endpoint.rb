@@ -11,9 +11,9 @@ module V1
 
           if user.present?
             user.update_reset_password_token!
-            success_json("Email has been sent to registered email address")
+            success!('Email has been sent to registered email address')
           else
-            error_json(401, 'Email not found')
+            error!('Email not found', 404)
           end
         end
 
@@ -26,10 +26,16 @@ module V1
           user = User.find_by(reset_password_token: params[:reset_password_token])
 
           if user.present? && !user.password_token_expired?
-            user.update(password: params[:password], reset_password_token: nil)
-            success_json("Password has been set successfully")
+            if user.update(password: params[:password], reset_password_token: nil)
+              success!('Password has been set successfully')
+            else
+              error!({ message: 'Validations failed', data: {
+                user: user.errors.messages,
+              }}, 403)
+            end
+
           else
-            error_json(401, 'Password token is invalid or expired')
+            error!('Password token is invalid or expired', 401)
           end
         end
 
@@ -41,7 +47,7 @@ module V1
         #   user = User.find_by(reset_password_token: params[:reset_password_token])
         #   if user.present? && !user.password_token_expired?
         #    user.update_auth_token!
-        #     success_json("Login successfull", {
+        #                 success!('Login successfull', {
         #         auth_token: user.auth_token
         #       })
         #   else

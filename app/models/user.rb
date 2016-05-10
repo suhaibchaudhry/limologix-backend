@@ -7,10 +7,10 @@ class User < ActiveRecord::Base
   belongs_to :admin, class_name: :User
   has_many :managers, class_name: :User, foreign_key: :admin_id
 
-  validates :first_name, :last_name, :user_name, :password, :mobile_number, :auth_token, presence: true
+  validates :first_name, :last_name, :user_name, :password, :mobile_number,  presence: true
   validates :user_name, :password, :mobile_number, :auth_token, uniqueness: true
 
-  before_validation :set_auth_token
+  before_create :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
 
   def verify_password?(password)
