@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   belongs_to :company
   belongs_to :admin, class_name: :User
   has_many :managers, class_name: :User, foreign_key: :admin_id
+  has_many :trips
 
   validates :email, :username, :password , presence: true
   validates :username, :email, uniqueness: true
