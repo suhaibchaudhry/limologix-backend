@@ -8,7 +8,7 @@ module V1
       helpers do
         def company_params
           params[:company][:logo] = ActionDispatch::Http::UploadedFile.new(params[:company][:logo]) if params[:company][:logo]
-          params[:address_attributes] = params[:address]
+          params[:company][:address_attributes] = params[:company][:address]
           ActionController::Parameters.new(params).require(:company).permit(:name,
             :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
