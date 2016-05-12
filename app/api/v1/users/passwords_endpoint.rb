@@ -3,7 +3,7 @@ module V1
     class PasswordsEndpoint < Root
       namespace :users do
         desc 'Verifies email and send reset password mail' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Email has been sent to registered email address.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Email has been sent to registered email address.' }.to_json },
             { code: 401, message: { status: 'error', message: 'Email not found.' }.to_json }]
         end
         params do
@@ -25,14 +25,7 @@ module V1
             { code: 401,
               message: {
                 status: 'error',
-                message: 'Validations failed.',
-                data: {
-                  user: {
-                    password: [
-                      'not valid password'
-                    ]
-                  }
-                }
+                message: 'User password is empty'
               }.to_json
             }]
         end
@@ -47,9 +40,7 @@ module V1
             if user.update(password: params[:password], reset_password_token: nil)
               { message: 'Password has been set successfully.' }
             else
-              error!({ message: 'Validations failed.', data: {
-                user: user.errors.messages,
-              }}, 403)
+              error!(error_formatter(user) , 401)
             end
 
           else

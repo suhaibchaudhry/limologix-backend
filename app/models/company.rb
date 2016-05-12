@@ -3,14 +3,8 @@ class Company < ActiveRecord::Base
   has_many :customers
   has_one :address, as: :addressable, dependent: :destroy
 
-  validates :name, :email, presence: { message: -> (object, data) do
-      "#{data[:model]} #{data[:attribute].downcase} can't be blank"
-    end
-  }
-  validates :email, uniqueness: { message: -> (object, data) do
-      "#{data[:model]} #{data[:attribute].downcase} has already been taken"
-    end
-  }
+  validates :name, :email, presence: true
+  validates :email, uniqueness: true
   validate :logo_size
 
   mount_uploader :logo, LogoUploader

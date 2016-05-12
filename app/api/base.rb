@@ -3,6 +3,9 @@ module CustomErrorFormatter
     if message.is_a?(Hash)
       { status: 'error', message: message[:message], data: message[:data]}.to_json
     else
+      message = message.gsub('username', 'name')
+      message = message.gsub('[', ' ')
+      message = message.gsub(']', '')
       { status: 'error', message: message}.to_json
     end
   end
@@ -30,6 +33,17 @@ class Base < Grape::API
       else
         serializer.serializable_hash
       end
+    end
+
+    def error_formatter(resource)
+      message = ""
+      model_name = resource.class.name
+      resource.errors.messages.each do |attribute, arr|
+        arr.each do |error|
+          message = message + "#{model_name} #{attribute.to_s.gsub('_', " ")} #{error}, "
+        end
+      end
+      message.gsub(/, $/, "")
     end
   end
 

@@ -1,13 +1,14 @@
 module V1
   module Users
     class CompaniesEndpoint < Root
-      after_validation do
+      before do
         authenticate!
       end
 
       helpers do
         def company_params
           params[:company][:logo] = ActionDispatch::Http::UploadedFile.new(params[:company][:logo]) if params[:company][:logo]
+          params[:address_attributes] = params[:address]
           ActionController::Parameters.new(params).require(:company).permit(:name,
             :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
@@ -22,14 +23,7 @@ module V1
               { code: 401,
                 message: {
                   status: 'error',
-                  message: 'Validations failed.',
-                  data: {
-                    company: {
-                      logo: [
-                        'not valid'
-                      ]
-                    }
-                  }
+                  message: 'company name is missing, company name is empty'
                 }.to_json
               }]
           end
@@ -44,7 +38,7 @@ module V1
               optional :secondary_phone_number, type: String
               optional :fax, type: String
 
-              optional :address_attributes, type: Hash do
+              optional :address, type: Hash do
                 optional :street, type: String
                 optional :city, type: String
                 optional :zipcode, type: Integer
@@ -57,9 +51,7 @@ module V1
             if current_user.company.update(company_params)
               { message: 'Company details updated successfully.'}
             else
-              error!({ message: 'Validations failed.', data:{
-                company: company.errors.messages
-                }}, 401)
+              error!(error_formatter(company) , 401)
             end
           end
 

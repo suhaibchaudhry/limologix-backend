@@ -7,14 +7,8 @@ class User < ActiveRecord::Base
   belongs_to :admin, class_name: :User
   has_many :managers, class_name: :User, foreign_key: :admin_id
 
-  validates :email, :username, :password , presence: { message: -> (object, data) do
-      "#{data[:model]} #{data[:attribute].downcase} can't be blank"
-    end
-  }
-  validates :username, :email, uniqueness: { message: -> (object, data) do
-      "#{data[:model]} #{data[:attribute].downcase} has already been taken"
-    end
-  }
+  validates :email, :username, :password , presence: true
+  validates :username, :email, uniqueness: true
 
   before_create :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}

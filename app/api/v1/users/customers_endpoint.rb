@@ -20,14 +20,7 @@ module V1
               { code: 401,
                 message: {
                   status: 'error',
-                  message: 'Validations failed.',
-                  data: {
-                    customer: {
-                      email: [
-                        'is invalid.'
-                      ]
-                    }
-                  }
+                  message: 'Customer first name is missing, Customer last name is empty',
                 }.to_json
               }]
           end
@@ -43,26 +36,30 @@ module V1
           post 'create' do
             customer  = Customer.new(customer_params)
             if customer.valid?
+              customer.company = current_user.company
               customer.save
               { message: 'Customer created successfully.' }
             else
-              error!({ message: 'Validations failed.', data:{
-                customer: customer.errors.messages,
-              }}, 401)
+              error!(error_formatter(customer) , 401)
             end
           end
 
           desc 'Customers list' do
-            http_codes [ { code: 201, message: { status: 'success', message: 'Customer list.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json }]
+            http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
+              data: {
+                customers: [ {"id":1,"first_name":"customer1","last_name":"t","email":"customer1","mobile_number":"customer1"},
+                  {"id":2,"first_name":"customer1","last_name":"t","email":"customer1","mobile_number":"customer1"}]
+              }
+            }.to_json }]
           end
           params do
             requires :auth_token, type: String, allow_blank: false
           end
           post 'index' do
             {
-              message: 'Customer created successfully.',
+              message: 'Customers list.',
               data: {
-                customer: serialize_model_object(Customer.all)
+                customer: serialize_model_object(current_user.company.customers)
               }
             }
           end

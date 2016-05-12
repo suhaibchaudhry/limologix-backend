@@ -18,19 +18,7 @@ module V1
             { code: 401,
               message: {
                 status: 'error',
-                message: 'Username has already been taken',
-                data: {
-                  user: {
-                    username: [
-                      'has already been taken'
-                    ]
-                  },
-                  company: {
-                    email: [
-                      'has already been taken'
-                    ]
-                  }
-                }
+                message: 'User name has already been taken, User email has already been taken, Company email has already been taken'
               }.to_json
             }
           ]
@@ -63,10 +51,8 @@ module V1
               }
             }
           else
-            error!({ message: 'Validations failed.', data:{
-              user: user.errors.messages,
-              company: company.errors.messages
-            }}, 401)
+            message = error_formatter(user) + ", " + error_formatter(company)
+            error!(message , 401)
           end
         end
 
