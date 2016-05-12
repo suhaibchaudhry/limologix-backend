@@ -8,11 +8,11 @@ module V1
             { code: 401, message: { status: 'error', message: 'Invalid credentails' }.to_json }]
         end
         params do
-          requires :user_name, type: String, allow_blank: false
+          requires :username, type: String, allow_blank: false
           requires :password, type: String, allow_blank: false
         end
         post 'sign_in' do
-          user = User.find_by(user_name: params[:user_name])
+          user = User.find_by(username: params[:username])
            if user.present? && user.verify_password?(params[:password])
             user.update_auth_token!
             {

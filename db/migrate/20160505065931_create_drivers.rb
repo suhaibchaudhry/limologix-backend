@@ -6,7 +6,7 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :password
       t.string :email
       t.string :mobile_number
-      t.string :user_name
+      t.string :username
       t.date :dob
       t.string :home_phone_number
       t.string :fax_number

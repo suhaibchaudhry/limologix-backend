@@ -27,14 +27,32 @@ ActiveRecord::Schema.define(version: 20160510104059) do
 
   add_index "addresses", ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
 
+  create_table "companies", force: :cascade do |t|
+    t.string   "uid",                    limit: 255
+    t.string   "name",                   limit: 255
+    t.string   "logo",                   limit: 255
+    t.string   "email",                  limit: 255
+    t.string   "primary_phone_number",   limit: 255
+    t.string   "secondary_phone_number", limit: 255
+    t.string   "fax",                    limit: 255
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
+  add_index "companies", ["email"], name: "index_companies_on_email", unique: true, using: :btree
+  add_index "companies", ["uid"], name: "index_companies_on_uid", unique: true, using: :btree
+
   create_table "customers", force: :cascade do |t|
     t.string   "first_name",    limit: 255
     t.string   "last_name",     limit: 255
     t.string   "email",         limit: 255
     t.string   "mobile_number", limit: 255
+    t.integer  "company_id",    limit: 4
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
+
+  add_index "customers", ["company_id"], name: "index_customers_on_company_id", using: :btree
 
   create_table "drivers", force: :cascade do |t|
     t.string   "first_name",             limit: 255
@@ -42,7 +60,7 @@ ActiveRecord::Schema.define(version: 20160510104059) do
     t.string   "password",               limit: 255
     t.string   "email",                  limit: 255
     t.string   "mobile_number",          limit: 255
-    t.string   "user_name",              limit: 255
+    t.string   "username",               limit: 255
     t.date     "dob"
     t.string   "home_phone_number",      limit: 255
     t.string   "fax_number",             limit: 255
@@ -62,21 +80,6 @@ ActiveRecord::Schema.define(version: 20160510104059) do
     t.datetime "reset_password_sent_at"
   end
 
-  create_table "limo_companies", force: :cascade do |t|
-    t.string   "uid",                    limit: 255
-    t.string   "name",                   limit: 255
-    t.string   "logo",                   limit: 255
-    t.string   "email",                  limit: 255
-    t.string   "primary_phone_number",   limit: 255
-    t.string   "secondary_phone_number", limit: 255
-    t.string   "fax",                    limit: 255
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-  end
-
-  add_index "limo_companies", ["email"], name: "index_limo_companies_on_email", unique: true, using: :btree
-  add_index "limo_companies", ["uid"], name: "index_limo_companies_on_uid", unique: true, using: :btree
-
   create_table "roles", force: :cascade do |t|
     t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
@@ -94,7 +97,7 @@ ActiveRecord::Schema.define(version: 20160510104059) do
   create_table "users", force: :cascade do |t|
     t.string   "first_name",             limit: 255
     t.string   "last_name",              limit: 255
-    t.string   "user_name",              limit: 255
+    t.string   "username",               limit: 255
     t.string   "password",               limit: 255
     t.string   "email",                  limit: 255
     t.string   "mobile_number",          limit: 255
@@ -102,7 +105,7 @@ ActiveRecord::Schema.define(version: 20160510104059) do
     t.datetime "auth_token_expires_at"
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
-    t.integer  "limo_company_id",        limit: 4
+    t.integer  "company_id",             limit: 4
     t.integer  "role_id",                limit: 4
     t.integer  "admin_id",               limit: 4
     t.datetime "created_at",                         null: false
@@ -111,11 +114,11 @@ ActiveRecord::Schema.define(version: 20160510104059) do
 
   add_index "users", ["admin_id"], name: "index_users_on_admin_id", using: :btree
   add_index "users", ["auth_token"], name: "index_users_on_auth_token", unique: true, using: :btree
+  add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["limo_company_id"], name: "index_users_on_limo_company_id", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
-  add_index "users", ["user_name"], name: "index_users_on_user_name", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "vehicle_models", force: :cascade do |t|
     t.string   "name",            limit: 255

@@ -5,6 +5,7 @@ class CreateCustomers < ActiveRecord::Migration
       t.string :last_name
       t.string :email
       t.string :mobile_number
+      t.references :company, index: true
 
       t.timestamps null: false
     end

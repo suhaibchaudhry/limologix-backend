@@ -3,12 +3,18 @@ class User < ActiveRecord::Base
   include BCrypt
 
   belongs_to :role
-  belongs_to :limo_company
+  belongs_to :company
   belongs_to :admin, class_name: :User
   has_many :managers, class_name: :User, foreign_key: :admin_id
 
-  validates :email, :user_name, :password , presence: true
-  validates :user_name, :email, uniqueness: true
+  validates :email, :username, :password , presence: { message: -> (object, data) do
+      "#{data[:model]} #{data[:attribute].downcase} can't be blank"
+    end
+  }
+  validates :username, :email, uniqueness: { message: -> (object, data) do
+      "#{data[:model]} #{data[:attribute].downcase} has already been taken"
+    end
+  }
 
   before_create :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}

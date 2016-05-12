@@ -8,4 +8,5 @@ class AddressSerializer < ActiveModel::Serializer
   def country
     CS.countries[object.country_code.upcase.to_sym]
   end
+
 end

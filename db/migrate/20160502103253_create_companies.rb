@@ -1,6 +1,6 @@
-class CreateLimoCompanies < ActiveRecord::Migration
+class CreateCompanies < ActiveRecord::Migration
   def change
-    create_table :limo_companies do |t|
+    create_table :companies do |t|
       t.string :uid
       t.string :name
       t.string :logo
@@ -11,7 +11,7 @@ class CreateLimoCompanies < ActiveRecord::Migration
 
       t.timestamps null: false
     end
-    add_index :limo_companies, :email, unique: true
-    add_index :limo_companies, :uid, unique: true
+    add_index :companies, :email, unique: true
+    add_index :companies, :uid, unique: true
   end
 end

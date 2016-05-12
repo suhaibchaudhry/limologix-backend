@@ -2,8 +2,8 @@ class Driver < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
   has_many :vehicles, as: :owner, dependent: :destroy
 
-  validates :first_name, :last_name, :user_name, :password, :mobile_number, :auth_token, presence: true
-  validates :user_name, :password, :mobile_number, :auth_token, uniqueness: true
+  validates :first_name, :last_name, :username, :password, :mobile_number, :auth_token, presence: true
+  validates :username, :password, :mobile_number, :auth_token, uniqueness: true
 
   before_validation :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
