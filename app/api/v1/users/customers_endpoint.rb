@@ -2,7 +2,7 @@ module V1
   module Users
     class CustomersEndpoint < Root
 
-      after_validation do
+      before do
         authenticate!
       end
 
@@ -59,7 +59,7 @@ module V1
             {
               message: 'Customers list.',
               data: {
-                customer: serialize_model_object(current_user.company.customers)
+                customers: serialize_model_object(current_user.company.customers)
               }
             }
           end

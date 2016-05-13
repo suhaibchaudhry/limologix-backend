@@ -22,6 +22,7 @@ module V1
     mount V1::Users::PasswordsEndpoint
     mount V1::Users::CompaniesEndpoint
     mount V1::Users::CustomersEndpoint
+    mount V1::Users::TripsEndpoint
     mount V1::MasterDataEndpoint
     mount V1::VehiclesEndpoint
   end

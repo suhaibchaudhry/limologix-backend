@@ -5,6 +5,7 @@ class CreateTrips < ActiveRecord::Migration
       t.string :end_destination
       t.datetime :pick_up_at
       t.references :user, index: true
+      t.string :status, default: 'pending'
 
       t.timestamps null: false
     end

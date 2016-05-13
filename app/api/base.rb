@@ -4,7 +4,7 @@ module CustomErrorFormatter
       { status: 'error', message: message[:message], data: message[:data]}.to_json
     else
       message = message.gsub('username', 'name')
-      message = message.gsub('[', ' ')
+      message = message.gsub(/\[|_|\./, ' ')
       message = message.gsub(']', '')
       { status: 'error', message: message}.to_json
     end
@@ -40,7 +40,7 @@ class Base < Grape::API
       model_name = resource.class.name
       resource.errors.messages.each do |attribute, arr|
         arr.each do |error|
-          message = message + "#{model_name} #{attribute.to_s.gsub('_', " ")} #{error}, "
+          message = message + "#{model_name} #{attribute.to_s} #{error}, "
         end
       end
       message.gsub(/, $/, "")

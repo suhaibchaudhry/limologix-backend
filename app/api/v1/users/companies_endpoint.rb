@@ -48,7 +48,8 @@ module V1
             end
           end
           post 'update' do
-            if current_user.company.update(company_params)
+            company = current_user.company
+            if company.update(company_params)
               { message: 'Company details updated successfully.'}
             else
               error!(error_formatter(company) , 401)
