@@ -4,7 +4,7 @@ module CustomErrorFormatter
       { status: 'error', message: message[:message], data: message[:data]}.to_json
     else
       message = message.gsub('username', 'name')
-      message = message.gsub(/\[|_|\./, ' ')
+      message = message.gsub(/\[|_|\.|^\, /, ' ')
       message = message.gsub(']', '')
       { status: 'error', message: message}.to_json
     end

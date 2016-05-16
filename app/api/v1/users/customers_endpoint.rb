@@ -31,13 +31,12 @@ module V1
               requires :last_name, type: String, allow_blank: false
               requires :email, type: String, allow_blank: false
               requires :mobile_number, type: String, allow_blank: false
+              requires :organisation, type: String, allow_blank: false
             end
           end
           post 'create' do
-            customer  = Customer.new(customer_params)
-            if customer.valid?
-              customer.company = current_user.company
-              customer.save
+            customer  = current_user.customers.new(customer_params)
+            if customer.save
               { message: 'Customer created successfully.' }
             else
               error!(error_formatter(customer) , 401)

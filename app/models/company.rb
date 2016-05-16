@@ -1,6 +1,6 @@
 class Company < ActiveRecord::Base
   has_many :users
-  has_many :customers
+  has_many :customers, through: :users
   has_one :address, as: :addressable, dependent: :destroy
 
   validates :name, :email, presence: true

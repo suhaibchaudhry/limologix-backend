@@ -7,11 +7,34 @@ module V1
 
       helpers do
         def company_params
-          params[:company][:logo] = ActionDispatch::Http::UploadedFile.new(params[:company][:logo]) if params[:company][:logo]
+          params[:company][:logo] = parse_image_data(params[:company][:logo])
           params[:company][:address_attributes] = params[:company][:address]
           ActionController::Parameters.new(params).require(:company).permit(:name,
             :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
+        end
+
+        def parse_image_data(base64_image)
+          filename = "image_#{Time.now.to_i}"
+          in_content_type, encoding, string = base64_image.split(/[:;,]/)[1..3]
+
+          tempfile = Tempfile.new(filename)
+          tempfile.binmode
+          tempfile.write Base64.decode64(string)
+
+          # for security we want the actual content type, not just what was passed in
+          content_type = `file --mime -b #{tempfile.path}`.split(";")[0]
+
+          # we will also add the extension ourselves based on the above
+          # if it's not gif/jpeg/png, it will fail the validation in the upload model
+          extension = content_type.match(/gif|jpeg|png/).to_s
+          filename += ".#{extension}" if extension
+
+          ActionDispatch::Http::UploadedFile.new({
+            tempfile: tempfile,
+            content_type: content_type,
+            filename: filename
+          })
         end
       end
 
@@ -33,7 +56,7 @@ module V1
               requires :name, type: String, allow_blank: false
               requires :email, type: String, allow_blank: false
               optional :primary_phone_number, type: String
-              optional :logo, type: Rack::Multipart::UploadedFile
+              optional :logo, type: String
 
               optional :secondary_phone_number, type: String
               optional :fax, type: String

@@ -47,12 +47,13 @@ ActiveRecord::Schema.define(version: 20160510104059) do
     t.string   "last_name",     limit: 255
     t.string   "email",         limit: 255
     t.string   "mobile_number", limit: 255
-    t.integer  "company_id",    limit: 4
+    t.string   "organisation",  limit: 255
+    t.integer  "user_id",       limit: 4
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
 
-  add_index "customers", ["company_id"], name: "index_customers_on_company_id", using: :btree
+  add_index "customers", ["user_id"], name: "index_customers_on_user_id", using: :btree
 
   create_table "drivers", force: :cascade do |t|
     t.string   "first_name",             limit: 255
@@ -90,6 +91,7 @@ ActiveRecord::Schema.define(version: 20160510104059) do
     t.string   "start_destination", limit: 255
     t.string   "end_destination",   limit: 255
     t.datetime "pick_up_at"
+    t.integer  "passengers_count",  limit: 4
     t.integer  "user_id",           limit: 4
     t.string   "status",            limit: 255, default: "pending"
     t.datetime "created_at",                                        null: false
