@@ -46,8 +46,8 @@ module V1
           desc 'Customers list' do
             http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
               data: {
-                customers: [ {"id":1,"first_name":"customer1","last_name":"t","email":"customer1","mobile_number":"customer1"},
-                  {"id":2,"first_name":"customer1","last_name":"t","email":"customer1","mobile_number":"customer1"}]
+                customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
+                  {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
               }
             }.to_json }]
           end
@@ -59,6 +59,28 @@ module V1
               message: 'Customers list.',
               data: {
                 customers: serialize_model_object(current_user.company.customers)
+              }
+            }
+          end
+
+          desc 'Customers search' do
+            http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
+              data: {
+                customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
+                  {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
+              }
+            }.to_json }]
+          end
+          params do
+            requires :auth_token, type: String, allow_blank: false
+            requires :value, type: String, allow_blank: false
+          end
+          post 'search' do
+            {
+              message: 'Customers list.',
+              data: {
+                customers: serialize_model_object(current_user.company.customers.where(
+                  "customers.first_name like ? OR customers.last_name like ? ", "#{params[:value]}%", "#{params[:value]}%" ))
               }
             }
           end

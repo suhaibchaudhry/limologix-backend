@@ -7,16 +7,16 @@ module V1
 
       helpers do
         def company_params
-          params[:company][:logo] = parse_image_data(params[:company][:logo])
+          params[:company][:logo] = params[:company][:logo].present? ? parse_image_data(params[:company][:logo][:name], params[:company][:logo][:image]) : nil
           params[:company][:address_attributes] = params[:company][:address]
           ActionController::Parameters.new(params).require(:company).permit(:name,
             :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
         end
 
-        def parse_image_data(base64_image)
-          filename = "image_#{Time.now.to_i}"
+        def parse_image_data(filename, base64_image)
           in_content_type, encoding, string = base64_image.split(/[:;,]/)[1..3]
+          filename = filename.split(".")[0]
 
           tempfile = Tempfile.new(filename)
           tempfile.binmode
@@ -27,7 +27,7 @@ module V1
 
           # we will also add the extension ourselves based on the above
           # if it's not gif/jpeg/png, it will fail the validation in the upload model
-          extension = content_type.match(/gif|jpeg|png/).to_s
+          extension = content_type.match(/gif|jpeg|png|jpg/).to_s
           filename += ".#{extension}" if extension
 
           ActionDispatch::Http::UploadedFile.new({
@@ -56,7 +56,10 @@ module V1
               requires :name, type: String, allow_blank: false
               requires :email, type: String, allow_blank: false
               optional :primary_phone_number, type: String
-              optional :logo, type: String
+              optional :logo, type: Hash do
+                optional :name, type: String
+                optional :image, type: String
+              end
 
               optional :secondary_phone_number, type: String
               optional :fax, type: String
@@ -88,7 +91,10 @@ module V1
                   company: {
                     id: 2,
                     name: "dsad",
-                    logo: "/uploads/company/logo/2/certficate3.jpg",
+                    logo: {
+                      name: "image_1463402627.jpeg",
+                      image: "/uploads/company/logo/1/image_1463402627.jpeg"
+                    },
                     email: "sadsad",
                     primary_phone_number: "1231231234",
                     secondary_phone_number: "null",

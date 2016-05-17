@@ -8,7 +8,7 @@ module V1
       helpers do
         def trip_params
           ActionController::Parameters.new(params).require(:trip).permit(:start_destination,
-            :end_destination, :pick_up_at)
+            :end_destination, :pick_up_at, :passengers_count)
         end
       end
 
@@ -20,7 +20,7 @@ module V1
               { code: 401,
                 message: {
                   status: 'error',
-                  message: 'Trip start destination is empty',
+                  message: 'Trip start destination is missing, Trip end destination is empty',
                 }.to_json
               }]
           end
@@ -30,13 +30,12 @@ module V1
               requires :start_destination, type: String, allow_blank: false
               requires :end_destination, type: String, allow_blank: false
               requires :pick_up_at, type: DateTime, allow_blank: false
+              requires :passengers_count, type: Integer, allow_blank: false
             end
           end
           post 'create' do
-            trip  = Trip.new(trip_params)
-            if trip.valid?
-              trip.user = current_user
-              trip.save
+            trip  = current_user.trips.new(trip_params)
+            if trip.save
               { message: 'Trip created successfully.' }
             else
               error!(error_formatter(trip) , 401)

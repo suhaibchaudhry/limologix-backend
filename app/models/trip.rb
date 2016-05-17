@@ -6,7 +6,7 @@ class Trip < ActiveRecord::Base
 
   belongs_to :user
 
-  validates :start_destination, :end_destination, :pick_up_at, presence: true
+  validates :start_destination, :end_destination, :pick_up_at, :passengers_count, presence: true
 
   STATUSES.each do |value|
     define_method("#{value}?") do
