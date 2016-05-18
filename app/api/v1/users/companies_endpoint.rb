@@ -103,8 +103,8 @@ module V1
                       street: "LNP",
                       city: "Guntur",
                       zipcode: 522004,
-                      state: "Alaska",
-                      country: "United States"
+                      state: {code: "AL", name: "Albama"},
+                      country: {code: "US", name: "United States"}
                     }
                   }
                 }

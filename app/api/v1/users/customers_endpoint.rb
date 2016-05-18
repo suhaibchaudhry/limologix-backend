@@ -80,7 +80,7 @@ module V1
               message: 'Customers list.',
               data: {
                 customers: serialize_model_object(current_user.company.customers.where(
-                  "customers.first_name like ? OR customers.last_name like ? ", "#{params[:value]}%", "#{params[:value]}%" ))
+                  "CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:value]}%"))
               }
             }
           end

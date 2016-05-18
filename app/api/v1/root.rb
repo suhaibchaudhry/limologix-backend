@@ -5,7 +5,7 @@ module V1
 
     helpers do
       def authenticate!
-        error!('Unauthorized. Invalid or expired token.', 401) unless current_user
+        error!('Unauthorized. Invalid or expired token.', 401) unless request.url.include?("users") ? current_user : current_driver
       end
 
       def current_user
@@ -14,6 +14,14 @@ module V1
         user = User.find_by(auth_token: params[:auth_token])
 
         (user.present? && !user.auth_token_expired?) ? user : nil
+      end
+
+      def current_driver
+        return false unless params[:auth_token].present?
+
+        driver = Driver.find_by(auth_token: params[:auth_token])
+
+        (driver.present? && !driver.auth_token_expired?) ? driver : nil
       end
     end
 
