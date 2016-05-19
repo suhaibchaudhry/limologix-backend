@@ -20,7 +20,7 @@ module V1
       params do
         requires :country_code, type: String, allow_blank: false
       end
-      get 'states' do
+      post 'states' do
         states = []
         CS.states(params[:country_code].to_sym).each {|key, value| states << {code: key.to_s, name: value.to_s }}
         {

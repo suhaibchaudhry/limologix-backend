@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510104059) do
+ActiveRecord::Schema.define(version: 20160519080303) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -81,6 +81,19 @@ ActiveRecord::Schema.define(version: 20160510104059) do
     t.datetime "reset_password_sent_at"
   end
 
+  create_table "geolocations", force: :cascade do |t|
+    t.string   "name",           limit: 255
+    t.string   "latitude",       limit: 255
+    t.string   "longitude",      limit: 255
+    t.string   "type",           limit: 255
+    t.integer  "locatable_id",   limit: 4
+    t.string   "locatable_type", limit: 255
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "geolocations", ["locatable_type", "locatable_id"], name: "index_geolocations_on_locatable_type_and_locatable_id", using: :btree
+
   create_table "roles", force: :cascade do |t|
     t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
@@ -88,14 +101,12 @@ ActiveRecord::Schema.define(version: 20160510104059) do
   end
 
   create_table "trips", force: :cascade do |t|
-    t.string   "start_destination", limit: 255
-    t.string   "end_destination",   limit: 255
     t.datetime "pick_up_at"
-    t.integer  "passengers_count",  limit: 4
-    t.integer  "user_id",           limit: 4
-    t.string   "status",            limit: 255, default: "pending"
-    t.datetime "created_at",                                        null: false
-    t.datetime "updated_at",                                        null: false
+    t.integer  "passengers_count", limit: 4
+    t.integer  "user_id",          limit: 4
+    t.string   "status",           limit: 255, default: "pending"
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
   end
 
   add_index "trips", ["user_id"], name: "index_trips_on_user_id", using: :btree

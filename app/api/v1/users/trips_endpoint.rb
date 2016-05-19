@@ -7,8 +7,10 @@ module V1
 
       helpers do
         def trip_params
-          ActionController::Parameters.new(params).require(:trip).permit(:start_destination,
-            :end_destination, :pick_up_at, :passengers_count)
+          params[:trip][:start_destination_attributes] = params[:trip][:start_destination]
+          params[:trip][:end_destination_attributes] = params[:trip][:end_destination]
+          ActionController::Parameters.new(params).require(:trip).permit(:pick_up_at, :passengers_count, start_destination_attributes: [:name,
+            :latitude, :longitude], end_destination_attributes: [:name, :latitude, :longitude])
         end
       end
 
@@ -16,6 +18,7 @@ module V1
         namespace :trips do
 
           desc 'Trip creation.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Trip created successfully.'}.to_json },
               { code: 401,
                 message: {
@@ -25,15 +28,23 @@ module V1
               }]
           end
           params do
-            requires :auth_token, type: String, allow_blank: false
             requires :trip, type: Hash do
-              requires :start_destination, type: String, allow_blank: false
-              requires :end_destination, type: String, allow_blank: false
+              requires :start_destination, type: Hash do
+                requires :name, type: String, allow_blank: false
+                requires :latitude, type: String, allow_blank: false
+                optional :longitude, type: String, allow_blank: false
+              end
+              requires :end_destination, type: Hash do
+                requires :name, type: String, allow_blank: false
+                requires :latitude, type: String, allow_blank: false
+                requires :longitude, type: String, allow_blank: false
+              end
               requires :pick_up_at, type: DateTime, allow_blank: false
               requires :passengers_count, type: Integer, allow_blank: false
             end
           end
           post 'create' do
+            byebug
             trip  = current_user.trips.new(trip_params)
             if trip.save
               { message: 'Trip created successfully.' }

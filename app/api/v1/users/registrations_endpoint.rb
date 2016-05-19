@@ -14,7 +14,7 @@ module V1
 
       namespace :users do
         desc 'Company registration.' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454'} }.to_json },
             { code: 401,
               message: {
                 status: 'error',

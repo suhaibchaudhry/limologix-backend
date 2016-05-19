@@ -71,14 +71,14 @@ module V1
             }.to_json }]
           end
           params do
-            requires :search_string, type: String, allow_blank: false
+            requires :search_string, type: String
           end
-          get 'search' do
+          post 'search' do
             {
               message: 'Customers list.',
               data: {
                 customers: serialize_model_object(current_user.company.customers.where(
-                  "CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:value]}%"))
+                  "CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:search_string]}%"))
               }
             }
           end

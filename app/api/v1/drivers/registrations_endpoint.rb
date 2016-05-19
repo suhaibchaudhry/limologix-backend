@@ -26,7 +26,6 @@ module V1
             requires :password, type: String, allow_blank: false
             requires :mobile_number, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
-            requires :home_phone_number, type: String, allow_blank: false
           end
         end
         post 'sign_up' do
