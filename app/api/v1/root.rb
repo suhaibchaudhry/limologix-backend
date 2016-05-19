@@ -9,20 +9,21 @@ module V1
       end
 
       def current_user
-        return false unless params[:auth_token].present?
+        return false unless headers['Auth-Token'].present?
 
-        user = User.find_by(auth_token: params[:auth_token])
+        user = User.find_by(auth_token: headers['Auth-Token'])
 
         (user.present? && !user.auth_token_expired?) ? user : nil
       end
 
       def current_driver
-        return false unless params[:auth_token].present?
+        return false unless headers['Auth-Token'].present?
 
-        driver = Driver.find_by(auth_token: params[:auth_token])
+        driver = Driver.find_by(auth_token: headers['Auth-Token'])
 
         (driver.present? && !driver.auth_token_expired?) ? driver : nil
       end
+
     end
 
     mount V1::Users::RegistrationsEndpoint

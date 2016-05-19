@@ -4,7 +4,7 @@ module V1
       desc 'Returns list of countries' do
         http_codes [ { code: 201, message: { status: 'success', message: 'Countries list', data: [{ code: "US", name: "United States" }, { code: "CA", name: "Canada"}] }.to_json }]
       end
-      post 'countries' do
+      get 'countries' do
         {
           message: 'Countries list',
           data: [
@@ -20,7 +20,7 @@ module V1
       params do
         requires :country_code, type: String, allow_blank: false
       end
-      post 'states' do
+      get 'states' do
         states = []
         CS.states(params[:country_code].to_sym).each {|key, value| states << {code: key.to_s, name: value.to_s }}
         {

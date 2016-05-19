@@ -47,7 +47,7 @@ module V1
             {
               message: 'Registration successfull.',
               data: {
-                auth_token: user.auth_token
+                'Auth-Token': user.auth_token
               }
             }
           else

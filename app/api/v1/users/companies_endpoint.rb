@@ -16,7 +16,7 @@ module V1
 
         def parse_image_data(filename, base64_image)
           in_content_type, encoding, string = base64_image.split(/[:;,]/)[1..3]
-          filename = filename.split(".")[0]
+          # filename = filename.split(".")[0]
 
           tempfile = Tempfile.new(filename)
           tempfile.binmode
@@ -27,8 +27,8 @@ module V1
 
           # we will also add the extension ourselves based on the above
           # if it's not gif/jpeg/png, it will fail the validation in the upload model
-          extension = content_type.match(/gif|jpeg|png|jpg/).to_s
-          filename += ".#{extension}" if extension
+          # extension = content_type.match(/gif|jpeg|png|jpg/).to_s
+          # filename += ".#{extension}" if extension
 
           ActionDispatch::Http::UploadedFile.new({
             tempfile: tempfile,
@@ -42,6 +42,7 @@ module V1
         namespace :companies do
 
           desc 'Company details update.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Company details updated successfully.'}.to_json },
               { code: 401,
                 message: {
@@ -51,7 +52,6 @@ module V1
               }]
           end
           params do
-            requires :auth_token, type: String, allow_blank: false
             requires :company, type: Hash do
               requires :name, type: String, allow_blank: false
               requires :email, type: String, allow_blank: false
@@ -83,6 +83,7 @@ module V1
           end
 
           desc 'Get Company details.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message:
               {
                 status: "success",
@@ -103,18 +104,15 @@ module V1
                       street: "LNP",
                       city: "Guntur",
                       zipcode: 522004,
-                      state: {code: "AL", name: "Albama"},
-                      country: {code: "US", name: "United States"}
+                      state: { code: "AL", name: "Albama" },
+                      country: { code: "US", name: "United States" }
                     }
                   }
                 }
               }.to_json },
               { code: 404, message: { status: 'error', message: 'Company not found.'}.to_json } ]
           end
-          params do
-            requires :auth_token, type: String, allow_blank: false
-          end
-          post 'show' do
+          get 'show' do
             error!({ message: 'Company not found.'}, 404) unless current_user.company
             {
               message: 'Company details.',

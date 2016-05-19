@@ -18,7 +18,7 @@ module V1
             {
               message: 'Login successfull.',
               data: {
-                auth_token: user.auth_token
+                'Auth-Token': user.auth_token
               }
             }
            else
@@ -27,12 +27,10 @@ module V1
         end
 
         desc 'User logout' do
+          headers 'Auth-Token': { description: 'Validates your identity', required: true }
           http_codes [ { code: 201, message: { status: 'success', message: 'Logged out successfully.'}.to_json }]
         end
-        params do
-          requires :auth_token, type: String, allow_blank: false
-        end
-        post 'logout' do
+        get 'logout' do
           authenticate!
           current_user.update(auth_token: nil)
           {

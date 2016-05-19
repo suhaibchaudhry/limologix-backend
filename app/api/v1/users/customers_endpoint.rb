@@ -16,6 +16,7 @@ module V1
       namespace :users do
         namespace :customers do
           desc 'Customer creation.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Customer created successfully.'}.to_json },
               { code: 401,
                 message: {
@@ -25,7 +26,6 @@ module V1
               }]
           end
           params do
-            requires :auth_token, type: String, allow_blank: false
             requires :customer, type: Hash do
               requires :first_name, type: String, allow_blank: false
               requires :last_name, type: String, allow_blank: false
@@ -44,6 +44,7 @@ module V1
           end
 
           desc 'Customers list' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
               data: {
                 customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
@@ -51,10 +52,7 @@ module V1
               }
             }.to_json }]
           end
-          params do
-            requires :auth_token, type: String, allow_blank: false
-          end
-          post 'index' do
+          get 'index' do
             {
               message: 'Customers list.',
               data: {
@@ -64,6 +62,7 @@ module V1
           end
 
           desc 'Customers search' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
               data: {
                 customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
@@ -72,10 +71,9 @@ module V1
             }.to_json }]
           end
           params do
-            requires :auth_token, type: String, allow_blank: false
-            requires :value, type: String, allow_blank: false
+            requires :search_string, type: String, allow_blank: false
           end
-          post 'search' do
+          get 'search' do
             {
               message: 'Customers list.',
               data: {
