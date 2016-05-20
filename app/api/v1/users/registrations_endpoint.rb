@@ -65,6 +65,7 @@ module V1
         end
         post 'verify_username' do
           user = User.find_by(username: params[:username])
+
           unless user.present?
             { message: 'User name is unique.' }
           else

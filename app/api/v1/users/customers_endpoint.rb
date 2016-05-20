@@ -9,7 +9,7 @@ module V1
       helpers do
         def customer_params
           ActionController::Parameters.new(params).require(:customer).permit(:first_name,
-            :last_name, :email, :mobile_number)
+            :last_name, :email, :mobile_number, :organisation)
         end
       end
 
@@ -17,7 +17,9 @@ module V1
         namespace :customers do
           desc 'Customer creation.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Customer created successfully.'}.to_json },
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Customer created successfully.', data:
+              {customer: {id: 1, first_name: "customer1", last_name: "t", email:"customer1", mobile_number:"customer1sad", organisation: "sa dasd"}}}.to_json },
               { code: 401,
                 message: {
                   status: 'error',
@@ -36,8 +38,14 @@ module V1
           end
           post 'create' do
             customer  = current_user.customers.new(customer_params)
+
             if customer.save
-              { message: 'Customer created successfully.' }
+              {
+                message: 'Customer created successfully.',
+                data:{
+                  customer: serialize_model_object(customer)
+                }
+               }
             else
               error!(error_formatter(customer) , 401)
             end
@@ -45,12 +53,16 @@ module V1
 
           desc 'Customers list' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
-              data: {
-                customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
-                  {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
-              }
-            }.to_json }]
+
+            http_codes [
+              { code: 201, message: { status: 'success', message: 'Customers list.',
+                data: {
+                  customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
+                    {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
+                  }
+                }.to_json },
+              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }
+            ]
           end
           get 'index' do
             {
@@ -63,25 +75,30 @@ module V1
 
           desc 'Customers search' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Customers list.',
-              data: {
-                customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
-                  {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
-              }
-            }.to_json }]
+
+            http_codes [
+              { code: 201, message: { status: 'success', message: 'Customers list.',
+                data: {
+                  customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
+                    {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
+                  }
+                }.to_json },
+              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }
+            ]
           end
           params do
             requires :search_string, type: String
           end
           post 'search' do
             customers = serialize_model_object(current_user.company.customers.where("CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:search_string]}%"))
+
             if customers.present?
-            {
-              message: 'Customers list.',
-              data: {
-                customers: customers
+              {
+                message: 'Customers list.',
+                data: {
+                  customers: customers
+                }
               }
-            }
             else
               { message: 'No results found.'}
             end

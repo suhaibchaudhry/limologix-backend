@@ -104,11 +104,13 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.datetime "pick_up_at"
     t.integer  "passengers_count", limit: 4
     t.integer  "user_id",          limit: 4
+    t.integer  "customer_id",      limit: 4
     t.string   "status",           limit: 255, default: "pending"
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
   end
 
+  add_index "trips", ["customer_id"], name: "index_trips_on_customer_id", using: :btree
   add_index "trips", ["user_id"], name: "index_trips_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|

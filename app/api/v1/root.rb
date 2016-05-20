@@ -11,17 +11,17 @@ module V1
       def current_user
         return false unless headers['Auth-Token'].present?
 
-        user = User.find_by(auth_token: headers['Auth-Token'])
+        @user = User.find_by(auth_token: headers['Auth-Token'])
 
-        (user.present? && !user.auth_token_expired?) ? user : nil
+        (@user.present? && !@user.auth_token_expired?) ? @user : nil
       end
 
       def current_driver
         return false unless headers['Auth-Token'].present?
 
-        driver = Driver.find_by(auth_token: headers['Auth-Token'])
+        @driver = Driver.find_by(auth_token: headers['Auth-Token'])
 
-        (driver.present? && !driver.auth_token_expired?) ? driver : nil
+        (@driver.present? && !@driver.auth_token_expired?) ? @driver : nil
       end
 
     end

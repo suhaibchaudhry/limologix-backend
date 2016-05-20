@@ -9,6 +9,7 @@ module V1
         def company_params
           params[:company][:logo] = params[:company][:logo].present? ? parse_image_data(params[:company][:logo][:name], params[:company][:logo][:image]) : nil
           params[:company][:address_attributes] = params[:company][:address]
+
           ActionController::Parameters.new(params).require(:company).permit(:name,
             :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
@@ -43,6 +44,7 @@ module V1
 
           desc 'Company details update.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
             http_codes [ { code: 201, message: { status: 'success', message: 'Company details updated successfully.'}.to_json },
               { code: 401,
                 message: {
@@ -56,6 +58,7 @@ module V1
               requires :name, type: String, allow_blank: false
               requires :email, type: String, allow_blank: false
               optional :primary_phone_number, type: String
+
               optional :logo, type: Hash do
                 optional :name, type: String
                 optional :image, type: String

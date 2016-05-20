@@ -5,6 +5,7 @@ class Trip < ActiveRecord::Base
   scope :pending, -> { where(status: 'pending') }
 
   belongs_to :user
+  belongs_to :customer
   has_one :start_destination, as: :locatable, dependent: :destroy
   has_one :end_destination, as: :locatable, dependent: :destroy
 
