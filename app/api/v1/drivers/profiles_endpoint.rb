@@ -17,7 +17,7 @@ module V1
               { code: 401,
                 message: {
                   status: 'error',
-                  message: 'Driver name is missing, Driver name is empty'
+                  message: 'Driver first name is missing, Driver last name is empty'
                 }.to_json
               }]
           end

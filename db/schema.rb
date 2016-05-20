@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   end
 
   create_table "geolocations", force: :cascade do |t|
-    t.string   "name",           limit: 255
+    t.string   "place",          limit: 255
     t.string   "latitude",       limit: 255
     t.string   "longitude",      limit: 255
     t.string   "type",           limit: 255

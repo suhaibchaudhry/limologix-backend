@@ -9,8 +9,8 @@ module V1
         def trip_params
           params[:trip][:start_destination_attributes] = params[:trip][:start_destination]
           params[:trip][:end_destination_attributes] = params[:trip][:end_destination]
-          ActionController::Parameters.new(params).require(:trip).permit(:pick_up_at, :passengers_count, start_destination_attributes: [:name,
-            :latitude, :longitude], end_destination_attributes: [:name, :latitude, :longitude])
+          ActionController::Parameters.new(params).require(:trip).permit(:pick_up_at, :passengers_count, start_destination_attributes: [:place,
+            :latitude, :longitude], end_destination_attributes: [:place, :latitude, :longitude])
         end
       end
 
@@ -30,12 +30,12 @@ module V1
           params do
             requires :trip, type: Hash do
               requires :start_destination, type: Hash do
-                requires :name, type: String, allow_blank: false
+                requires :place, type: String, allow_blank: false
                 requires :latitude, type: String, allow_blank: false
                 optional :longitude, type: String, allow_blank: false
               end
               requires :end_destination, type: Hash do
-                requires :name, type: String, allow_blank: false
+                requires :place, type: String, allow_blank: false
                 requires :latitude, type: String, allow_blank: false
                 requires :longitude, type: String, allow_blank: false
               end

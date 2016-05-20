@@ -74,13 +74,17 @@ module V1
             requires :search_string, type: String
           end
           post 'search' do
+            customers = serialize_model_object(current_user.company.customers.where("CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:search_string]}%"))
+            if customers.present?
             {
               message: 'Customers list.',
               data: {
-                customers: serialize_model_object(current_user.company.customers.where(
-                  "CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:search_string]}%"))
+                customers: customers
               }
             }
+            else
+              { message: 'No results found.'}
+            end
           end
 
         end

@@ -1,7 +1,7 @@
 class Geolocations < ActiveRecord::Migration
   def change
     create_table :geolocations do |t|
-      t.string :name
+      t.string :place
       t.string :latitude
       t.string :longitude
       t.string :type
