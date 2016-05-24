@@ -116,7 +116,7 @@ module V1
               { code: 404, message: { status: 'error', message: 'Company not found.'}.to_json } ]
           end
           get 'show' do
-            error!({ message: 'Company not found.'}, 404) unless current_user.company
+            error!('Company not found.', 404) unless current_user.company
             {
               message: 'Company details.',
               data: {

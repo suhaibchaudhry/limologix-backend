@@ -21,7 +21,12 @@ module V1
           desc 'Trip creation.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip created successfully.'}.to_json },
+            http_codes [ { code: 201, message: { status: 'success', message: 'Trip created successfully.',
+                data: {
+                  trip: {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
+                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
+                  "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
+                  }}.to_json },
               { code: 404,
                 message: {
                   status: 'error',
@@ -64,7 +69,12 @@ module V1
               trip.customer = customer
               trip.save
 
-              { message: 'Trip created successfully.' }
+              {
+                message: 'Trip created successfully.',
+                data: {
+                  trip: serialize_model_object(trip)
+                }
+              }
             else
               error!(error_formatter(trip) , 401)
             end
@@ -75,13 +85,16 @@ module V1
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Trips list.',
               data: {
-                trips: [{"id":1,"start_destination":"fdgdfg","end_destination":"dfgdfg","pick_up_at":"2016-05-13T15:38:00.000Z"},
-                  {"id":2,"start_destination":"fdgdfg","end_destination":"dfgdfg","pick_up_at":"2016-05-13T15:38:00.000Z"}]
+                trips: [{"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
+                "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
+                "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 },
+                {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
+                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
+                  "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }]
               }
             }.to_json }]
           end
           params do
-            requires :auth_token, type: String, allow_blank: false
             requires :trip_status, type: String, allow_blank: false
           end
           post 'index' do
@@ -91,6 +104,41 @@ module V1
                 trips: serialize_model_object(current_user.trips)
               }
             }
+          end
+
+          desc 'Get Trip details..' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Trip details.',
+              data: {
+                trip: {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
+                "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
+                "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
+              }
+            }.to_json },
+            { code: 404,
+              message: {
+                status: 'error',
+                message: 'Trip not found.',
+              }.to_json
+            }]
+          end
+          params do
+            requires :trip_id, type: Integer, allow_blank: false
+          end
+          post 'show' do
+            trip = current_user.trips.find_by(id: params[:trip_id])
+
+            if trip.present?
+              {
+                message: 'Trip details.',
+                data: {
+                  trip: serialize_model_object(trip)
+                }
+              }
+            else
+              error!('Trip not found.', 404)
+            end
           end
 
         end

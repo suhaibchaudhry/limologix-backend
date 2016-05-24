@@ -45,7 +45,7 @@ module V1
                 data:{
                   customer: serialize_model_object(customer)
                 }
-               }
+              }
             else
               error!(error_formatter(customer) , 401)
             end
@@ -55,7 +55,7 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [
-              { code: 201, message: { status: 'success', message: 'Customers list.',
+              { code: 200, message: { status: 'success', message: 'Customers list.',
                 data: {
                   customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
                     {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
@@ -65,19 +65,25 @@ module V1
             ]
           end
           get 'index' do
-            {
-              message: 'Customers list.',
-              data: {
-                customers: serialize_model_object(current_user.company.customers)
+            customers = serialize_model_object(current_user.company.customers)
+
+            if customers.present?
+              {
+                message: 'Customers list.',
+                data: {
+                  customers: customers
+                }
               }
-            }
+            else
+              { message: 'No results found.'}
+            end
           end
 
           desc 'Customers search' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [
-              { code: 201, message: { status: 'success', message: 'Customers list.',
+              { code: 200, message: { status: 'success', message: 'Customers list.',
                 data: {
                   customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
                     {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]

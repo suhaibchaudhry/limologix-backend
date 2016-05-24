@@ -6,7 +6,7 @@ class CreateVehicles < ActiveRecord::Migration
       t.string :license_plate_number
       t.string :year_of_purchase
       t.references :owner, polymorphic: true, index: true
-      t.references :vehicle_model, index: true
+      t.references :vehicle_type, index: true
 
       t.timestamps null: false
     end

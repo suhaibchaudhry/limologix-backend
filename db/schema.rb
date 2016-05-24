@@ -149,9 +149,12 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   add_index "vehicle_models", ["vehicle_type_id"], name: "index_vehicle_models_on_vehicle_type_id", using: :btree
 
   create_table "vehicle_types", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name",        limit: 255
+    t.string   "description", limit: 255
+    t.integer  "capacity",    limit: 4
+    t.string   "image",       limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   create_table "vehicles", force: :cascade do |t|
@@ -161,12 +164,12 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.string   "year_of_purchase",     limit: 255
     t.integer  "owner_id",             limit: 4
     t.string   "owner_type",           limit: 255
-    t.integer  "vehicle_model_id",     limit: 4
+    t.integer  "vehicle_type_id",      limit: 4
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
   end
 
   add_index "vehicles", ["owner_type", "owner_id"], name: "index_vehicles_on_owner_type_and_owner_id", using: :btree
-  add_index "vehicles", ["vehicle_model_id"], name: "index_vehicles_on_vehicle_model_id", using: :btree
+  add_index "vehicles", ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id", using: :btree
 
 end
