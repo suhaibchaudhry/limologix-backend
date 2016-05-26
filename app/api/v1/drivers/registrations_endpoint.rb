@@ -3,17 +3,18 @@ module V1
     class RegistrationsEndpoint < Root
       helpers do
         def driver_params
-          ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name, :user_name, :password, :email, :mobile_number, :home_phone_number )
+          ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name, :username, 
+            :password, :email, :mobile_number, :home_phone_number, :fax_number)
         end
       end
 
       namespace :drivers do
         desc 'Creates a driver account' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454'} }.to_json },
             { code: 401,
               message: {
                 status: 'error',
-                message: 'Driver first name has already been taken'
+                message: 'Driver email has already been taken'
               }.to_json
             }
           ]
@@ -26,15 +27,20 @@ module V1
             requires :password, type: String, allow_blank: false
             requires :mobile_number, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
+            optional :home_phone_number, type: String
+            optional :fax_number, type: String
           end
         end
-        post 'sign_up' do
+        post 'registration' do
           driver = Driver.new(driver_params)
 
           if driver.save
-            success!("Registration successfull", {
-              auth_token: driver.auth_token
-            })
+            {
+              message: 'Registration successfull.',
+              data: {
+                'Auth-Token': driver.auth_token
+              }
+            }
           else
             error!(error_formatter(driver) , 401)
           end

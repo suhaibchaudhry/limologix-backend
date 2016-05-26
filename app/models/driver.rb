@@ -1,11 +1,12 @@
 class Driver < ActiveRecord::Base
+  include BCrypt
   has_one :address, as: :addressable, dependent: :destroy
   has_many :vehicles, as: :owner, dependent: :destroy
 
-  validates :first_name, :last_name, :username, :password, :mobile_number, :auth_token, presence: true
-  validates :username, :password, :mobile_number, :auth_token, uniqueness: true
+  validates :first_name, :last_name, :username, :password, :mobile_number, :email, presence: true
+  validates :username, :mobile_number, :email, uniqueness: true
 
-  before_validation :set_auth_token
+  before_create :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
 
   def verify_password?(password)

@@ -33,6 +33,10 @@ module V1
     mount V1::Users::CustomersEndpoint
     mount V1::Users::TripsEndpoint
     mount V1::Users::VehiclesEndpoint
+
+    mount V1::Drivers::RegistrationsEndpoint
+    mount V1::Drivers::SessionsEndpoint
+
     mount V1::MasterDataEndpoint
   end
 end
