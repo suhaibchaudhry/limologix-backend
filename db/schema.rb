@@ -79,7 +79,14 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.datetime "auth_token_expires_at"
     t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
+    t.boolean  "available",                          default: true
   end
+
+  add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree
+  add_index "drivers", ["available"], name: "index_drivers_on_available", using: :btree
+  add_index "drivers", ["email"], name: "index_drivers_on_email", unique: true, using: :btree
+  add_index "drivers", ["reset_password_token"], name: "index_drivers_on_reset_password_token", unique: true, using: :btree
+  add_index "drivers", ["username"], name: "index_drivers_on_username", unique: true, using: :btree
 
   create_table "geolocations", force: :cascade do |t|
     t.string   "place",          limit: 255

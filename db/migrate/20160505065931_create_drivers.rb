@@ -24,8 +24,13 @@ class CreateDrivers < ActiveRecord::Migration
       t.datetime :auth_token_expires_at
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
-
-
+      t.boolean :available, default: true
     end
+
+    add_index :drivers, :available
+    add_index :drivers, :email, unique: true
+    add_index :drivers, :username, unique: true
+    add_index :drivers, :reset_password_token, unique: true
+    add_index :drivers, :auth_token, unique: true
   end
 end

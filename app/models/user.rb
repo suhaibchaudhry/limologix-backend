@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   has_many :trips
   has_many :customers
 
-  validates :email, :username, :password , presence: true
+  validates :first_name, :last_name, :email, :username, :password , presence: true
   validates :username, :email, uniqueness: true
 
   before_create :set_auth_token

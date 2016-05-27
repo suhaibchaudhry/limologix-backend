@@ -4,7 +4,7 @@ module V1
 
       helpers do
         def user_params
-          ActionController::Parameters.new(params).require(:user).permit(:username, :password, :email)
+          ActionController::Parameters.new(params).require(:user).permit(:first_name, :last_name, :username, :password, :email)
         end
 
         def company_params
@@ -25,6 +25,8 @@ module V1
         end
         params do
           requires :user, type: Hash do
+            requires :first_name, type: String, allow_blank: false
+            requires :last_name, type: String, allow_blank: false
             requires :username, type: String, allow_blank: false
             requires :password, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
