@@ -4,7 +4,7 @@ module V1
       helpers do
         def driver_params
           ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name, :mobile_number, :email, :dob, :home_phone_number, :fax_number, 
-            :social_security_number, :display_name, :license_number, :license_image, :license_expiry_date, :badge_number
+            :social_security_number, :display_name, :license_number, :license_image, :license_expiry_date, :badge_number,
             :badge_expiry_date, :ara_number, :ara_image, :ara_exp_date,)
         end
       end
