@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Server Stack
 gem 'rails', '4.2.6'
 gem 'thin'
-gem 'mysql2', '~> 0.3.18'
+gem 'mysql2', '0.4.4'
 
 # Authentication & Authorization
 gem "bcrypt"
