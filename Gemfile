@@ -27,6 +27,7 @@ gem 'paper_trail', '~> 4.0.0'
 # gem 'turbolinks'
 # gem 'uglifier', '>= 1.3.0'
 gem 'city-state'
+gem 'rack-cors'
 
 # Uploads & Imports
 gem 'carrierwave'
@@ -40,10 +41,10 @@ group :development do
   gem 'capistrano-rvm'
 end
 
-group :staging do
-  gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'ffaker'
-end
+# group :staging do
+#   gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+#   gem 'ffaker'
+# end
 
 
 
