@@ -13,7 +13,7 @@ namespace :deploy do
   task :restart do
     on roles(:app), in: :groups, limit: 3, wait: 10 do
       within release_path do
-        execute :bundle, "exec thin restart -e #{fetch(:stage)} --server 4 --socket #{release_path}/tmp/sockets/thin.sock"
+        execute :bundle, "exec thin restart -e #{fetch(:stage)} --server 5 --socket #{release_path}/tmp/sockets/thin.sock"
       end
     end
   end
