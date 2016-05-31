@@ -9,9 +9,10 @@ class CompanySerializer < ActiveModel::Serializer
         image: object.logo_url
       }
     else
+      helpers = ActionController::Base.helpers
       {
         name: 'Limo_logix.png',
-        image: '/assets/Limo_logix.png'
+        image: helpers.image_path('Limo_logix.png')
       }
     end
   end
