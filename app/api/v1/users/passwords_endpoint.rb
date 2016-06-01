@@ -12,8 +12,8 @@ module V1
         post 'forgot_password' do
           user = User.find_by(email: params[:email])
 
-          if user.present?
-            user.update_reset_password_token!
+          if user.present? && user.update_reset_password_token!
+            UserMailer.reset_password_mail(user).deliver_now
             { message: 'Email has been sent to registered email address.' }
           else
             error!('Email not found.', 404)
