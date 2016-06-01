@@ -71,15 +71,14 @@ module V1
           end
           params do
             requires :user, type: Hash do
-              requires :username, type: String, allow_blank: false
               requires :password, type: String, allow_blank: false
             end
           end
           post 'reset_authentication_details' do
             user = current_user
 
-            if user.update(username: params[:user][:username], password: params[:user][:password], auth_token: nil)
-              { message: 'Username and Password has been updated successfully.'}
+            if user.update(password: params[:user][:password], auth_token: nil)
+              { message: 'Password has been updated successfully.'}
             else
               error!(error_formatter(user) , 401)
             end
