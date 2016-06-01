@@ -30,14 +30,16 @@ module V1
             }]
         end
         params do
-          requires :password, type: String, allow_blank: false
-          requires :reset_password_token, type: String, allow_blank: false
+          requires :user, type: Hash do
+            requires :password, type: String, allow_blank: false
+            requires :reset_password_token, type: String, allow_blank: false
+          end
         end
         post 'reset_password' do
-          user = User.find_by(reset_password_token: params[:reset_password_token])
+          user = User.find_by(reset_password_token: params[:user][:reset_password_token])
 
           if user.present? && !user.password_token_expired?
-            if user.update(password: params[:password], reset_password_token: nil)
+            if user.update(password: params[:user][:password], reset_password_token: nil)
               { message: 'Password has been set successfully.' }
             else
               error!(error_formatter(user) , 401)
