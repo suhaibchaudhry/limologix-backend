@@ -6,6 +6,13 @@ module V1
       end
 
       helpers do
+
+        params :geolocation do
+          requires :place, type: String, allow_blank: false
+          requires :latitude, type: String, allow_blank: false
+          requires :longitude, type: String, allow_blank: false
+        end
+
         def trip_params
           params[:trip][:start_destination_attributes] = params[:trip][:start_destination]
           params[:trip][:end_destination_attributes] = params[:trip][:end_destination]
@@ -43,15 +50,11 @@ module V1
           params do
             requires :trip, type: Hash do
               requires :start_destination, type: Hash do
-                requires :place, type: String, allow_blank: false
-                requires :latitude, type: String, allow_blank: false
-                requires :longitude, type: String, allow_blank: false
+                use :geolocation
               end
 
               requires :end_destination, type: Hash do
-                requires :place, type: String, allow_blank: false
-                requires :latitude, type: String, allow_blank: false
-                requires :longitude, type: String, allow_blank: false
+                use :geolocation
               end
 
               requires :pick_up_at, type: DateTime, allow_blank: false
@@ -63,7 +66,7 @@ module V1
             trip  = current_user.trips.new(trip_params)
 
             customer = current_user.company.customers.where(id: params[:trip][:customer_id]).first
-            error!("Customer not found." , 401) unless customer.present?
+            error!("Customer not found." , 404) unless customer.present?
 
             if trip.valid?
               trip.customer = customer
@@ -141,6 +144,52 @@ module V1
             end
           end
 
+          desc 'Trip Update.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Trip updated successfully.',
+                data: {
+                  trip: {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
+                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
+                  "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
+                  }}.to_json },
+              { code: 401,
+                message: {
+                  status: 'error',
+                  message: 'Trip start destination is missing, Trip end destination is empty',
+                }.to_json
+              }]
+          end
+          params do
+            requires :trip, type: Hash do
+              requires  :id, type: Integer, allow_blank: false
+              requires :start_destination, type: Hash do
+                use :geolocation
+              end
+
+              requires :end_destination, type: Hash do
+                use :geolocation
+              end
+
+              requires :pick_up_at, type: DateTime, allow_blank: false
+              requires :passengers_count, type: Integer, allow_blank: false
+            end
+          end
+          post 'update' do
+            trip  = current_user.trips.find_by(id: params[:trip][:id])
+            error!("Trip not found." , 404) unless trip.present?
+
+            if trip.update(trip_params)
+              {
+                message: 'Trip updated successfully.',
+                data: {
+                  trip: serialize_model_object(trip)
+                }
+              }
+            else
+              error!(error_formatter(trip) , 401)
+            end
+          end
         end
       end
     end
