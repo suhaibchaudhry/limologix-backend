@@ -1,23 +1,7 @@
-module CustomErrorFormatter
-  def self.call message, backtrace, options, env
-    if message.is_a?(Hash)
-      { status: 'error', message: message[:message], data: message[:data]}.to_json
-    else
-      message = message.gsub('username', 'name')
-      message = message.gsub(/\[|_|\.|^\, /, ' ')
-      message = message.gsub(']', '')
-      { status: 'error', message: message}.to_json
-    end
-  end
-end
-
-module CustomFormatter
-  def self.call object, env
-    ({status: 'success'}.merge(object)).to_json
-  end
-end
-
 class Base < Grape::API
+  require 'custom_formatter'
+  require 'custom_error_formatter'
+
   include Grape::Kaminari
   format :json
   formatter :json, CustomFormatter

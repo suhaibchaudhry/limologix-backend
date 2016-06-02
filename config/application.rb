@@ -31,7 +31,9 @@ module LimoLogix
     config.active_record.raise_in_transactional_callbacks = true
 
     config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
-    config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
+    Dir[Rails.root.join('app', 'api', '*'), Rails.root.join('lib', 'api', '*')].each do |file|
+      config.autoload_paths += [file]
+    end
   end
 end
 
