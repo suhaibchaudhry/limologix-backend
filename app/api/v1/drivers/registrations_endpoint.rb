@@ -10,7 +10,7 @@ module V1
 
       namespace :drivers do
         desc 'Creates a driver account' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454'} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', username: "mahesh"} }.to_json },
             { code: 401,
               message: {
                 status: 'error',
@@ -38,7 +38,8 @@ module V1
             {
               message: 'Registration successfull.',
               data: {
-                'Auth-Token': driver.auth_token
+                'Auth-Token': driver.auth_token,
+                username: driver.username
               }
             }
           else
