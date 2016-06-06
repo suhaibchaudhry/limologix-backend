@@ -4,7 +4,7 @@ module V1
 
       helpers do
         def user_params
-          ActionController::Parameters.new(params).require(:user).permit(:first_name, :last_name, :username, :password, :email)
+          ActionController::Parameters.new(params).require(:user).permit(:first_name, :last_name, :password, :email)
         end
 
         def company_params
@@ -14,11 +14,11 @@ module V1
 
       namespace :users do
         desc 'Company registration.' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454','username': "Avinash489"} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454','email': "Avinash489@yopmail.com"} }.to_json },
             { code: 401,
               message: {
                 status: 'error',
-                message: 'User name has already been taken, User email has already been taken, Company email has already been taken'
+                message: 'User email has already been taken, Company email has already been taken'
               }.to_json
             }
           ]
@@ -27,7 +27,6 @@ module V1
           requires :user, type: Hash do
             requires :first_name, type: String, allow_blank: false
             requires :last_name, type: String, allow_blank: false
-            requires :username, type: String, allow_blank: false
             requires :password, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
           end
@@ -50,7 +49,7 @@ module V1
               message: 'Registration successfull.',
               data: {
                 'Auth-Token': user.auth_token,
-                username: user.username
+                email: user.email
               }
             }
           else
@@ -58,24 +57,6 @@ module V1
             error!(message , 401)
           end
         end
-
-        desc 'Verify\'s whether username exists in system' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'User name is unique.' }.to_json },
-            { code: 401, message: { status: 'error', message: 'User name already exists.' }.to_json }]
-        end
-        params do
-          requires :username, type: String, allow_blank: false
-        end
-        post 'verify_username' do
-          user = User.find_by(username: params[:username])
-
-          unless user.present?
-            { message: 'User name is unique.' }
-          else
-            error!('User name already exists.', 401)
-          end
-        end
-
       end
     end
   end

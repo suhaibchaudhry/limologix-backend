@@ -34,7 +34,6 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.string   "email",                  limit: 255
     t.string   "primary_phone_number",   limit: 255
     t.string   "secondary_phone_number", limit: 255
-    t.string   "fax",                    limit: 255
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
   end
@@ -61,10 +60,9 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.string   "password",               limit: 255
     t.string   "email",                  limit: 255
     t.string   "mobile_number",          limit: 255
-    t.string   "username",               limit: 255
+    t.string   "company",                limit: 255
     t.date     "dob"
     t.string   "home_phone_number",      limit: 255
-    t.string   "fax_number",             limit: 255
     t.string   "social_security_number", limit: 255
     t.string   "display_name",           limit: 255
     t.string   "license_number",         limit: 255
@@ -86,7 +84,6 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   add_index "drivers", ["available"], name: "index_drivers_on_available", using: :btree
   add_index "drivers", ["email"], name: "index_drivers_on_email", unique: true, using: :btree
   add_index "drivers", ["reset_password_token"], name: "index_drivers_on_reset_password_token", unique: true, using: :btree
-  add_index "drivers", ["username"], name: "index_drivers_on_username", unique: true, using: :btree
 
   create_table "geolocations", force: :cascade do |t|
     t.string   "place",          limit: 255
@@ -123,7 +120,6 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   create_table "users", force: :cascade do |t|
     t.string   "first_name",             limit: 255
     t.string   "last_name",              limit: 255
-    t.string   "username",               limit: 255
     t.string   "password",               limit: 255
     t.string   "email",                  limit: 255
     t.string   "mobile_number",          limit: 255
@@ -144,16 +140,6 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
-  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
-
-  create_table "vehicle_models", force: :cascade do |t|
-    t.string   "name",            limit: 255
-    t.integer  "vehicle_type_id", limit: 4
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-  end
-
-  add_index "vehicle_models", ["vehicle_type_id"], name: "index_vehicle_models_on_vehicle_type_id", using: :btree
 
   create_table "vehicle_types", force: :cascade do |t|
     t.string   "name",        limit: 255

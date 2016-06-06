@@ -31,9 +31,9 @@ module V1
             requires :customer, type: Hash do
               requires :first_name, type: String, allow_blank: false
               requires :last_name, type: String, allow_blank: false
-              requires :email, type: String, allow_blank: false
-              requires :mobile_number, type: String, allow_blank: false
-              requires :organisation, type: String, allow_blank: false
+              optional :email, type: String, allow_blank: false
+              optional :mobile_number, type: String, allow_blank: false
+              optional :organisation, type: String, allow_blank: false
             end
           end
           post 'create' do

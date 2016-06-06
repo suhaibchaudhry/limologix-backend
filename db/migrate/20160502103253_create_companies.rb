@@ -7,7 +7,6 @@ class CreateCompanies < ActiveRecord::Migration
       t.string :email
       t.string :primary_phone_number
       t.string :secondary_phone_number
-      t.string :fax
 
       t.timestamps null: false
     end

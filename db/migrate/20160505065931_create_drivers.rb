@@ -6,10 +6,9 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :password
       t.string :email
       t.string :mobile_number
-      t.string :username
+      t.string :company
       t.date :dob
       t.string :home_phone_number
-      t.string :fax_number
       t.string :social_security_number
       t.string :display_name
       t.string :license_number
@@ -29,7 +28,6 @@ class CreateDrivers < ActiveRecord::Migration
 
     add_index :drivers, :available
     add_index :drivers, :email, unique: true
-    add_index :drivers, :username, unique: true
     add_index :drivers, :reset_password_token, unique: true
     add_index :drivers, :auth_token, unique: true
   end

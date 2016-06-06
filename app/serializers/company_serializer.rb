@@ -1,5 +1,5 @@
 class CompanySerializer < ActiveModel::Serializer
-  attributes :id, :name, :logo, :email, :primary_phone_number, :secondary_phone_number, :fax, :address
+  attributes :id, :name, :logo, :email, :primary_phone_number, :secondary_phone_number, :address
   has_one :address
 
   def logo

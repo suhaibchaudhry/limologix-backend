@@ -11,7 +11,7 @@ module V1
           params[:company][:address_attributes] = params[:company][:address]
 
           ActionController::Parameters.new(params).require(:company).permit(:name,
-            :email, :primary_phone_number, :secondary_phone_number, :fax, :logo,
+            :email, :primary_phone_number, :secondary_phone_number, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
         end
 
@@ -65,7 +65,6 @@ module V1
               end
 
               optional :secondary_phone_number, type: String
-              optional :fax, type: String
 
               optional :address, type: Hash do
                 optional :street, type: String
@@ -102,7 +101,6 @@ module V1
                     email: "sadsad",
                     primary_phone_number: "1231231234",
                     secondary_phone_number: "null",
-                    fax: "null",
                     address: {
                       street: "LNP",
                       city: "Guntur",

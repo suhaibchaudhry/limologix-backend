@@ -3,15 +3,15 @@ module V1
     class SessionsEndpoint < Root
       namespace :drivers do
         desc 'Driver login' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', username: "mahesh"} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', email: "mahesh@yopmail.com"} }.to_json },
             { code: 401, message: { status: 'error', message: 'Invalid credentails.' }.to_json }]
         end
         params do
-          requires :username, type: String, allow_blank: false
+          requires :email, type: String, allow_blank: false
           requires :password, type: String, allow_blank: false
         end
         post 'sign_in' do
-          driver = Driver.find_by(username: params[:username])
+          driver = Driver.find_by(email: params[:email])
            if driver.present? && driver.verify_password?(params[:password])
             driver.update_auth_token!
 
@@ -19,7 +19,7 @@ module V1
               message: 'Login successfull.',
               data: {
                 'Auth-Token': driver.auth_token,
-                username: driver.username
+                email: driver.email
               }
             }
            else

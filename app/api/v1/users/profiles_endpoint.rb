@@ -47,7 +47,7 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: {"status":"success","message":"User profile details.",
-              "data":{"user":{"first_name":"Surya","last_name":"T","email":"surya12345@yopmail.com","mobile_number":"1231231234","username":"Avinash12345"}}}.to_json }]
+              "data":{"user":{"first_name":"Surya","last_name":"T","email":"surya12345@yopmail.com","mobile_number":"1231231234"}}}.to_json }]
           end
           get 'show' do
             {
@@ -61,7 +61,7 @@ module V1
           desc 'Update username or password' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-            http_codes [ { code: 201, message: { status: 'success', message: 'Username and Password has been updated successfully.'}.to_json },
+            http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
               { code: 401,
                 message: {
                   status: 'error',

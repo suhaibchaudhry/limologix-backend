@@ -3,8 +3,8 @@ class Driver < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
   has_many :vehicles, as: :owner, dependent: :destroy
 
-  validates :first_name, :last_name, :username, :password, :mobile_number, :email, presence: true
-  validates :username, :mobile_number, :email, uniqueness: true
+  validates :first_name, :last_name, :password, :mobile_number, :email, presence: true
+  validates :mobile_number, :email, uniqueness: true
 
   before_create :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
@@ -18,7 +18,7 @@ class Driver < ActiveRecord::Base
   end
 
   def password_token_expired?
-    DateTime.now >= self.reset_password_sent_at + 1.day
+    DateTime.now >= self.reset_password_sent_at
   end
 
   def update_auth_token!
@@ -44,7 +44,7 @@ class Driver < ActiveRecord::Base
 
   def set_password_token
     self.reset_password_token = generate_unique_token_for("reset_password_token")
-    self.reset_password_sent_at = DateTime.now
+    self.reset_password_sent_at = DateTime.now + 1.day
   end
 
   def encrypt_password(password)
