@@ -9,6 +9,10 @@ class Driver < ActiveRecord::Base
   before_create :set_auth_token
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
 
+  def full_name
+    [first_name, last_name].join(' ').strip
+  end
+
   def verify_password?(password)
     Password.new(self.password) == password
   end

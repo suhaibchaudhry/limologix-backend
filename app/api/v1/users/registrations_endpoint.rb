@@ -49,7 +49,7 @@ module V1
               message: 'Registration successfull.',
               data: {
                 'Auth-Token': user.auth_token,
-                email: user.email
+                full_name: user.full_name
               }
             }
           else
