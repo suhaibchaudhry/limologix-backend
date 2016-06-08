@@ -4,13 +4,13 @@ class VehicleType < ActiveRecord::Base
   validates :name, :description, :image, :capacity, presence: true
   validate :image_size
 
-  mount_uploader :image, LogoUploader
+  mount_uploader :image, ImageUploader
 
   private
 
   def image_size
     if image.size > 5.megabytes
-      errors.add(:image, "VehicleType image size should be less than 5MB")
+      errors.add(:image, "size should be less than 5MB")
     end
   end
 end

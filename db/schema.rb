@@ -55,33 +55,35 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   add_index "customers", ["user_id"], name: "index_customers_on_user_id", using: :btree
 
   create_table "drivers", force: :cascade do |t|
-    t.string   "first_name",             limit: 255
-    t.string   "last_name",              limit: 255
-    t.string   "password",               limit: 255
-    t.string   "email",                  limit: 255
-    t.string   "mobile_number",          limit: 255
-    t.string   "company",                limit: 255
+    t.string   "first_name",              limit: 255
+    t.string   "last_name",               limit: 255
+    t.string   "password",                limit: 255
+    t.string   "email",                   limit: 255
+    t.string   "mobile_number",           limit: 255
     t.date     "dob"
-    t.string   "home_phone_number",      limit: 255
-    t.string   "social_security_number", limit: 255
-    t.string   "display_name",           limit: 255
-    t.string   "license_number",         limit: 255
-    t.string   "license_image",          limit: 255
-    t.string   "license_expiry_date",    limit: 255
-    t.string   "badge_number",           limit: 255
-    t.string   "badge_expiry_date",      limit: 255
-    t.string   "ara_number",             limit: 255
-    t.string   "ara_image",              limit: 255
-    t.string   "ara_exp_date",           limit: 255
-    t.string   "auth_token",             limit: 255
+    t.string   "home_phone_number",       limit: 255
+    t.string   "social_security_number",  limit: 255
+    t.string   "display_name",            limit: 255
+    t.string   "auth_token",              limit: 255
     t.datetime "auth_token_expires_at"
-    t.string   "reset_password_token",   limit: 255
+    t.string   "reset_password_token",    limit: 255
     t.datetime "reset_password_sent_at"
-    t.boolean  "available",                          default: true
+    t.boolean  "available",                           default: true
+    t.string   "company",                 limit: 255
+    t.string   "license_number",          limit: 255
+    t.string   "license_image",           limit: 255
+    t.date     "license_expiry_date"
+    t.string   "badge_number",            limit: 255
+    t.date     "badge_expiry_date"
+    t.string   "ara_number",              limit: 255
+    t.string   "ara_image",               limit: 255
+    t.date     "ara_expiry_date"
+    t.string   "insurance_company",       limit: 255
+    t.string   "insurance_policy_number", limit: 255
+    t.date     "insurance_expiry_date"
   end
 
   add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree
-  add_index "drivers", ["available"], name: "index_drivers_on_available", using: :btree
   add_index "drivers", ["email"], name: "index_drivers_on_email", unique: true, using: :btree
   add_index "drivers", ["reset_password_token"], name: "index_drivers_on_reset_password_token", unique: true, using: :btree
 
@@ -151,18 +153,19 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   end
 
   create_table "vehicles", force: :cascade do |t|
-    t.string   "color",                limit: 255
-    t.string   "hll_number",           limit: 255
-    t.string   "license_plate_number", limit: 255
-    t.string   "year_of_purchase",     limit: 255
-    t.integer  "owner_id",             limit: 4
-    t.string   "owner_type",           limit: 255
-    t.integer  "vehicle_type_id",      limit: 4
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.string   "color",           limit: 255
+    t.string   "make",            limit: 255
+    t.string   "model",           limit: 255
+    t.string   "hll",             limit: 255
+    t.string   "license_plate",   limit: 255
+    t.string   "features",        limit: 255
+    t.integer  "driver_id",       limit: 4
+    t.integer  "vehicle_type_id", limit: 4
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
-  add_index "vehicles", ["owner_type", "owner_id"], name: "index_vehicles_on_owner_type_and_owner_id", using: :btree
+  add_index "vehicles", ["driver_id"], name: "index_vehicles_on_driver_id", using: :btree
   add_index "vehicles", ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id", using: :btree
 
 end

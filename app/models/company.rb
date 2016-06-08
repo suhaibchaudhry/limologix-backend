@@ -7,14 +7,14 @@ class Company < ActiveRecord::Base
   validates :email, uniqueness: true
   validate :logo_size
 
-  mount_uploader :logo, LogoUploader
+  mount_uploader :logo, ImageUploader
   accepts_nested_attributes_for :address
 
   private
 
   def logo_size
     if logo.size > 5.megabytes
-      errors.add(:logo, "Company logo size should be less than 5MB")
+      errors.add(:logo, "size should be less than 5MB")
     end
   end
 end

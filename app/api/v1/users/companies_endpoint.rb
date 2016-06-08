@@ -7,35 +7,12 @@ module V1
 
       helpers do
         def company_params
-          params[:company][:logo] = params[:company][:logo].present? ? parse_image_data(params[:company][:logo][:name], params[:company][:logo][:image]) : nil
+          params[:company][:logo] = params[:company][:logo].present? ? decode_base64_image(params[:company][:logo][:name], params[:company][:logo][:image]) : nil
           params[:company][:address_attributes] = params[:company][:address]
 
           ActionController::Parameters.new(params).require(:company).permit(:name,
             :email, :primary_phone_number, :secondary_phone_number, :logo,
             address_attributes: [:street, :city, :zipcode, :state_code, :country_code] )
-        end
-
-        def parse_image_data(filename, base64_image)
-          in_content_type, encoding, string = base64_image.split(/[:;,]/)[1..3]
-          # filename = filename.split(".")[0]
-
-          tempfile = Tempfile.new(filename)
-          tempfile.binmode
-          tempfile.write Base64.decode64(string)
-
-          # for security we want the actual content type, not just what was passed in
-          content_type = `file --mime -b #{tempfile.path}`.split(";")[0]
-
-          # we will also add the extension ourselves based on the above
-          # if it's not gif/jpeg/png, it will fail the validation in the upload model
-          # extension = content_type.match(/gif|jpeg|png|jpg/).to_s
-          # filename += ".#{extension}" if extension
-
-          ActionDispatch::Http::UploadedFile.new({
-            tempfile: tempfile,
-            content_type: content_type,
-            filename: filename
-          })
         end
       end
 

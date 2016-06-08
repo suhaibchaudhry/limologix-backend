@@ -3,8 +3,18 @@ module V1
     class RegistrationsEndpoint < Root
       helpers do
         def driver_params
+          params[:driver][:license_image] = params[:driver][:license_image].present? ? decode_base64_image(params[:driver][:license_image][:name], params[:driver][:license_image][:image]) : nil
+          params[:driver][:ara_image] = params[:driver][:ara_image].present? ? decode_base64_image(params[:driver][:ara_image][:name], params[:driver][:ara_image][:image]) : nil
+
           ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name,
-            :password, :email, :mobile_number, :home_phone_number, :company)
+            :password, :email, :mobile_number, :license_number, :license_expiry_date, :license_image, 
+            :badge_number, :badge_expiry_date, :ara_number,:ara_image, :ara_expiry_date, :insurance_company, 
+            :insurance_policy_number, :insurance_expiry_date)
+        end
+
+        def vehicle_params
+          ActionController::Parameters.new(params).require(:vehicle).permit(:make, :model,
+            :hll, :color, :license_plate, :features)
         end
       end
 
@@ -26,14 +36,58 @@ module V1
             requires :password, type: String, allow_blank: false
             requires :mobile_number, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
-            optional :home_phone_number, type: String
-            optional :company, type: String
+
+            optional :address, type: Hash do
+              optional :street, type: String
+              optional :city, type: String
+              optional :zipcode, type: Integer
+              optional :state_code, type: String
+              optional :country_code, type: String
+            end
+
+            requires :license_number, type: String, allow_blank: false
+            requires :license_expiry_date, type: Date, allow_blank: false
+            requires :license_image, type: Hash do
+              requires :name, type: String, allow_blank: false
+              requires :image, type: String, allow_blank: false
+            end
+
+            requires :badge_number, type: String, allow_blank: false
+            requires :badge_expiry_date, type: Date, allow_blank: false
+
+            requires :ara_number, type: String, allow_blank: false
+            requires :ara_expiry_date, type: Date, allow_blank: false
+            requires :ara_image, type: Hash do
+              requires :name, type: String, allow_blank: false
+              requires :image, type: String, allow_blank: false
+            end
+            requires :insurance_company, type: String, allow_blank: false
+            requires :insurance_policy_number, type: String, allow_blank: false
+            requires :insurance_expiry_date, type: Date, allow_blank: false
+          end
+
+          requires :vehicle, type: Hash do
+            requires :make, type: String, allow_blank: false
+            requires :model, type: String, allow_blank: false
+            requires :hll, type: String, allow_blank: false
+            requires :color, type: String, allow_blank: false
+            requires :license_plate, type: String, allow_blank: false
+            requires :vehicle_type_id, type: Integer, allow_blank: false
+            optional :features, type: String
           end
         end
         post 'registration' do
-          driver = Driver.new(driver_params)
+          vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
+          error!("VehicleType not found." , 404) unless vehicle_type.present?
 
-          if driver.save
+          driver = Driver.new(driver_params)
+          vehicle = driver.vehicles.new(vehicle_params)
+
+          if driver.valid? && vehicle.valid?
+            driver.save
+            vehicle.vehicle_type = vehicle_type
+            vehicle.save
+
             {
               message: 'Registration successfull.',
               data: {
