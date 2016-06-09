@@ -11,4 +11,8 @@ class Customer < ActiveRecord::Base
     self.email = nil unless email.present?
     self.organisation = nil unless organisation.present?
   end
+
+  def full_name
+    [first_name, last_name].join(' ').strip
+  end
 end

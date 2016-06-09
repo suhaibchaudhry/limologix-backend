@@ -90,10 +90,11 @@ module V1
               data: {
                 trips: [{"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
                 "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
-                "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 },
+                "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 ,
+                "customer":{"id":7,"first_name":"customer1","last_name":"t","email":"ac@gmail.com","mobile_number":"123","full_name":"customer1 t","organisation":"tcs"}},
                 {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
-                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
-                  "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }]
+                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},"pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22,
+                  "customer":{"id":7,"first_name":"customer1","last_name":"t","email":"ac@gmail.com","mobile_number":"123","full_name":"customer1 t","organisation":"tcs"}}]
               }
             }.to_json }]
           end
