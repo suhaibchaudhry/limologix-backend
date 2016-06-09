@@ -41,10 +41,10 @@ group :development do
   gem 'capistrano-rvm'
 end
 
-# group :staging do
-#   gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-#   gem 'ffaker'
-# end
+group :staging do
+  gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'ffaker'
+end
 
 
 
