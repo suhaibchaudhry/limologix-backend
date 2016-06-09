@@ -79,7 +79,6 @@ module V1
           end
         end
         post 'registration' do
-          byebug
           vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
           error!("Vehicle Type not found." , 404) unless vehicle_type.present?
 

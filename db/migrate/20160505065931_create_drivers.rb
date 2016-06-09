@@ -27,6 +27,8 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :insurance_company
       t.string :insurance_policy_number
       t.date :insurance_expiry_date
+
+      t.timestamps null: false
     end
 
     add_index :drivers, :email, unique: true

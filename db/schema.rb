@@ -81,6 +81,8 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.string   "insurance_company",       limit: 255
     t.string   "insurance_policy_number", limit: 255
     t.date     "insurance_expiry_date"
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
   end
 
   add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree
