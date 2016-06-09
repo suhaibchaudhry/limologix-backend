@@ -153,16 +153,16 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   end
 
   create_table "vehicles", force: :cascade do |t|
-    t.string   "color",           limit: 255
-    t.string   "make",            limit: 255
-    t.string   "model",           limit: 255
-    t.string   "hll",             limit: 255
-    t.string   "license_plate",   limit: 255
-    t.string   "features",        limit: 255
-    t.integer  "driver_id",       limit: 4
-    t.integer  "vehicle_type_id", limit: 4
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.string   "color",                limit: 255
+    t.string   "make",                 limit: 255
+    t.string   "model",                limit: 255
+    t.string   "hll_number",           limit: 255
+    t.string   "license_plate_number", limit: 255
+    t.string   "features",             limit: 255
+    t.integer  "driver_id",            limit: 4
+    t.integer  "vehicle_type_id",      limit: 4
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
   add_index "vehicles", ["driver_id"], name: "index_vehicles_on_driver_id", using: :btree

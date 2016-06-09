@@ -4,8 +4,8 @@ class CreateVehicles < ActiveRecord::Migration
       t.string :color
       t.string :make
       t.string :model
-      t.string :hll
-      t.string :license_plate
+      t.string :hll_number
+      t.string :license_plate_number
       t.string :features
       t.references :driver, index: true
       t.references :vehicle_type, index: true
