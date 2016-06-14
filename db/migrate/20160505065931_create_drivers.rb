@@ -14,7 +14,7 @@ class CreateDrivers < ActiveRecord::Migration
       t.datetime :auth_token_expires_at
       t.string :reset_password_token
       t.datetime :reset_password_sent_at
-      t.boolean :available, default: true
+      t.boolean :visible, default: true
       t.string :company
       t.string :license_number
       t.string :license_image

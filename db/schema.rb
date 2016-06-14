@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(version: 20160519080303) do
     t.datetime "auth_token_expires_at"
     t.string   "reset_password_token",    limit: 255
     t.datetime "reset_password_sent_at"
-    t.boolean  "available",                           default: true
+    t.boolean  "visible",                             default: true
     t.string   "company",                 limit: 255
     t.string   "license_number",          limit: 255
     t.string   "license_image",           limit: 255

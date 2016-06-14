@@ -11,7 +11,7 @@ module V1
       def current_user
         return false unless headers['Auth-Token'].present?
 
-        @user = User.find_by(auth_token: headers['Auth-Token'])
+        @user ||= User.find_by(auth_token: headers['Auth-Token'])
 
         (@user.present? && !@user.auth_token_expired?) ? @user : nil
       end
@@ -19,7 +19,7 @@ module V1
       def current_driver
         return false unless headers['Auth-Token'].present?
 
-        @driver = Driver.find_by(auth_token: headers['Auth-Token'])
+        @driver ||= Driver.find_by(auth_token: headers['Auth-Token'])
 
         (@driver.present? && !@driver.auth_token_expired?) ? @driver : nil
       end
@@ -37,6 +37,8 @@ module V1
 
     mount V1::Drivers::RegistrationsEndpoint
     mount V1::Drivers::SessionsEndpoint
+    mount V1::Drivers::PasswordsEndpoint
+    mount V1::Drivers::ProfilesEndpoint
 
     mount V1::MasterDataEndpoint
   end
