@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160519080303) do
+ActiveRecord::Schema.define(version: 20160614113428) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -53,6 +53,18 @@ ActiveRecord::Schema.define(version: 20160519080303) do
   end
 
   add_index "customers", ["user_id"], name: "index_customers_on_user_id", using: :btree
+
+  create_table "dispatches", force: :cascade do |t|
+    t.integer  "driver_id",  limit: 4
+    t.integer  "trip_id",    limit: 4
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "dispatches", ["driver_id"], name: "index_dispatches_on_driver_id", using: :btree
+  add_index "dispatches", ["trip_id"], name: "index_dispatches_on_trip_id", using: :btree
 
   create_table "drivers", force: :cascade do |t|
     t.string   "first_name",              limit: 255

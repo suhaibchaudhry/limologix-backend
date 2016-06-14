@@ -27,7 +27,7 @@ module V1
         namespace :vehicles do
 
           desc 'Add a vehicle.' do
-            # headers "Auth-Token": { description: 'Validates your identity', required: true }
+            headers "Auth-Token" => { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle added successfully.'}.to_json },
               { code: 401,
@@ -58,7 +58,7 @@ module V1
 
 
           desc 'update a vehicle.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+            headers 'Auth-Token' => { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle updated successfully.'}.to_json },
               { code: 401,
@@ -79,9 +79,9 @@ module V1
             error!("Vehicle Type not found." , 404) unless vehicle_type.present?
 
             vehicle = current_driver.vehicles.find_by(id: params[:vehicle][:id])
-            vehicle.vehicle_type = vehicle_type
+            error!("Vehicle not found." , 404) unless vehicle.present?
 
-            if vehicle.save
+            if vehicle.update(vehicle_params)
               { message: 'Vehicle updated successfully.' }
             else
               error!(error_formatter(vehicle) , 401)

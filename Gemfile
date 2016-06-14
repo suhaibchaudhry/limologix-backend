@@ -15,9 +15,6 @@ gem 'hashie-forbidden_attributes'
 gem 'grape-active_model_serializers'
 gem 'grape-kaminari'
 
-# Config
-gem 'paper_trail', '~> 4.0.0'
-
 # View
 # gem 'coffee-rails', '~> 4.1.0'
 # gem 'jquery-rails'

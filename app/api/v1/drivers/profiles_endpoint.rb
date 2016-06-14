@@ -127,6 +127,31 @@ module V1
             end
           end
 
+
+          desc 'Update password' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
+              { code: 401,
+                message: {
+                  status: 'error',
+                  message: 'Driver password is empty'
+                }.to_json
+              }]
+          end
+          params do
+            requires :driver, type: Hash do
+              requires :password, type: String, allow_blank: false
+            end
+          end
+          post 'reset_authentication_details' do
+            if current_driver.update(password: params[:driver][:password], auth_token: nil)
+              { message: 'Password has been updated successfully.'}
+            else
+              error!(error_formatter(current_driver) , 401)
+            end
+          end
+
         end
       end
     end

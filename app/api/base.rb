@@ -1,3 +1,4 @@
+require 'grape-swagger'
 class Base < Grape::API
   require 'custom_formatter'
   require 'custom_error_formatter'

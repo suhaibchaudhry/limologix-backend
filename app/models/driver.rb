@@ -3,6 +3,9 @@ class Driver < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
   has_many :vehicles
 
+  has_many :dispatches
+  has_many :trips, through: :dispatches, source: :trip
+
   validates :first_name, :last_name, :password, :mobile_number, :email, :license_number,
             :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_number, :ara_image,
             :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date, presence: true
@@ -20,6 +23,10 @@ class Driver < ActiveRecord::Base
 
   def full_name
     [first_name, last_name].join(' ').strip
+  end
+
+  def has_active_trip?
+    trips.active.present?
   end
 
   def verify_password?(password)

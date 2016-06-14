@@ -34,12 +34,10 @@ module V1
             end
           end
           post 'update' do
-            user = current_user
-
-            if user.update(user_params)
+            if current_user.update(user_params)
               { message: 'Profile details updated successfully.'}
             else
-              error!(error_formatter(user) , 401)
+              error!(error_formatter(current_user) , 401)
             end
           end
 
@@ -58,7 +56,7 @@ module V1
             }
           end
 
-          desc 'Update username or password' do
+          desc 'Update password' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
@@ -75,12 +73,10 @@ module V1
             end
           end
           post 'reset_authentication_details' do
-            user = current_user
-
-            if user.update(password: params[:user][:password], auth_token: nil)
+            if current_user.update(password: params[:user][:password], auth_token: nil)
               { message: 'Password has been updated successfully.'}
             else
-              error!(error_formatter(user) , 401)
+              error!(error_formatter(current_user) , 401)
             end
           end
 

@@ -1,13 +1,19 @@
 class Trip < ActiveRecord::Base
-  STATUSES = ['active', 'pending']
+  STATUSES = ['active', 'pending', 'closed', 'cancelled']
 
   scope :active, -> { where(status: 'active') }
   scope :pending, -> { where(status: 'pending') }
+  scope :closed, -> { where(status: 'closed') }
+  scope :cancelled, -> { where(status: 'closed') }
 
   belongs_to :user
   belongs_to :customer
+
   has_one :start_destination, as: :locatable, dependent: :destroy
   has_one :end_destination, as: :locatable, dependent: :destroy
+
+  has_one :dispatch
+  has_one :driver, through: :dispatch, source: :driver
 
   validates :pick_up_at, :passengers_count, presence: true
   accepts_nested_attributes_for :start_destination
@@ -18,4 +24,10 @@ class Trip < ActiveRecord::Base
       self.status == value
     end
   end
+
+  def update_status_to_active!
+    self.status = 'active'
+    save
+  end
+
 end
