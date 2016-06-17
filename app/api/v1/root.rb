@@ -38,7 +38,6 @@ module V1
     mount V1::Drivers::SessionsEndpoint
     mount V1::Drivers::PasswordsEndpoint
     mount V1::Drivers::ProfilesEndpoint
-    mount V1::Drivers::VehiclesEndpoint
     mount V1::Drivers::TripsEndpoint
 
     mount V1::MasterDataEndpoint

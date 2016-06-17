@@ -21,6 +21,12 @@ module V1
             :badge_number, :badge_expiry_date, :ara_number,:ara_image, :ara_expiry_date, :insurance_company, 
             :insurance_policy_number, :insurance_expiry_date)
         end
+
+        def vehicle_params
+          params[:vehicle][:features] = params[:vehicle][:features].present? ? params[:vehicle][:features].join(",") : nil
+          ActionController::Parameters.new(params).require(:vehicle).permit(:make, :model,
+            :hll_number, :color, :license_plate_number, :features)
+        end
       end
 
       namespace :drivers do
@@ -149,6 +155,42 @@ module V1
               { message: 'Password has been updated successfully.'}
             else
               error!(error_formatter(current_driver) , 401)
+            end
+          end
+
+          desc 'update a vehicle.' do
+            headers 'Auth-Token' => { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle updated successfully.'}.to_json },
+              { code: 401,
+                message: {
+                  status: 'error',
+                  message: 'Vehicle make is missing, Vehicle make is empty'
+                }.to_json
+              }]
+          end
+          params do
+            requires :vehicle, type: Hash do
+              requires :make, type: String, allow_blank: false
+              requires :model, type: String, allow_blank: false
+              requires :hll_number, type: String, allow_blank: false
+              requires :color, type: String, allow_blank: false
+              requires :license_plate_number, type: String, allow_blank: false
+              requires :vehicle_type_id, type: Integer, allow_blank: false
+              optional :features, type: Array[String]
+            end
+          end
+          post 'update_vehicle' do
+            vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
+            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
+
+            vehicle = current_driver.vehicle
+            error!("Vehicle not found." , 404) unless vehicle.present?
+
+            if vehicle.update(vehicle_params)
+              { message: 'Vehicle updated successfully.' }
+            else
+              error!(error_formatter(vehicle) , 401)
             end
           end
 

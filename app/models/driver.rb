@@ -1,15 +1,15 @@
 class Driver < ActiveRecord::Base
   include BCrypt
   has_one :address, as: :addressable, dependent: :destroy
-  has_many :vehicles
+  has_one :vehicle
 
   has_many :dispatches
   has_many :trips, through: :dispatches, source: :trip
 
   validates :first_name, :last_name, :password, :mobile_number, :email, :license_number,
-            :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_number, :ara_image,
+            :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_image,
             :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date, presence: true
-  validates :mobile_number, :license_number, :ara_number, :badge_number, :email, uniqueness: true
+  validates :mobile_number, :license_number, :badge_number, :email, uniqueness: true
   validate :license_image_size, :ara_image_size
 
   mount_uploader :license_image, ImageUploader

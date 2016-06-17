@@ -103,13 +103,13 @@ ActiveRecord::Schema.define(version: 20160614113428) do
 
   create_table "geolocations", force: :cascade do |t|
     t.string   "place",          limit: 255
-    t.string   "latitude",       limit: 255
-    t.string   "longitude",      limit: 255
+    t.decimal  "latitude",                   precision: 20, scale: 15
+    t.decimal  "longitude",                  precision: 20, scale: 15
     t.string   "type",           limit: 255
     t.integer  "locatable_id",   limit: 4
     t.string   "locatable_type", limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
   end
 
   add_index "geolocations", ["locatable_type", "locatable_id"], name: "index_geolocations_on_locatable_type_and_locatable_id", using: :btree
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(version: 20160614113428) do
     t.integer  "passengers_count", limit: 4
     t.integer  "user_id",          limit: 4
     t.integer  "customer_id",      limit: 4
+    t.integer  "vehicle_type_id",  limit: 4
     t.string   "status",           limit: 255, default: "pending"
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
@@ -132,6 +133,7 @@ ActiveRecord::Schema.define(version: 20160614113428) do
 
   add_index "trips", ["customer_id"], name: "index_trips_on_customer_id", using: :btree
   add_index "trips", ["user_id"], name: "index_trips_on_user_id", using: :btree
+  add_index "trips", ["vehicle_type_id"], name: "index_trips_on_vehicle_type_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "first_name",             limit: 255

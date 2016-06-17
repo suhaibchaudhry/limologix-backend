@@ -191,6 +191,53 @@ module V1
               error!(error_formatter(trip) , 401)
             end
           end
+
+          desc 'Trip cancel API.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been  cancelled successfully.'}.to_json },
+            { code: 404,
+              message: {
+                status: 'error',
+                message: 'Trip not found.',
+              }.to_json
+            }]
+          end
+          params do
+            requires :trip, type: Hash do
+              requires :id, type: Integer, allow_blank: false
+            end
+          end
+          post 'cancel' do
+            trip = current_user.trips.find_by(id: params[:trip][:id])
+            error!("Trip not found." , 404) unless trip.present?
+
+            trip.update_status_to_cancelled!
+            { message: 'Trip has been cancelled successfully.' }
+          end
+
+          # desc 'Trip dispatch API.' do
+          #   headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+          #   http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been dispatched successfully.'}.to_json },
+          #   { code: 404,
+          #     message: {
+          #       status: 'error',
+          #       message: 'Trip not found.',
+          #     }.to_json
+          #   }]
+          # end
+          # params do
+          #   requires :trip, type: Hash do
+          #     requires :id, type: Integer, allow_blank: false
+          #   end
+          # end
+          # post 'dispatch' do
+          #   trip = current_user.trips.find_by(id: params[:trip][:id])
+          #   error!("Trip not found." , 404) unless trip.present?
+
+          #   { message: 'Trip has been dispatched successfully.' }
+          # end
         end
       end
     end

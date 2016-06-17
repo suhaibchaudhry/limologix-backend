@@ -1,7 +1,8 @@
 require 'grape-swagger'
+require 'custom_formatter'
+require 'custom_error_formatter'
+
 class Base < Grape::API
-  require 'custom_formatter'
-  require 'custom_error_formatter'
 
   include Grape::Kaminari
   format :json

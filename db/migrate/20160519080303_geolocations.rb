@@ -2,8 +2,8 @@ class Geolocations < ActiveRecord::Migration
   def change
     create_table :geolocations do |t|
       t.string :place
-      t.string :latitude
-      t.string :longitude
+      t.decimal :latitude, precision: 20, scale: 15
+      t.decimal :longitude, precision: 20, scale: 15
       t.string :type
       t.references :locatable, polymorphic: true, index: true
 

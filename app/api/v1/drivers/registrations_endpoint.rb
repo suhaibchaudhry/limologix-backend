@@ -57,7 +57,6 @@ module V1
             requires :badge_number, type: String, allow_blank: false
             requires :badge_expiry_date, type: Date, allow_blank: false
 
-            requires :ara_number, type: String, allow_blank: false
             requires :ara_expiry_date, type: Date, allow_blank: false
             requires :ara_image, type: Hash do
               requires :name, type: String, allow_blank: false
@@ -83,11 +82,12 @@ module V1
           error!("Vehicle Type not found." , 404) unless vehicle_type.present?
 
           driver = Driver.new(driver_params)
-          vehicle = driver.vehicles.new(vehicle_params)
+          vehicle = Vehicle.new(vehicle_params)
 
           if driver.valid? && vehicle.valid?
             driver.save
             vehicle.vehicle_type = vehicle_type
+            vehicle.driver = driver
             vehicle.save
 
             {

@@ -8,6 +8,7 @@ class Trip < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :customer
+  belongs_to :vehicle_type
 
   has_one :start_destination, as: :locatable, dependent: :destroy
   has_one :end_destination, as: :locatable, dependent: :destroy
@@ -27,6 +28,11 @@ class Trip < ActiveRecord::Base
 
   def update_status_to_active!
     self.status = 'active'
+    save
+  end
+
+  def update_status_to_cancelled!
+    self.status = 'cancelled'
     save
   end
 

@@ -5,6 +5,7 @@ class CreateTrips < ActiveRecord::Migration
       t.integer :passengers_count
       t.references :user, index: true
       t.references :customer, index: true
+      t.references :vehicle_type, index: true
       t.string :status, default: 'pending'
 
       t.timestamps null: false
