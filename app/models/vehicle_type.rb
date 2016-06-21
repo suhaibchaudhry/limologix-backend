@@ -1,5 +1,7 @@
 class VehicleType < ActiveRecord::Base
   has_many :vehicles
+  has_many :vehicle_make_types, dependent: :destroy
+  has_many :vehicle_makes, through: :vehicle_make_types, source: :vehicle_make
 
   validates :name, :description, :image, :capacity, presence: true
   validate :image_size

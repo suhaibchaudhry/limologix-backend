@@ -47,6 +47,69 @@ module V1
             }
           }
         end
+
+        desc 'List of vehicle makes.' do
+          http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle makes list..',
+            data: {
+              vehicle_makes: [{"id":16,"name":"Chevy"},{"id":17,"name":"Hyundai"}]
+            }
+          }.to_json }]
+        end
+        params do
+          requires :vehicle_type_id, type: String, allow_blank: false
+        end
+        post 'makes' do
+          vehicle_type = VehicleType.find_by(id: params[:vehicle_type_id])
+          error!("Vehicle type not found." , 404) unless vehicle_type.present?
+
+          if vehicle_type.vehicle_makes.present?
+            {
+              message: 'Vehicle makes list.',
+              data:
+              {
+                vehicle_makes: serialize_model_object(vehicle_type.vehicle_makes)
+              }
+            }
+          else
+            { message: 'No results found.'}
+          end
+        end
+
+        desc 'List of vehicle models.' do
+          http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle models list.',
+            data: {
+              vehicle_models: [{"id":16,"name":"3 Series"},{"id":17,"name":"4 Series"}]
+            }
+          }.to_json }]
+        end
+        params do
+          requires :vehicle_type_id, type: String, allow_blank: false
+          requires :vehicle_make_id, type: String, allow_blank: false
+        end
+        post 'models' do
+          vehicle_type = VehicleType.find_by(id: params[:vehicle_type_id])
+          error!("Vehicle type not found." , 404) unless vehicle_type.present?
+
+          vehicle_make = VehicleMake.find_by(id: params[:vehicle_make_id])
+          error!("Vehicle make not found." , 404) unless vehicle_make.present?
+
+          vehicle_make_type = VehicleMakeType.where(vehicle_type_id: vehicle_type.id, vehicle_make_id: vehicle_make.id).first
+          error!("Vehicle models of this type or make not found." , 404) unless vehicle_make_type.present?
+
+          vehicle_models = vehicle_make_type.vehicle_models
+
+          if vehicle_models.present?
+            {
+              message: 'Vehicle models list.',
+              data:
+              {
+                vehicle_models: serialize_model_object(vehicle_models)
+              }
+            }
+          else
+            { message: 'No results found.'}
+          end
+        end
       end
     end
   end
