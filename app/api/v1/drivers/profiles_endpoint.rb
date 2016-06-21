@@ -23,9 +23,8 @@ module V1
         end
 
         def vehicle_params
-          params[:vehicle][:features] = params[:vehicle][:features].present? ? params[:vehicle][:features].join(",") : nil
-          ActionController::Parameters.new(params).require(:vehicle).permit(:make, :model,
-            :hll_number, :color, :license_plate_number, :features)
+          params[:vehicle][:features_attributes] = params[:vehicle][:features].present? ? params[:vehicle][:features].map{|feature| {name: feature}} : []
+          ActionController::Parameters.new(params).require(:vehicle).permit(:hll_number, :color, :license_plate_number, :features)
         end
       end
 
@@ -172,6 +171,32 @@ module V1
             }
           end
 
+          desc 'Get vehicle information.' do
+            headers 'Auth-Token' => { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle details.'}.to_json },
+              { code: 401,
+                message: {
+                  status: 'error',
+                  message: 'Vehicle make is missing, Vehicle make is empty'
+                }.to_json
+              }]
+          end
+          get 'get_vehicle' do
+            vehicle = current_driver.vehicle
+
+            if vehicle.present?
+              {
+                message: 'Vehicle details.',
+                data: {
+                  vehicle: serialize_model_object(vehicle)
+                }
+              }
+            else
+             error!("Vehicle not found." , 404)
+            end
+          end
+
           desc 'update a vehicle.' do
             headers 'Auth-Token' => { description: 'Validates your identity', required: true }
 
@@ -185,8 +210,8 @@ module V1
           end
           params do
             requires :vehicle, type: Hash do
-              requires :make, type: String, allow_blank: false
-              requires :model, type: String, allow_blank: false
+              requires :vehicle_make_id, type: String, allow_blank: false
+              requires :vehicle_model_id, type: String, allow_blank: false
               requires :hll_number, type: String, allow_blank: false
               requires :color, type: String, allow_blank: false
               requires :license_plate_number, type: String, allow_blank: false
@@ -198,8 +223,21 @@ module V1
             vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
             error!("Vehicle Type not found." , 404) unless vehicle_type.present?
 
+            vehicle_make = VehicleMake.find_by(id: params[:vehicle][:vehicle_make_id])
+            error!("Vehicle make not found." , 404) unless vehicle_make.present?
+
+            vehicle_make_type = VehicleMakeType.where(vehicle_type_id: vehicle_type.id, vehicle_make_id: vehicle_make.id).first
+            error!("Vehicle model of this type or make not found." , 404) unless vehicle_make_type.present?
+
+            vehicle_model = VehicleModel.find_by(id: params[:vehicle][:vehicle_model_id])
+            error!("Vehicle model not found." , 404) unless vehicle_model.present?
+
             vehicle = current_driver.vehicle
             error!("Vehicle not found." , 404) unless vehicle.present?
+
+            vehicle.vehicle_type = vehicle_type
+            vehicle.vehicle_make = vehicle_make
+            vehicle.vehicle_model = vehicle_model
 
             if vehicle.update(vehicle_params)
               { message: 'Vehicle updated successfully.' }
