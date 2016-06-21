@@ -84,7 +84,7 @@ module V1
           driver = Driver.new(driver_params)
           vehicle = Vehicle.new(vehicle_params)
 
-          if driver.valid? && vehicle.valid?
+          if driver.valid? & vehicle.valid?
             driver.save
             vehicle.vehicle_type = vehicle_type
             vehicle.driver = driver
@@ -98,7 +98,8 @@ module V1
               }
             }
           else
-            error!(error_formatter(driver) , 401)
+            message = error_formatter(driver) + ", " + error_formatter(vehicle)
+            error!(message , 401)
           end
         end
       end

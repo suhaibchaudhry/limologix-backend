@@ -11,6 +11,8 @@ class Driver < ActiveRecord::Base
             :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date, presence: true
   validates :mobile_number, :license_number, :badge_number, :email, uniqueness: true
   validate :license_image_size, :ara_image_size
+  validates :mobile_number, numericality: { only_integer: true }
+  validates :email, format: { with: /\A[^\s@]+@[^\s@]+\.[^\s@]{2,}\z/, message: "is invalid" }
 
   mount_uploader :license_image, ImageUploader
   mount_uploader :ara_image, ImageUploader
@@ -18,7 +20,7 @@ class Driver < ActiveRecord::Base
 
   accepts_nested_attributes_for :address
 
-  before_create :set_auth_token
+  before_create :set_auth_token, :set_channel
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
 
   def full_name
@@ -83,11 +85,15 @@ class Driver < ActiveRecord::Base
     Password.create(password) if password.present?
   end
 
+  def set_channel
+    self.channel = generate_unique_token_for("channel")
+  end
+
   def generate_unique_token_for(attribute)
     token = nil
     loop do
       token = SecureRandom.hex
-      break token unless User.send("find_by_#{attribute}", token).present?
+      break token unless Driver.send("find_by_#{attribute}", token).present?
     end
   end
 end

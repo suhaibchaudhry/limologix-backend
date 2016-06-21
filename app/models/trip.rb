@@ -16,6 +16,8 @@ class Trip < ActiveRecord::Base
   has_one :dispatch
   has_one :driver, through: :dispatch, source: :driver
 
+  has_many :request_notifications, -> { where kind: 'request' }, class_name: 'TripNotification'
+
   validates :pick_up_at, :passengers_count, presence: true
   accepts_nested_attributes_for :start_destination
   accepts_nested_attributes_for :end_destination
@@ -36,4 +38,7 @@ class Trip < ActiveRecord::Base
     save
   end
 
+  def stop_scheduled_trip_worker
+    
+  end
 end

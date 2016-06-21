@@ -6,7 +6,7 @@ class CreateVehicles < ActiveRecord::Migration
       t.string :model
       t.string :hll_number
       t.string :license_plate_number
-      t.string :features
+      t.text :features
       t.references :driver, index: true
       t.references :vehicle_type, index: true
 

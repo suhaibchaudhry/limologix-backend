@@ -3,4 +3,5 @@ class Vehicle < ActiveRecord::Base
   belongs_to :driver
 
   validates :make, :model, :license_plate_number, :hll_number, :color, presence: true
+  validates :hll_number, :license_plate_number, uniqueness: true
 end
