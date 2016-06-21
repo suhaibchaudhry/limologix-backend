@@ -158,6 +158,20 @@ module V1
             end
           end
 
+          desc 'Get channel name' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
+          end
+          get 'channel' do
+            {
+              message: 'Channel.',
+              data: {
+                channel: current_driver.channel
+              }
+            }
+          end
+
           desc 'update a vehicle.' do
             headers 'Auth-Token' => { description: 'Validates your identity', required: true }
 
