@@ -56,7 +56,7 @@ module V1
           }.to_json }]
         end
         params do
-          requires :vehicle_type_id, type: String, allow_blank: false
+          requires :vehicle_type_id, type: Integer, allow_blank: false
         end
         post 'makes' do
           vehicle_type = VehicleType.find_by(id: params[:vehicle_type_id])
@@ -83,8 +83,8 @@ module V1
           }.to_json }]
         end
         params do
-          requires :vehicle_type_id, type: String, allow_blank: false
-          requires :vehicle_make_id, type: String, allow_blank: false
+          requires :vehicle_type_id, type: Integer, allow_blank: false
+          requires :vehicle_make_id, type: Integer, allow_blank: false
         end
         post 'models' do
           vehicle_type = VehicleType.find_by(id: params[:vehicle_type_id])

@@ -210,8 +210,8 @@ module V1
           end
           params do
             requires :vehicle, type: Hash do
-              requires :vehicle_make_id, type: String, allow_blank: false
-              requires :vehicle_model_id, type: String, allow_blank: false
+              requires :vehicle_make_id, type: Integer, allow_blank: false
+              requires :vehicle_model_id, type: Integer, allow_blank: false
               requires :hll_number, type: String, allow_blank: false
               requires :color, type: String, allow_blank: false
               requires :license_plate_number, type: String, allow_blank: false
