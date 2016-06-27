@@ -216,28 +216,41 @@ module V1
             { message: 'Trip has been cancelled successfully.' }
           end
 
-          # desc 'Trip dispatch API.' do
-          #   headers 'Auth-Token': { description: 'Validates your identity', required: true }
+          desc 'Trip dispatch API.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-          #   http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been dispatched successfully.'}.to_json },
-          #   { code: 404,
-          #     message: {
-          #       status: 'error',
-          #       message: 'Trip not found.',
-          #     }.to_json
-          #   }]
-          # end
-          # params do
-          #   requires :trip, type: Hash do
-          #     requires :id, type: Integer, allow_blank: false
-          #   end
-          # end
-          # post 'dispatch' do
-          #   trip = current_user.trips.find_by(id: params[:trip][:id])
-          #   error!("Trip not found." , 404) unless trip.present?
+            http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been dispatched successfully.'}.to_json },
+            { code: 404,
+              message: {
+                status: 'error',
+                message: 'Trip not found.',
+              }.to_json
+            }]
+          end
+          params do
+            requires :trip, type: Hash do
+              requires :id, type: Integer, allow_blank: false
+              requires :vehicle_type_id, type: Integer, allow_blank: false
+            end
+          end
+          post 'dispatch' do
+            trip = current_user.trips.find_by(id: params[:trip][:id])
+            error!("Trip not found." , 404) unless trip.present?
 
-          #   { message: 'Trip has been dispatched successfully.' }
-          # end
+            vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
+            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
+
+            error!("Trip has been dispatched already." , 404) unless trip.pending?
+
+            trip.vehicle_type = vehicle_type
+
+            if trip.update_status_to_dispatch!
+              TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
+              { message: 'Trip has been dispatched successfully.' }
+            else
+              error!(error_formatter(trip) , 401)
+            end
+          end
         end
       end
     end

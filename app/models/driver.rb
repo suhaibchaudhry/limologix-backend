@@ -1,10 +1,13 @@
 class Driver < ActiveRecord::Base
   include BCrypt
+  scope :visible, -> { where( visible: true ) }
+  scope :invisible, -> { where( visible: false ) }
+
   has_one :address, as: :addressable, dependent: :destroy
   has_one :vehicle
 
   has_many :dispatches
-  has_many :trips, through: :dispatches, source: :trip
+  has_one  :active_dispatch, -> { where('status IN (?)', ['yet_to_start','started'])}, class_name: 'Dispatch'
 
   validates :first_name, :last_name, :password, :mobile_number, :email, :license_number,
             :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_image,
@@ -25,10 +28,6 @@ class Driver < ActiveRecord::Base
 
   def full_name
     [first_name, last_name].join(' ').strip
-  end
-
-  def has_active_trip?
-    trips.active.present?
   end
 
   def verify_password?(password)

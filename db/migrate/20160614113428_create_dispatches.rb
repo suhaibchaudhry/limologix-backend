@@ -5,6 +5,7 @@ class CreateDispatches < ActiveRecord::Migration
       t.references :trip, index: true
       t.datetime :started_at
       t.datetime :ended_at
+      t.string :status, default: 'yet_to_start'
 
       t.timestamps null: false
     end

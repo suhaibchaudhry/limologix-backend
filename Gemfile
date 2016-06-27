@@ -4,6 +4,9 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.6'
 gem 'thin'
 gem 'mysql2', '0.4.4'
+gem 'sidekiq'
+
+gem 'sinatra', require: false
 
 # Authentication & Authorization
 gem "bcrypt"
