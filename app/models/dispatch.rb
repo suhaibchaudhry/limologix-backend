@@ -13,4 +13,19 @@ class Dispatch < ActiveRecord::Base
 
   belongs_to :driver
   belongs_to :trip
+
+  def start!
+    update_status!('started')
+  end
+
+  def stop!
+    update_status!('completed')
+  end
+
+  private
+
+  def update_status!(status)
+    self.status = status
+    self.save
+  end
 end

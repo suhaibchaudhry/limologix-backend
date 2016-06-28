@@ -25,21 +25,18 @@ class Trip < ActiveRecord::Base
   accepts_nested_attributes_for :start_destination
   accepts_nested_attributes_for :end_destination
 
-  def update_status_to_active!
+  def active!
     destroy_scheduled_worker
-    self.status = 'active'
-    save
+    update_status!('active')
   end
 
-  def update_status_to_dispatch!
-    self.status = 'dispatch'
-    save
+  def dispatch!
+    update_status!('dispatched')
   end
 
-  def update_status_to_cancelled!
+  def cancel!
     destroy_scheduled_worker
-    self.status = 'cancelled'
-    save
+    update_status!('cancelled')
   end
 
   def nearest_driver
@@ -84,5 +81,13 @@ class Trip < ActiveRecord::Base
   def reschedule_worker_to_run_now
     job = find_scheduled_worker
     job.add_to_queue if job.present?
+  end
+
+
+  private
+
+  def update_status!(status)
+    self.status = status
+    self.save
   end
 end

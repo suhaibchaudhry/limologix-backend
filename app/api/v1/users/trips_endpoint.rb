@@ -212,7 +212,7 @@ module V1
             trip = current_user.trips.find_by(id: params[:trip][:id])
             error!("Trip not found." , 404) unless trip.present?
 
-            trip.update_status_to_cancelled!
+            trip.cancel!
             { message: 'Trip has been cancelled successfully.' }
           end
 
@@ -244,7 +244,7 @@ module V1
 
             trip.vehicle_type = vehicle_type
 
-            if trip.update_status_to_dispatch!
+            if trip.dispatch!
               TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
               { message: 'Trip has been dispatched successfully.' }
             else

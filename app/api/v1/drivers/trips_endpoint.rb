@@ -3,7 +3,7 @@ module V1
     class TripsEndpoint < Root
       before do
         authenticate!
-        check_whether_driver_approved?
+        check_whether_driver_approved
       end
 
       namespace :drivers do
@@ -71,7 +71,7 @@ module V1
             error!('You have exceeded the time limit to accept.' , 401) if trip.request_notifications.find_by(driver_id: driver) && ((Time.now - trip.request_notifications.find_by(driver_id: driver).created_at) < 10.seconds)
 
             dispatch = current_driver.dispatches.new(trip_id: trip.id)
-            if dispatch.save && trip.update_status_to_active!
+            if dispatch.save && trip.active!
               {
                 message: 'Trip accepted successfully.',
               }
@@ -84,12 +84,7 @@ module V1
           headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
           http_codes [ { code: 201, message: { status: 'success', message: 'Trip denied successfully.'}.to_json },
-            { code: 404,
-              message: {
-                status: 'error',
-                message: 'Trip not found.',
-              }.to_json
-            }]
+            { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
           end
           params do
             requires :trip, type: Hash do
@@ -99,10 +94,57 @@ module V1
           post 'deny' do
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
+
             trip.reschedule_worker_to_run_now
             { message: 'Trip denied successfully.' }
           end
 
+          desc 'When passanger on board start the trip.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+             http_codes [ { code: 201, message: { status: 'success', message: 'Trip started successfully.'}.to_json },
+              { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
+          end
+          params do
+            requires :trip, type: Hash do
+              requires :id, type: Integer, allow_blank: false
+            end
+          end
+          post 'start' do
+            trip  = Trip.find_by(id: params[:trip][:id])
+            error!('Trip not found.' , 404) unless trip.present?
+
+            error!('This trip does not belong to you.' , 404) if trip.active? && (trip.active_dispatch.driver != current_driver)
+            error!('Trip already started.' , 404) if trip.active_dispatch.started?
+            error!('Trip already completed.' , 404) if trip.active_dispatch.completed?
+
+            trip.active_dispatch.start!
+            { message: 'Trip started successfully.' }
+          end
+
+          desc 'When passanger off board stop the trip.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 201, message: { status: 'success', message: 'Status updated to passanger on board.'}.to_json },
+              { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
+          end
+          params do
+            requires :trip, type: Hash do
+              requires :id, type: Integer, allow_blank: false
+            end
+          end
+          post 'stop' do
+            trip  = Trip.find_by(id: params[:trip][:id])
+            error!('Trip not found.' , 404) unless trip.present?
+
+             error!('This trip does not belong to you.' , 404) if trip.active? && (trip.active_dispatch.driver != current_driver)
+
+            error!('Trip not yet started.' , 404) if trip.active_dispatch.yet_to_start?
+            error!('Trip already completed.' , 404) if trip.active_dispatch.completed?
+
+            trip.active_dispatch.stop!
+            { message: 'Trip started successfully.' }
+          end
         end
       end
     end
