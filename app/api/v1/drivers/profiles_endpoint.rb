@@ -30,6 +30,67 @@ module V1
 
       namespace :drivers do
         namespace :profile do
+          desc 'Get driver details.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [
+              {
+                code: 200,
+                message: {
+                  status: 'success',
+                  message: 'Drivers details.',
+                  data: {
+                    driver: {
+                      id: 1,
+                      first_name: 'Avinash',
+                      last_name: 'T',
+                      mobile_number: '78787878',
+                      email: 'avinash123@yopmail.com',
+                      license_number: 'L456',
+                      license_expiry_date: '2016-06-08',
+                      license_image: {
+                        name: 'License.jpg',
+                        image: '/uploads/driver/license_image/1/License.jpg'
+                      },
+                      badge_number: 'B456',
+                      badge_expiry_date: '2016-06-08',
+                      ara_image: {
+                        name: 'ARA.jpg',
+                        image: '/uploads/driver/ara_image/1/ARA.jpg'
+                      },
+                      ara_expiry_date: '2016-06-08',
+                      insurance_company: 'LIMO',
+                      insurance_policy_number: 'IN456',
+                      insurance_expiry_date: '2016-06-08',
+                      status: 'pending',
+                      address: {
+                        street: 'adsdasdasdasd',
+                        city: 'texas',
+                        zipcode: 52014,
+                        state: {
+                          code: 'AL',
+                          name: 'Alabama'
+                        },
+                        country: {
+                          code: 'US',
+                          name: 'United States'
+                        }
+                      }
+                    }
+                  }
+                }.to_json
+              },
+              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
+          end
+          get 'show' do
+            {
+              message: 'Drivers details.',
+              data: {
+                driver: serialize_model_object(current_driver)
+              }
+            }
+          end
+
           desc 'Update contact information.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Contact Information updated successfully.'}.to_json },
@@ -124,7 +185,7 @@ module V1
             end
           end
           post 'update_visible_status' do
-            check_whether_driver_approved?
+            check_whether_driver_approved
 
             if current_driver.update(visible: params[:driver][:visible])
               { message: 'Visible status updated successfully.'}
