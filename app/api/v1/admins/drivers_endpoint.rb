@@ -21,8 +21,8 @@ module V1
               { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
           end
           paginate per_page: 20, max_per_page: 30, offset: false
-          post 'index', each_serializer: DriversArraySerializer do
-            drivers = paginate(Driver.all)
+          post 'index', each_serializer: DriverVehicleSerializer do
+            drivers = paginate(Driver.all.order(:created_at).reverse_order)
 
             if drivers.present?
               {
@@ -93,7 +93,7 @@ module V1
               requires :id, type: Integer, allow_blank: false
             end
           end
-          post 'show' do
+          post 'show', serializer: DriverVehicleSerializer do
             driver = Driver.find_by(id: params[:driver][:id])
 
             if driver.present?
