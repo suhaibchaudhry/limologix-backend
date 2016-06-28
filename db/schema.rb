@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160621104317) do
+ActiveRecord::Schema.define(version: 20160627081443) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -26,6 +26,21 @@ ActiveRecord::Schema.define(version: 20160621104317) do
   end
 
   add_index "addresses", ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
+
+  create_table "admins", force: :cascade do |t|
+    t.string   "first_name",            limit: 255
+    t.string   "last_name",             limit: 255
+    t.string   "password",              limit: 255
+    t.string   "email",                 limit: 255
+    t.string   "mobile_number",         limit: 255
+    t.string   "auth_token",            limit: 255
+    t.datetime "auth_token_expires_at"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+  end
+
+  add_index "admins", ["auth_token"], name: "index_admins_on_auth_token", unique: true, using: :btree
+  add_index "admins", ["email"], name: "index_admins_on_email", unique: true, using: :btree
 
   create_table "companies", force: :cascade do |t|
     t.string   "uid",                    limit: 255
@@ -81,7 +96,7 @@ ActiveRecord::Schema.define(version: 20160621104317) do
     t.datetime "auth_token_expires_at"
     t.string   "reset_password_token",    limit: 255
     t.datetime "reset_password_sent_at"
-    t.boolean  "visible",                             default: true
+    t.boolean  "visible",                             default: false
     t.string   "company",                 limit: 255
     t.string   "license_number",          limit: 255
     t.string   "license_image",           limit: 255
@@ -95,8 +110,9 @@ ActiveRecord::Schema.define(version: 20160621104317) do
     t.string   "insurance_policy_number", limit: 255
     t.date     "insurance_expiry_date"
     t.string   "channel",                 limit: 255
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.string   "status",                  limit: 255, default: "pending"
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
   end
 
   add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree

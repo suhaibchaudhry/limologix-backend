@@ -14,7 +14,7 @@ class CreateDrivers < ActiveRecord::Migration
       t.datetime :auth_token_expires_at
       t.string :reset_password_token
       t.datetime :reset_password_sent_at
-      t.boolean :visible, default: true
+      t.boolean :visible, default: false
       t.string :company
       t.string :license_number
       t.string :license_image
@@ -28,6 +28,7 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :insurance_policy_number
       t.date :insurance_expiry_date
       t.string :channel
+      t.string :status, default: 'pending'
 
       t.timestamps null: false
     end

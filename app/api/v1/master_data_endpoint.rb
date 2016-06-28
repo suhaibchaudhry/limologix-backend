@@ -1,5 +1,5 @@
 module V1
-  class MasterDataEndpoint < Root
+  class MasterDataEndpoint < Base
     namespace :master_data do
       desc 'Returns list of countries' do
         http_codes [ { code: 201, message: { status: 'success', message: 'Countries list', data: [{ code: "US", name: "United States" }, { code: "CA", name: "Canada"}] }.to_json }]

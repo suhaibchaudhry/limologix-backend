@@ -124,6 +124,7 @@ module V1
             end
           end
           post 'update_visible_status' do
+            check_whether_driver_approved?
 
             if current_driver.update(visible: params[:driver][:visible])
               { message: 'Visible status updated successfully.'}
@@ -150,6 +151,7 @@ module V1
             end
           end
           post 'reset_authentication_details' do
+
             if current_driver.update(password: params[:driver][:password], auth_token: nil)
               { message: 'Password has been updated successfully.'}
             else

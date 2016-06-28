@@ -1,11 +1,13 @@
 class Trip < ActiveRecord::Base
-  STATUSES = ['pending', 'dispatch', 'active', 'closed', 'cancelled']
+  STATUSES = ['pending', 'dispatched', 'active', 'closed', 'cancelled']
 
-  scope :pending, -> { where(status: 'pending') }
-  scope :dispatch, -> { where(status: 'dispatch') }
-  scope :active, -> { where(status: 'active') }
-  scope :closed, -> { where(status: 'closed') }
-  scope :cancelled, -> { where(status: 'cancelled') }
+  STATUSES.each do |status|
+    scope status.to_sym, -> { where(status: status) }
+
+    define_method("#{status}?") do
+      self.status == status
+    end
+  end
 
   belongs_to :user
   belongs_to :customer
@@ -22,12 +24,6 @@ class Trip < ActiveRecord::Base
   validates :pick_up_at, :passengers_count, presence: true
   accepts_nested_attributes_for :start_destination
   accepts_nested_attributes_for :end_destination
-
-  STATUSES.each do |value|
-    define_method("#{value}?") do
-      self.status == value
-    end
-  end
 
   def update_status_to_active!
     destroy_scheduled_worker
@@ -77,7 +73,6 @@ class Trip < ActiveRecord::Base
   end
 
   def find_scheduled_worker
-    job = nil
     scheduled = Sidekiq::ScheduledSet.new
     scheduled.each do |job|
       if job.klass == 'TripRequestWorker' && job.args.first == self.id

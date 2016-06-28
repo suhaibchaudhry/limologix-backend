@@ -33,33 +33,36 @@ class Base < Grape::API
     end
 
     def decode_base64_image(filename, base64)
-          in_content_type, encoding, string = base64.split(/[:;,]/)[1..3]
-          # filename = filename.split(".")[0]
+      in_content_type, encoding, string = base64.split(/[:;,]/)[1..3]
+      # filename = filename.split(".")[0]
 
-          tempfile = Tempfile.new(filename)
-          tempfile.binmode
-          tempfile.write Base64.decode64(string)
+      tempfile = Tempfile.new(filename)
+      tempfile.binmode
+      tempfile.write Base64.decode64(string)
 
-          # for security we want the actual content type, not just what was passed in
-          content_type = `file --mime -b #{tempfile.path}`.split(";")[0]
+      # for security we want the actual content type, not just what was passed in
+      content_type = `file --mime -b #{tempfile.path}`.split(";")[0]
 
-          # we will also add the extension ourselves based on the above
-          # if it's not gif/jpeg/png, it will fail the validation in the upload model
-          # extension = content_type.match(/gif|jpeg|png|jpg/).to_s
-          # filename += ".#{extension}" if extension
+      # we will also add the extension ourselves based on the above
+      # if it's not gif/jpeg/png, it will fail the validation in the upload model
+      # extension = content_type.match(/gif|jpeg|png|jpg/).to_s
+      # filename += ".#{extension}" if extension
 
-          ActionDispatch::Http::UploadedFile.new({
-            tempfile: tempfile,
-            content_type: content_type,
-            filename: filename
-          })
-        end
+      ActionDispatch::Http::UploadedFile.new({
+        tempfile: tempfile,
+        content_type: content_type,
+        filename: filename
+      })
+    end
 
 
 
   end
 
-  mount V1::Root
+  mount V1::Users::Root
+  mount V1::Drivers::Root
+  mount V1::Admins::Root
+  mount V1::MasterDataEndpoint
 
   add_swagger_documentation
 end

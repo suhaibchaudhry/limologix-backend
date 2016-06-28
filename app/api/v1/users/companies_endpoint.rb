@@ -65,25 +65,25 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message:
               {
-                status: "success",
-                message: "Company details updated successfully.",
+                status: 'success',
+                message: 'Company details updated successfully.',
                 data: {
                   company: {
                     id: 2,
-                    name: "dsad",
+                    name: 'dsad',
                     logo: {
-                      name: "image_1463402627.jpeg",
-                      image: "/uploads/company/logo/1/image_1463402627.jpeg"
+                      name: 'image_1463402627.jpeg',
+                      image: '/uploads/company/logo/1/image_1463402627.jpeg'
                     },
-                    email: "sadsad",
-                    primary_phone_number: "1231231234",
-                    secondary_phone_number: "null",
+                    email: 'sadsad',
+                    primary_phone_number: '1231231234',
+                    secondary_phone_number: 'null',
                     address: {
-                      street: "LNP",
-                      city: "Guntur",
+                      street: 'LNP',
+                      city: 'Guntur',
                       zipcode: 522004,
-                      state: { code: "AL", name: "Albama" },
-                      country: { code: "US", name: "United States" }
+                      state: { code: 'AL', name: 'Albama' },
+                      country: { code: 'US', name: 'United States' }
                     }
                   }
                 }

@@ -1,5 +1,16 @@
 class Driver < ActiveRecord::Base
   include BCrypt
+
+  STATUSES = ['pending', 'approved', 'disapproved', 'blocked']
+
+  STATUSES.each do |status|
+    scope status.to_sym, -> { where(status: status) }
+
+    define_method("#{status}?") do
+      self.status == status
+    end
+  end
+
   scope :visible, -> { where( visible: true ) }
   scope :invisible, -> { where( visible: false ) }
 
@@ -25,6 +36,18 @@ class Driver < ActiveRecord::Base
 
   before_create :set_auth_token, :set_channel
   before_save :set_password, if: Proc.new { |user| user.password_changed?}
+
+  def approve!
+    update_status!('approved')
+  end
+
+  def disapprove!
+    update_status!('disapproved')
+  end
+
+  def block!
+    update_status!('blocked')
+  end
 
   def full_name
     [first_name, last_name].join(' ').strip
@@ -53,6 +76,11 @@ class Driver < ActiveRecord::Base
   end
 
   private
+
+  def update_status!(status)
+    self.status = status
+    self.save
+  end
 
   def license_image_size
     if license_image.size > 5.megabytes

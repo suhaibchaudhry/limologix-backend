@@ -25,6 +25,16 @@ if Role.count <= 0
   end
 end
 
+if Admin.count <=0
+  admin = Admin.new
+  admin.first_name = "Super"
+  admin.last_name = "Admin"
+  admin.email = "superadmin@limologix.com"
+  admin.mobile_number = 7878787878
+  admin.password = 'Limologix@1234'
+  admin.save!
+end
+
 if VehicleType.count <= 0
   VEHICLE_TYPES.each do |type|
     vehicle_type = VehicleType.new
@@ -44,6 +54,5 @@ csv.each do |row|
   vehicle_type.vehicle_make_ids = (vehicle_type.vehicle_make_ids << vehicle_make.id)
   vehicle_make_type = VehicleMakeType.where(vehicle_type_id: vehicle_type.id, vehicle_make_id: vehicle_make.id).first
   vehicle_model = VehicleModel.find_or_create_by(name: row[2], vehicle_make_type_id: vehicle_make_type.id)
-  byebug
   puts "ONE Vehicle Make & Model created #{vehicle_make.name} --- #{vehicle_model.name}"
 end
