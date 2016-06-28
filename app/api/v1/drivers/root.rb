@@ -1,7 +1,6 @@
 module V1
   module Drivers
     class Root < Base
-      version 'v1'
 
       helpers do
         def authenticate!
