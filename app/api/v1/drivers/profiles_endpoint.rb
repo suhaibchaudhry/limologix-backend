@@ -82,7 +82,7 @@ module V1
               },
               { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
           end
-          get 'show' do
+          get 'show' , serializer: DriverVehicleSerializer do
             {
               message: 'Drivers details.',
               data: {
