@@ -15,7 +15,7 @@ module V1
 
         def vehicle_params
           params[:vehicle][:features_attributes] = params[:vehicle][:features].present? ? params[:vehicle][:features].map{|feature| {name: feature}} : []
-          ActionController::Parameters.new(params).require(:vehicle).permit(:hll_number, :color, :license_plate_number, :features)
+          ActionController::Parameters.new(params).require(:vehicle).permit(:hll_number, :color, :license_plate_number, features_attributes: [:name])
         end
       end
 

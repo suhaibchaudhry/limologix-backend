@@ -18,13 +18,13 @@ module V1
           params[:driver][:ara_image] = params[:driver][:ara_image].present? ? decode_base64_image(params[:driver][:ara_image][:name], params[:driver][:ara_image][:image]) : nil
 
           ActionController::Parameters.new(params).require(:driver).permit(:license_number, :license_expiry_date, :license_image,
-            :badge_number, :badge_expiry_date, :ara_number,:ara_image, :ara_expiry_date, :insurance_company, 
+            :badge_number, :badge_expiry_date,:ara_image, :ara_expiry_date, :insurance_company, 
             :insurance_policy_number, :insurance_expiry_date)
         end
 
         def vehicle_params
           params[:vehicle][:features_attributes] = params[:vehicle][:features].present? ? params[:vehicle][:features].map{|feature| {name: feature}} : []
-          ActionController::Parameters.new(params).require(:vehicle).permit(:hll_number, :color, :license_plate_number, :features)
+          ActionController::Parameters.new(params).require(:vehicle).permit(:hll_number, :color, :license_plate_number, features_attributes: [:name])
         end
       end
 
@@ -148,7 +148,6 @@ module V1
               requires :badge_number, type: String, allow_blank: false
               requires :badge_expiry_date, type: Date, allow_blank: false
 
-              requires :ara_number, type: String, allow_blank: false
               requires :ara_expiry_date, type: Date, allow_blank: false
               requires :ara_image, type: Hash do
                 requires :name, type: String, allow_blank: false
