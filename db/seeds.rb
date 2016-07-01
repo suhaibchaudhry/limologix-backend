@@ -2,7 +2,7 @@
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 require 'csv'
 
-ROLES = ["manager", "admin"]
+ROLES = ["super_admin", "admin", "manager", ]
 VEHICLE_TYPES = ["SUV", "Sedan", "Sprinter Van", "Van", "Shuttle Bus"]
 
 def get_dummy_image
@@ -25,14 +25,15 @@ if Role.count <= 0
   end
 end
 
-if Admin.count <=0
-  admin = Admin.new
-  admin.first_name = "Super"
-  admin.last_name = "Admin"
-  admin.email = "superadmin@limologix.com"
-  admin.mobile_number = 7878787878
-  admin.password = 'Limologix@1234'
-  admin.save!
+if Role.super_admin.users.count <=0
+  user = User.new
+  user.first_name = "Super"
+  user.last_name = "Admin"
+  user.email = "superadmin@limologix.com"
+  user.mobile_number = 7878787878
+  user.password = 'Limologix@1234'
+  user.role = Role.super_admin
+  user.save!
 end
 
 if VehicleType.count <= 0

@@ -49,7 +49,8 @@ module V1
               message: 'Registration successfull.',
               data: {
                 'Auth-Token': user.auth_token,
-                full_name: user.full_name
+                full_name: user.full_name,
+                role: user.role.name
               }
             }
           else

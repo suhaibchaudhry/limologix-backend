@@ -18,6 +18,10 @@ gem 'hashie-forbidden_attributes'
 gem 'grape-active_model_serializers'
 gem 'grape-kaminari'
 
+# Authorization
+gem 'cancancan', '~> 1.13.1'
+gem 'grape-cancan'
+
 # View
 # gem 'coffee-rails', '~> 4.1.0'
 # gem 'jquery-rails'

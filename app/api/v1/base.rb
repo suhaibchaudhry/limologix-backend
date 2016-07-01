@@ -51,7 +51,6 @@ module V1
 
     mount Users::Root
     mount Drivers::Root
-    mount Admins::Root
     mount MasterDataEndpoint
   end
 end

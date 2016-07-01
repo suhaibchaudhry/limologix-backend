@@ -1,6 +1,9 @@
 class Role < ActiveRecord::Base
-  scope :admin, -> { find_by(name: 'admin') }
-  scope :manager, -> { find_by(name: 'manager') }
+  ROLES = ['super_admin', 'admin', 'manager']
+
+  ROLES.each do |role|
+    scope role.to_sym, -> { find_by(name: role) }
+  end
 
   has_many  :users
 end

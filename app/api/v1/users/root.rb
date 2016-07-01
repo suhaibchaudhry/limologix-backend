@@ -24,6 +24,7 @@ module V1
       mount CustomersEndpoint
       mount TripsEndpoint
       mount VehiclesEndpoint
+      mount DriversEndpoint
     end
   end
 end
