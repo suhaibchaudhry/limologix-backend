@@ -4,7 +4,7 @@ module V1
 
       namespace :users do
         desc 'User login' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454','email': "Avinash489@yopmail.com"} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454','full_name': "Avinash T", 'role': 'super_admin'} }.to_json },
             { code: 401, message: { status: 'error', message: 'Invalid credentails.' }.to_json }]
         end
         params do
