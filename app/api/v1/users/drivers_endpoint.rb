@@ -109,78 +109,31 @@ module V1
             end
           end
 
-          desc 'Approve a driver.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+          Driver::SUPER_ADMIN_ACTIONS.each do |action, status|
+            desc "#{action} a driver." do
+              headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Driver approved successfully.',}.to_json },
-              { code: 201, message: { status: 'success', message: 'Driver not found.'}.to_json }]
-          end
-          params do
-            requires :driver, type: Hash do
-              requires :id, type: Integer, allow_blank: false
+              http_codes [
+                { code: 200, message: { status: 'success', message: "Driver #{status} successfully."}.to_json },
+                { code: 404, message: { status: 'success', message: 'Driver not found.'}.to_json }]
+            end
+            params do
+              requires :driver, type: Hash do
+                requires :id, type: Integer, allow_blank: false
+              end
+            end
+            post "#{action}", authorize: [:status_update, DriversEndpoint] do
+              driver = Driver.find_by(id: params[:driver][:id])
+
+              if driver.present?
+                driver.send("#{action}!")
+
+                { message: "Driver #{status} successfully." }
+              else
+                error!('Driver not found.', 404)
+              end
             end
           end
-          post 'approve' do
-            driver = Driver.find_by(id: params[:driver][:id])
-
-            if driver.present?
-              driver.approve!
-
-              { message: 'Driver approved successfully.' }
-            else
-              { message: 'No results found.'}
-            end
-          end
-
-          desc 'Disapprove a driver.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Driver disapproved successfully.',}.to_json },
-              { code: 201, message: { status: 'success', message: 'Driver not found.'}.to_json }]
-          end
-          params do
-            requires :driver, type: Hash do
-              requires :id, type: Integer, allow_blank: false
-            end
-          end
-          post 'disapprove' do
-            driver = Driver.find_by(id: params[:driver][:id])
-
-            if driver.present?
-              driver.disapprove!
-
-              { message: 'Driver disapproved successfully.' }
-            else
-              { message: 'No results found.'}
-            end
-          end
-
-          desc 'Block a driver.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Driver blocked successfully.',}.to_json },
-              { code: 201, message: { status: 'success', message: 'Driver not found.'}.to_json }]
-          end
-          params do
-            requires :driver, type: Hash do
-              requires :id, type: Integer, allow_blank: false
-            end
-          end
-          post 'block' do
-            driver = Driver.find_by(id: params[:driver][:id])
-
-            if driver.present?
-              driver.block!
-
-              { message: 'Driver blocked successfully.' }
-            else
-              { message: 'No results found.'}
-            end
-          end
-
 
         end
       end

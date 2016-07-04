@@ -2,6 +2,11 @@ class Driver < ActiveRecord::Base
   include Authentication
 
   STATUSES = ['pending', 'approved', 'disapproved', 'blocked']
+  SUPER_ADMIN_ACTIONS = {
+    approve: 'approved',
+    block: 'blocked',
+    disapprove: 'disapproved'
+  }
 
   STATUSES.each do |status|
     scope status.to_sym, -> { where(status: status) }
@@ -34,16 +39,11 @@ class Driver < ActiveRecord::Base
 
   before_create :set_channel
 
-  def approve!
-    update_status!('approved')
-  end
-
-  def disapprove!
-    update_status!('disapproved')
-  end
-
-  def block!
-    update_status!('blocked')
+  SUPER_ADMIN_ACTIONS.each do |action, status|
+    define_method("#{action}!") do
+      self.status = status
+      self.save
+    end
   end
 
   def full_name
@@ -51,11 +51,6 @@ class Driver < ActiveRecord::Base
   end
 
   private
-
-  def update_status!(status)
-    self.status = status
-    self.save
-  end
 
   def license_image_size
     if license_image.size > 5.megabytes

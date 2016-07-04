@@ -32,7 +32,7 @@ module V1
 
           http_codes [ { code: 201, message: { status: 'success', message: 'Logged out successfully.'}.to_json }]
         end
-        post 'logout' do
+        get 'logout' do
           authenticate!
           current_driver.update(auth_token: nil)
           {

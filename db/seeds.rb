@@ -2,7 +2,7 @@
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 require 'csv'
 
-ROLES = ["super_admin", "admin", "manager", ]
+ROLES = ["super_admin", "admin", "manager"]
 VEHICLE_TYPES = ["SUV", "Sedan", "Sprinter Van", "Van", "Shuttle Bus"]
 
 def get_dummy_image
