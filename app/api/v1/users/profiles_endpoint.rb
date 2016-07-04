@@ -18,7 +18,7 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Profile details updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'User first name is missing, User last name is empty'
@@ -37,7 +37,7 @@ module V1
             if current_user.update(user_params)
               { message: 'Profile details updated successfully.'}
             else
-              error!(error_formatter(current_user) , 401)
+              error!(error_formatter(current_user) , 400)
             end
           end
 
@@ -60,7 +60,7 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'User password is empty'
@@ -76,7 +76,7 @@ module V1
             if current_user.update(password: params[:user][:password], auth_token: nil)
               { message: 'Password has been updated successfully.'}
             else
-              error!(error_formatter(current_user) , 401)
+              error!(error_formatter(current_user) , 400)
             end
           end
 

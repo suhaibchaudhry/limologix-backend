@@ -15,7 +15,7 @@ module V1
       namespace :users do
         desc 'Company registration.' do
           http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454','full_name': "Avinash T", 'role': 'super_admin'} }.to_json },
-            { code: 401,
+            { code: 400,
               message: {
                 status: 'error',
                 message: 'User email has already been taken, Company email has already been taken'
@@ -55,7 +55,7 @@ module V1
             }
           else
             message = error_formatter(user) + ", " + error_formatter(company)
-            error!(message , 401)
+            error!(message , 400)
           end
         end
       end

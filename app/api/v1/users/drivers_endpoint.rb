@@ -13,7 +13,7 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [
-              { code: 200, message: { status: 'success', message: 'Customers list.',
+              { code: 200, message: { status: 'success', message: 'Drivers list.',
                 data: {
                   drivers: [{id: 1, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'},
                     {id: 2, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'}]

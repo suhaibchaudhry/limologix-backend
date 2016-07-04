@@ -1,6 +1,8 @@
 module V1
   module Users
     class CompaniesEndpoint < Root
+      authorize_routes!
+
       before do
         authenticate!
       end
@@ -18,6 +20,34 @@ module V1
 
       namespace :users do
         namespace :companies do
+
+          desc 'Companies list.' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [
+              { code: 200, message: { status: 'success', message: 'Companies list.',
+                data: {
+                  drivers: [{id: 1, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'},
+                    {id: 2, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'}]
+                  }
+                }.to_json },
+              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
+          end
+          paginate per_page: 20, max_per_page: 30, offset: false
+          post 'index', authorize: [:index, CompaniesEndpoint] do
+            companies = paginate(Company.all.order(:created_at).reverse_order)
+
+            if companies.present?
+              {
+                message: 'Companies list.',
+                data: {
+                  companies: serialize_model_object(companies)
+                }
+              }
+            else
+              { message: 'No results found.'}
+            end
+          end
 
           desc 'Company details update.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
@@ -52,7 +82,7 @@ module V1
               end
             end
           end
-          post 'update' do
+          post 'update', authorize: [:update, CompaniesEndpoint] do
             company = current_user.company
             if company.update(company_params)
               { message: 'Company details updated successfully.'}
@@ -99,6 +129,7 @@ module V1
               }
             }
           end
+
 
         end
       end
