@@ -4,7 +4,7 @@ module V1
       namespace :drivers do
         desc 'Verifies email and send reset password mail' do
           http_codes [ { code: 201, message: { status: 'success', message: 'Email has been sent to registered email address.' }.to_json },
-            { code: 401, message: { status: 'error', message: 'Email not found.' }.to_json }]
+            { code: 404, message: { status: 'error', message: 'Email not found.' }.to_json }]
         end
         params do
           requires :email, type: String, allow_blank: false
@@ -22,7 +22,7 @@ module V1
 
         desc 'Creates new password by verifying password token' do
           http_codes [ { code: 201, message: { status: 'success', message: 'Password has been set successfully.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
-            { code: 401,
+            { code: 400,
               message: {
                 status: 'error',
                 message: 'Driver password is empty'
@@ -42,7 +42,7 @@ module V1
             if driver.update(password: params[:driver][:password], reset_password_token: nil)
               { message: 'Password has been set successfully.' }
             else
-              error!(error_formatter(driver) , 401)
+              error!(error_formatter(driver) , 400)
             end
 
           else

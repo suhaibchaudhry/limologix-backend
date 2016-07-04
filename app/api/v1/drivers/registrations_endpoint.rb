@@ -22,7 +22,7 @@ module V1
       namespace :drivers do
         desc 'Creates a driver account' do
           http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', email: "mahesh@yopmail.com"} }.to_json },
-            { code: 401,
+            { code: 400,
               message: {
                 status: 'error',
                 message: 'Driver email has already been taken'
@@ -78,7 +78,7 @@ module V1
         end
         post 'registration' do
           vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
-          error!("Vehicle Type not found." , 404) unless vehicle_type.present?
+          error!("Vehicle type not found." , 404) unless vehicle_type.present?
 
           vehicle_make = VehicleMake.find_by(id: params[:vehicle][:vehicle_make_id])
           error!("Vehicle make not found." , 404) unless vehicle_make.present?
@@ -110,7 +110,7 @@ module V1
             }
           else
             message = error_formatter(driver) + ", " + error_formatter(vehicle)
-            error!(message , 401)
+            error!(message , 400)
           end
         end
       end

@@ -48,7 +48,7 @@ module V1
                   message: 'Trip not found.',
                 }.to_json
               },
-              { code: 401,
+              { code: 403,
                 message: {
                   status: 'error',
                   message: 'Trip has already been dispatched.',
@@ -63,12 +63,12 @@ module V1
           post 'accept' do
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
-            error!('Trip has been closed or cancelled.' , 401) if trip.closed? || trip.cancelled?
-            error!('You have already accepted this trip.' , 401) if trip.active? && trip.active_dispatch.driver == current_driver
+            error!('Trip has been closed or cancelled.' , 403) if trip.closed? || trip.cancelled?
+            error!('You have already accepted this trip.' , 403) if trip.active? && trip.active_dispatch.driver == current_driver
             error!('You cannot accept this trip because you are part of some other trip.') if current_driver.active_dispatch.present?
-            error!('Trip has already been dispatched.' , 401) if trip.active?
-            error!('Right now you are in Invisible status.' , 401) unless current_driver.visible
-            error!('You have exceeded the time limit to accept.' , 401) if trip.request_notifications.find_by(driver_id: driver) && ((Time.now - trip.request_notifications.find_by(driver_id: driver).created_at) < 10.seconds)
+            error!('Trip has already been dispatched.' , 403) if trip.active?
+            error!('Right now you are in Invisible status.' , 403) unless current_driver.visible
+            error!('You have exceeded the time limit to accept.' , 403) if trip.request_notifications.find_by(driver_id: driver) && ((Time.now - trip.request_notifications.find_by(driver_id: driver).created_at) < 10.seconds)
 
             dispatch = current_driver.dispatches.new(trip_id: trip.id)
             if dispatch.save && trip.active!
@@ -76,7 +76,7 @@ module V1
                 message: 'Trip accepted successfully.',
               }
             else
-              error!(error_formatter(dispatch) , 401)
+              error!(error_formatter(dispatch) , 400)
             end
           end
 
@@ -114,9 +114,9 @@ module V1
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
 
-            error!('This trip does not belong to you.' , 404) if trip.active? && (trip.active_dispatch.driver != current_driver)
-            error!('Trip already started.' , 404) if trip.active_dispatch.started?
-            error!('Trip already completed.' , 404) if trip.active_dispatch.completed?
+            error!('This trip does not belong to you.' , 403) if trip.active? && (trip.active_dispatch.driver != current_driver)
+            error!('Trip already started.' , 403) if trip.active_dispatch.started?
+            error!('Trip already completed.' , 403) if trip.active_dispatch.completed?
 
             trip.active_dispatch.start!
             { message: 'Trip started successfully.' }
@@ -137,10 +137,10 @@ module V1
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
 
-             error!('This trip does not belong to you.' , 404) if trip.active? && (trip.active_dispatch.driver != current_driver)
+             error!('This trip does not belong to you.' , 403) if trip.active? && (trip.active_dispatch.driver != current_driver)
 
-            error!('Trip not yet started.' , 404) if trip.active_dispatch.yet_to_start?
-            error!('Trip already completed.' , 404) if trip.active_dispatch.completed?
+            error!('Trip not yet started.' , 403) if trip.active_dispatch.yet_to_start?
+            error!('Trip already completed.' , 403) if trip.active_dispatch.completed?
 
             trip.active_dispatch.stop!
             { message: 'Trip started successfully.' }

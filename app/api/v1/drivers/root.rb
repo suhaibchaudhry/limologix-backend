@@ -16,9 +16,9 @@ module V1
         end
 
         def check_whether_driver_approved
-          error!('Your account is in approval process.', 401) if current_driver.pending?
-          error!('Your account has been disapproved.', 401) if current_driver.disapproved?
-          error!('Your account is blocked.', 401) if current_driver.blocked?
+          error!('Your account is in approval process.', 403) if current_driver.pending?
+          error!('Your account has been disapproved.', 403) if current_driver.disapproved?
+          error!('Your account is blocked.', 403) if current_driver.blocked?
         end
       end
 

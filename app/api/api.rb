@@ -9,6 +9,10 @@ class API < Grape::API
   formatter :json, CustomFormatter
   error_formatter :json, CustomErrorFormatter
 
+  rescue_from CanCan::AccessDenied do |e|
+    error!('Access denied.', 403)
+  end
+
 
   mount V1::Base
 

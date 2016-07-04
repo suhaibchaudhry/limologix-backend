@@ -94,7 +94,7 @@ module V1
           desc 'Update contact information.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Contact Information updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Driver first name is missing, Driver last name is empty'
@@ -122,14 +122,14 @@ module V1
             if current_driver.update(contact_info_params)
               { message: 'Contact information updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 401)
+              error!(error_formatter(current_driver) , 400)
             end
           end
 
           desc 'Update personal information.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Personal information updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Driver license number is missing, Driver license number is empty'
@@ -163,7 +163,7 @@ module V1
             if current_driver.update(personal_info_params)
               { message: 'Personal information updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 401)
+              error!(error_formatter(current_driver) , 400)
             end
           end
 
@@ -171,7 +171,7 @@ module V1
           desc 'Update visible status.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
             http_codes [ { code: 201, message: { status: 'success', message: 'Personal information updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Driver visible is missing, Driver visible is empty'
@@ -189,7 +189,7 @@ module V1
             if current_driver.update(visible: params[:driver][:visible])
               { message: 'Visible status updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 401)
+              error!(error_formatter(current_driver) , 400)
             end
           end
 
@@ -198,7 +198,7 @@ module V1
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Driver password is empty'
@@ -215,7 +215,7 @@ module V1
             if current_driver.update(password: params[:driver][:password], auth_token: nil)
               { message: 'Password has been updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 401)
+              error!(error_formatter(current_driver) , 400)
             end
           end
 
@@ -237,7 +237,7 @@ module V1
             headers 'Auth-Token' => { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle details.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Vehicle make is missing, Vehicle make is empty'
@@ -263,7 +263,7 @@ module V1
             headers 'Auth-Token' => { description: 'Validates your identity', required: true }
 
             http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle updated successfully.'}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Vehicle make is missing, Vehicle make is empty'
@@ -283,7 +283,7 @@ module V1
           end
           post 'update_vehicle' do
             vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
-            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
+            error!("Vehicle type not found." , 404) unless vehicle_type.present?
 
             vehicle_make = VehicleMake.find_by(id: params[:vehicle][:vehicle_make_id])
             error!("Vehicle make not found." , 404) unless vehicle_make.present?
@@ -304,7 +304,7 @@ module V1
             if vehicle.update(vehicle_params)
               { message: 'Vehicle updated successfully.' }
             else
-              error!(error_formatter(vehicle) , 401)
+              error!(error_formatter(vehicle) , 400)
             end
           end
 
