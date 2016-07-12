@@ -54,8 +54,7 @@ module V1
               }
             }
           else
-            message = error_formatter(user) + ", " + error_formatter(company)
-            error!(message , 400)
+            error!("#{user.errors.full_messages}, #{company.errors.full_messages}" , 400)
           end
         end
       end

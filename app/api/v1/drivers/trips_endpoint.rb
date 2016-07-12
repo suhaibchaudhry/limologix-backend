@@ -76,7 +76,7 @@ module V1
                 message: 'Trip accepted successfully.',
               }
             else
-              error!(error_formatter(dispatch) , 400)
+              error!(dispatch.errors.full_messages , 400)
             end
           end
 

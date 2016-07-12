@@ -42,11 +42,11 @@ module V1
             if user.update(password: params[:user][:password], reset_password_token: nil)
               { message: 'Password has been set successfully.' }
             else
-              error!(error_formatter(user) , 401)
+              error!(user.errors.full_messages , 401)
             end
 
           else
-            error!('Password token is invalid or expired', 401)
+            error!('Password token is invalid or expired.', 401)
           end
         end
       end

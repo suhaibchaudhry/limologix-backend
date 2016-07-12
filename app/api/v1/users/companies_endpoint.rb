@@ -87,7 +87,7 @@ module V1
             if company.update(company_params)
               { message: 'Company details updated successfully.'}
             else
-              error!(error_formatter(company) , 401)
+              error!(company.errors.full_messages , 401)
             end
           end
 

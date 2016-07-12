@@ -109,8 +109,7 @@ module V1
               }
             }
           else
-            message = error_formatter(driver) + ", " + error_formatter(vehicle)
-            error!(message , 400)
+            error!("#{driver.errors.full_messages}, #{vehicle.errors.full_messages}" , 400)
           end
         end
       end

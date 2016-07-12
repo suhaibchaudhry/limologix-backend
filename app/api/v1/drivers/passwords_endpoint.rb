@@ -42,7 +42,7 @@ module V1
             if driver.update(password: params[:driver][:password], reset_password_token: nil)
               { message: 'Password has been set successfully.' }
             else
-              error!(error_formatter(driver) , 400)
+              error!(driver.errors.full_messages , 400)
             end
 
           else

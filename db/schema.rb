@@ -91,36 +91,33 @@ ActiveRecord::Schema.define(version: 20160627081443) do
     t.string   "password",                limit: 255
     t.string   "email",                   limit: 255
     t.string   "mobile_number",           limit: 255
-    t.date     "dob"
-    t.string   "home_phone_number",       limit: 255
-    t.string   "social_security_number",  limit: 255
-    t.string   "display_name",            limit: 255
     t.string   "auth_token",              limit: 255
     t.datetime "auth_token_expires_at"
     t.string   "reset_password_token",    limit: 255
     t.datetime "reset_password_sent_at"
     t.boolean  "visible",                             default: false
-    t.string   "company",                 limit: 255
     t.string   "license_number",          limit: 255
     t.string   "license_image",           limit: 255
     t.date     "license_expiry_date"
     t.string   "badge_number",            limit: 255
     t.date     "badge_expiry_date"
-    t.string   "ara_number",              limit: 255
     t.string   "ara_image",               limit: 255
     t.date     "ara_expiry_date"
     t.string   "insurance_company",       limit: 255
     t.string   "insurance_policy_number", limit: 255
     t.date     "insurance_expiry_date"
     t.string   "channel",                 limit: 255
+    t.string   "topic",                   limit: 255
     t.string   "status",                  limit: 255, default: "pending"
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
   end
 
   add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree
+  add_index "drivers", ["channel"], name: "index_drivers_on_channel", unique: true, using: :btree
   add_index "drivers", ["email"], name: "index_drivers_on_email", unique: true, using: :btree
   add_index "drivers", ["reset_password_token"], name: "index_drivers_on_reset_password_token", unique: true, using: :btree
+  add_index "drivers", ["topic"], name: "index_drivers_on_topic", unique: true, using: :btree
 
   create_table "geolocations", force: :cascade do |t|
     t.string   "place",          limit: 255

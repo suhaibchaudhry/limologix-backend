@@ -37,7 +37,7 @@ module V1
             if current_user.update(user_params)
               { message: 'Profile details updated successfully.'}
             else
-              error!(error_formatter(current_user) , 400)
+              error!(current_user.errors.full_messages , 400)
             end
           end
 
@@ -76,7 +76,7 @@ module V1
             if current_user.update(password: params[:user][:password], auth_token: nil)
               { message: 'Password has been updated successfully.'}
             else
-              error!(error_formatter(current_user) , 400)
+              error!(current_user.errors.full_messages , 400)
             end
           end
 

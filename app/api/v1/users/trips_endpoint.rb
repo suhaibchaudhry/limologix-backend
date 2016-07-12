@@ -40,7 +40,7 @@ module V1
                   message: 'Customer not found.',
                 }.to_json
               },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Trip start destination is missing, Trip end destination is empty',
@@ -79,7 +79,7 @@ module V1
                 }
               }
             else
-              error!(error_formatter(trip) , 401)
+              error!(trip.errors.full_messages , 400)
             end
           end
 
@@ -154,7 +154,7 @@ module V1
                   "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
                   "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
                   }}.to_json },
-              { code: 401,
+              { code: 400,
                 message: {
                   status: 'error',
                   message: 'Trip start destination is missing, Trip end destination is empty',
@@ -188,7 +188,7 @@ module V1
                 }
               }
             else
-              error!(error_formatter(trip) , 401)
+              error!(trip.errors.full_messages , 400)
             end
           end
 
@@ -248,7 +248,7 @@ module V1
               TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
               { message: 'Trip has been dispatched successfully.' }
             else
-              error!(error_formatter(trip) , 401)
+              error!(trip.errors.full_messages , 400)
             end
           end
         end

@@ -121,7 +121,7 @@ module V1
             if current_driver.update(contact_info_params)
               { message: 'Contact information updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 400)
+              error!(current_driver.errors.full_messages , 400)
             end
           end
 
@@ -162,7 +162,7 @@ module V1
             if current_driver.update(personal_info_params)
               { message: 'Personal information updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 400)
+              error!(current_driver.errors.full_messages , 400)
             end
           end
 
@@ -188,7 +188,7 @@ module V1
             if current_driver.update(visible: params[:driver][:visible])
               { message: 'Visible status updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 400)
+              error!(current_driver.errors.full_messages , 400)
             end
           end
 
@@ -214,7 +214,7 @@ module V1
             if current_driver.update(password: params[:driver][:password], auth_token: nil)
               { message: 'Password has been updated successfully.'}
             else
-              error!(error_formatter(current_driver) , 400)
+              error!(current_driver.errors.full_messages , 400)
             end
           end
 
@@ -228,6 +228,20 @@ module V1
               message: 'Channel.',
               data: {
                 channel: current_driver.channel
+              }
+            }
+          end
+
+          desc 'Get topic name' do
+            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+
+            http_codes [ { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
+          end
+          get 'topic' do
+            {
+              message: 'Topic.',
+              data: {
+                topic: current_driver.topic
               }
             }
           end
@@ -303,7 +317,7 @@ module V1
             if vehicle.update(vehicle_params)
               { message: 'Vehicle updated successfully.' }
             else
-              error!(error_formatter(vehicle) , 400)
+              error!(vehicle.errors.full_messages, 400)
             end
           end
 

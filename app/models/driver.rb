@@ -28,7 +28,7 @@ class Driver < ActiveRecord::Base
   validates :first_name, :last_name, :password, :mobile_number, :email, :license_number,
             :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_image,
             :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date, presence: true
-  validates :mobile_number, :license_number, :badge_number, :email, uniqueness: true
+  validates :mobile_number, :license_number, :badge_number, :email, :channel, :topic, uniqueness: true
   validate :license_image_size, :ara_image_size
 
   mount_uploader :license_image, ImageUploader
@@ -37,7 +37,7 @@ class Driver < ActiveRecord::Base
 
   accepts_nested_attributes_for :address
 
-  before_create :set_channel
+  before_create :set_channel, :set_topic
 
   SUPER_ADMIN_ACTIONS.each do |action, status|
     define_method("#{action}!") do
@@ -64,7 +64,22 @@ class Driver < ActiveRecord::Base
     end
   end
 
+
+  private
+
   def set_channel
-    self.channel = generate_unique_token_for("channel")
+    self.channel = generate_unique_name_for("channel")
+  end
+
+  def set_topic
+    self.topic = generate_unique_name_for("topic")
+  end
+
+  def generate_unique_name_for(attribute)
+    name = nil
+    loop do
+      name = "#{attribute}_#{SecureRandom.hex}"
+      break name unless Driver.send("find_by_#{attribute}", name).present?
+    end
   end
 end

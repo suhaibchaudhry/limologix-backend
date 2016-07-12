@@ -14,17 +14,6 @@ module V1
         end
       end
 
-      def error_formatter(resource)
-        message = ""
-        model_name = resource.class.name
-        resource.errors.messages.each do |attribute, arr|
-          arr.each do |error|
-            message = message + "#{model_name} #{attribute.to_s} #{error}, "
-          end
-        end
-        message.gsub(/, $/, "")
-      end
-
       def decode_base64_image(filename, base64)
         in_content_type, encoding, string = base64.split(/[:;,]/)[1..3]
         # filename = filename.split(".")[0]

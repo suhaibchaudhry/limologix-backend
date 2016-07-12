@@ -47,7 +47,7 @@ module V1
                 }
               }
             else
-              error!(error_formatter(customer) , 401)
+              error!(customer.errors.full_messages , 401)
             end
           end
 
