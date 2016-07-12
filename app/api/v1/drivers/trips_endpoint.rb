@@ -99,7 +99,7 @@ module V1
             { message: 'Trip denied successfully.' }
           end
 
-          desc 'When passanger on board start the trip.' do
+          desc 'When passenger on board start the trip.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
              http_codes [ { code: 201, message: { status: 'success', message: 'Trip started successfully.'}.to_json },
@@ -122,10 +122,10 @@ module V1
             { message: 'Trip started successfully.' }
           end
 
-          desc 'When passanger off board stop the trip.' do
+          desc 'When passenger off board stop the trip.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-            http_codes [ { code: 201, message: { status: 'success', message: 'Status updated to passanger on board.'}.to_json },
+            http_codes [ { code: 201, message: { status: 'success', message: 'Status updated to passenger on board.'}.to_json },
               { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
           end
           params do

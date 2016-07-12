@@ -3,7 +3,7 @@ module Authentication
   extend ActiveSupport::Concern
 
   included do |base|
-    @@base = base
+    @@base_class = base
     validates :first_name, :last_name, :email, :password , presence: true
     validates :email, uniqueness: true
     validates :mobile_number, numericality: { only_integer: true }, allow_blank: true
@@ -57,7 +57,7 @@ module Authentication
     token = nil
     loop do
       token = SecureRandom.hex
-      break token unless @@base.send("find_by_#{attribute}", token).present?
+      break token unless @@base_class.send("find_by_#{attribute}", token).present?
     end
   end
 end

@@ -79,8 +79,7 @@ module V1
                     }
                   }
                 }.to_json
-              },
-              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
+              }]
           end
           get 'show' , serializer: DriverVehicleSerializer do
             {
@@ -170,7 +169,7 @@ module V1
 
           desc 'Update visible status.' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Personal information updated successfully.'}.to_json },
+            http_codes [ { code: 201, message: { status: 'success', message: 'Visible status updated successfully.'}.to_json },
               { code: 400,
                 message: {
                   status: 'error',
