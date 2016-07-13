@@ -3,17 +3,22 @@
 require 'csv'
 
 ROLES = ['super_admin', 'admin', 'manager']
-VEHICLE_TYPES = ['SUV', 'Sedan', 'Sprinter Van', 'Van', 'Shuttle Bus']
+VEHICLE_TYPE_WITH_ICONS = {
+  'SUV': 'vehicle-icons-suv.png',
+  'Sedan': 'vehicle-icons-sedan.png',
+  'Sprinter Van': 'vehicle-icons-sprinter-van.png',
+  'Van': 'vehicle-icons-van.png',
+  'Shuttle Van': 'vehicle-icons-shuttle-van.png',
+  }
 
-def get_dummy_image
-  filename = "dummy_image_#{(1..10).to_a.sample}"
-  tempfile = open(FFaker::Avatar.image)
-  extension = tempfile.content_type.match(/gif|jpeg|png|jpg/).to_s
-  filename += ".#{extension}" if extension
+def generate_upload_file_image(filename)
+  image_file = File.open(File.join(Rails.root, "app/assets/images/#{filename}"),'r')
+
+  content_type = `file --mime -b #{image_file.path}`.split(";")[0]
 
   ActionDispatch::Http::UploadedFile.new({
-    tempfile: tempfile,
-    content_type: tempfile.content_type,
+    tempfile: image_file,
+    content_type: content_type,
     filename: filename
   })
 end
@@ -37,12 +42,18 @@ if Role.super_admin.users.count <=0
 end
 
 if VehicleType.count <= 0
-  VEHICLE_TYPES.each do |type|
+  VEHICLE_TYPE_WITH_ICONS.each do |name, icon|
     vehicle_type = VehicleType.new
-    vehicle_type.name = type
-    vehicle_type.description = FFaker::Lorem.sentence
+    vehicle_type.name = name
+    vehicle_type.description = "Lorem Ipsum is simply dummy text of the printing and 
+    typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 
+    the 1500s, when an unknown printer took a galley of type and scrambled it to make a type 
+    specimen book. It has survived not only five centuries, but also the leap into electronic 
+    typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release 
+    of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+    software like Aldus PageMaker including versions of Lorem Ipsum."
     vehicle_type.capacity = (1..10).to_a.sample
-    vehicle_type.image = get_dummy_image
+    vehicle_type.image = generate_upload_file_image(icon)
     puts "One Vehicle type is created with name #{vehicle_type.name}" if vehicle_type.save!
   end
 end

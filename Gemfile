@@ -45,7 +45,7 @@ end
 
 group :staging, :development do
   gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'ffaker'
+  # gem 'ffaker'
 end
 
 

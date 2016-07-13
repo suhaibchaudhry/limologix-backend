@@ -83,7 +83,6 @@ GEM
     equalizer (0.0.11)
     erubis (2.7.0)
     eventmachine (1.2.0.1)
-    ffaker (2.2.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     grape (0.14.0)
@@ -221,7 +220,6 @@ DEPENDENCIES
   capistrano-rvm
   carrierwave
   city-state
-  ffaker
   grape
   grape-active_model_serializers
   grape-cancan
