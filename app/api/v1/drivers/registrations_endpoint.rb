@@ -109,7 +109,8 @@ module V1
               }
             }
           else
-            error!("#{driver.errors.full_messages}, #{vehicle.errors.full_messages}" , 400)
+            message = "#{driver.errors.full_messages}, #{vehicle.errors.full_messages}"
+            error!(message.gsub(/^,|,$/, ''), 400)
           end
         end
       end
