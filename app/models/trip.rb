@@ -45,7 +45,7 @@ class Trip < ActiveRecord::Base
     nearest_distance = 20
 
     already_requested_drivers = self.request_notifications.collect(&:driver_id)
-    drivers_not_visible = Driver.invisible.collect(&:id)
+    # drivers_not_visible = Driver.invisible.collect(&:id)
     drivers_in_active_trips = Dispatch.active.collect(&:driver_id)
     driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
 
