@@ -113,7 +113,7 @@ module V1
           post 'start' do
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
-
+            error!('This trip is not yet dispatched or cancelled.' , 403) unless trip.active?
             error!('This trip does not belong to you.' , 403) if trip.active? && (trip.active_dispatch.driver != current_driver)
             error!('Trip already started.' , 403) if trip.active_dispatch.started?
             error!('Trip already completed.' , 403) if trip.active_dispatch.completed?
@@ -136,8 +136,8 @@ module V1
           post 'stop' do
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
-
-             error!('This trip does not belong to you.' , 403) if trip.active? && (trip.active_dispatch.driver != current_driver)
+            error!('This trip is not yet dispatched or cancelled.' , 403) unless trip.active?
+            error!('This trip does not belong to you.' , 403) if trip.active? && (trip.active_dispatch.driver != current_driver)
 
             error!('Trip not yet started.' , 403) if trip.active_dispatch.yet_to_start?
             error!('Trip already completed.' , 403) if trip.active_dispatch.completed?
