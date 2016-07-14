@@ -1,22 +1,26 @@
 source 'https://rubygems.org'
 
 # Server Stack
-gem 'rails', '4.2.4'
+gem 'rails', '4.2.6'
 gem 'thin'
-gem 'mysql2'
+gem 'mysql2', '0.4.4'
+gem 'sidekiq'
+
+gem 'sinatra', require: false
 
 # Authentication & Authorization
-gem 'devise'
+gem "bcrypt"
 
 # API
 gem 'grape'
 gem 'grape-swagger'
 gem 'hashie-forbidden_attributes'
+gem 'grape-active_model_serializers'
+gem 'grape-kaminari'
 
-
-# Config
-gem 'paper_trail', '~> 4.0.0'
-gem 'settingslogic'
+# Authorization
+gem 'cancancan', '~> 1.13.1'
+gem 'grape-cancan'
 
 # View
 # gem 'coffee-rails', '~> 4.1.0'
@@ -26,13 +30,23 @@ gem 'settingslogic'
 # gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'turbolinks'
 # gem 'uglifier', '>= 1.3.0'
+gem 'city-state'
+gem 'rack-cors'
 
 # Uploads & Imports
-gem 'carrierwave-aws'
+gem 'carrierwave'
 gem 'mini_magick'
 
-group :development, :test do
-  gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'ffaker'
+group :development do
+  gem 'capistrano', '~> 3.4'
+  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano-rvm'
 end
+
+group :staging, :development do
+  gem 'byebug' # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  # gem 'ffaker'
+end
+
+
 

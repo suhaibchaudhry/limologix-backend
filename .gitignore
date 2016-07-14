@@ -16,4 +16,5 @@
 !/log/.keep
 /public/uploads
 /tmp
-
+/test
+.byebug_history

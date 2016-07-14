@@ -1,0 +1,3 @@
+class EndDestination < Geolocation
+
+end

@@ -1,0 +1,46 @@
+Type,Make,Model
+Sedan,Lincoln,MKZ
+Sedan,Lincoln,MKS
+Sedan,Hyundai,Genesis
+Sedan,Hyundai,Equus
+Sedan,Hyundai,Azera
+Sedan,Cadillac,ATS
+Sedan,Cadillac,CTS
+Sedan,Cadillac,XTS
+Sedan,Lexus,IS
+Sedan,Lexus,GS
+Sedan,Lexus,ES
+Sedan,Lexus,LS
+Sedan,Mercedes,C-Class
+Sedan,Mercedes,E-Class
+Sedan,Mercedes,S-Class
+Sedan,BMW,3 Series
+Sedan,BMW,4 Series
+Sedan,BMW,5 Series
+Sedan,BMW,6 Series
+Sedan,BMW,7 Series
+Sedan,Acura,RLX
+Sedan,Infiniti,Q40
+Sedan,Infiniti,Q50
+Sedan,Infiniti,Q70
+Sedan,Jaguar,XF
+Sedan,Jaguar,XJ
+SUV,Lincoln,MKT
+SUV,Lincoln,Navigator
+SUV,Chevy,Tahoe
+SUV,Chevy,Suburban
+SUV,Cadillac,Escalade
+SUV,Ford,Expedition
+SUV,Lexus,RX
+SUV,Lexus,GX
+SUV,Lexus,LX
+SUV,Mercedes,GLE-Class
+SUV,Mercedes,GL-Sedan
+SUV,GMC,Yukon
+SUV,Acura,MDX
+SUV,Infiniti,QX60
+SUV,Infiniti,QX70
+SUV,Infiniti,QX80
+SUV,Toyota,Sequoia
+SUV,Toyota,Land Cruiser
+SUV,Jaguar,F-Pace
