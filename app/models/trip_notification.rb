@@ -6,8 +6,12 @@ class TripNotification < ActiveRecord::Base
   belongs_to :driver
   belongs_to :trip
 
+  after_create :send_notification
 
-  # def send
-  #   puts "<<<notification has been send"
-  # end
+  private
+
+  def send_notification
+    response = Fcm.publish_to_topic(driver.topic, title, body, TripSerializer.new(trip))
+    self.update(status: response[:status], response: response[:message])
+  end
 end

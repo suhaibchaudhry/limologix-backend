@@ -52,7 +52,7 @@ class Trip < ActiveRecord::Base
     if drivers_geolocation.present?
       drivers_geolocation.each do|key, value|
         geolocation = JSON.parse(value)
-        if !(driver_ids.include?(key.to_i)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 60)
+        if !(driver_ids.include?(key.to_i)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180)
           distance = self.start_destination.calculate_distance(geolocation['latitude'], geolocation['longitude'])
           if distance < nearest_distance
             nearest_distance = distance

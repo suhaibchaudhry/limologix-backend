@@ -7,7 +7,7 @@ class TripRequestWorker
 
     if driver_id.present?
       driver = Driver.find_by(id: driver_id)
-      notification = trip.request_notifications.create(driver_id: driver.id, message: "YOU’VE GOT A RIDE REQUEST.")
+      notification = trip.request_notifications.create(driver_id: driver.id, title: "Limo Logix", body: "YOU’VE GOT A RIDE REQUEST.")
     end
 
     nearest_driver = trip.nearest_driver

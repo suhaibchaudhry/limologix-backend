@@ -5,15 +5,15 @@ class Fcm
   }
   URL = 'https://fcm.googleapis.com/fcm/send'
 
-  def self.publish_to_topic(topic, message)
+  def self.publish_to_topic(topic, title, body, data )
     begin
       args = {
         to: "/topics/#{topic}",
         priority: 'high',
-        data: message,
+        data: data,
         notification: {
-          title: "Notification title",
-          body: "Notification body",
+          title: title,
+          body: body,
           sound: "default",
           click_action: "FCM_PLUGIN_ACTIVITY",
           icon: "fcm_push_icon"
@@ -22,9 +22,9 @@ class Fcm
       response = do_post_request(args)
 
       if response.code == "200"
-        { status: "success", body: response.body }
+        { status: "success", message: response.body }
       else
-        { status: "error", body:  response.body, code: response.code }
+        { status: "error", message:  response.body, code: response.code }
       end
     rescue Exception => e
       { status: "exception", message: e.message }

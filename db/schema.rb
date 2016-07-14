@@ -139,9 +139,12 @@ ActiveRecord::Schema.define(version: 20160627081443) do
   end
 
   create_table "trip_notifications", force: :cascade do |t|
-    t.text     "message",    limit: 65535
+    t.string   "title",      limit: 255
+    t.text     "body",       limit: 65535
     t.integer  "trip_id",    limit: 4
     t.integer  "driver_id",  limit: 4
+    t.string   "status",     limit: 255
+    t.string   "response",   limit: 255
     t.string   "kind",       limit: 255
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
