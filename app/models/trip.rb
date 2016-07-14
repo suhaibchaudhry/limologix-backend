@@ -50,10 +50,10 @@ class Trip < ActiveRecord::Base
     driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
 
     if drivers_geolocation.present?
-      drivers_geolocation.each do|key, value|
+      drivers_geolocation.each do |key, value|
         geolocation = JSON.parse(value)
-        if !(driver_ids.include?(key.to_i)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180)
-          distance = self.start_destination.calculate_distance(geolocation['latitude'], geolocation['longitude'])
+        if (!driver_ids.include?(key.to_i)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 1800)
+          distance = self.start_destination.calculate_distance(geolocation['latitude'].to_f, geolocation['longitude'].to_f)
           if distance < nearest_distance
             nearest_distance = distance
             nearest_driver = key.to_i

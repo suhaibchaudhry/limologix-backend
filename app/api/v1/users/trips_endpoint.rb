@@ -245,7 +245,7 @@ module V1
             trip.vehicle_type = vehicle_type
 
             if trip.dispatch!
-              TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
+              TripRequestWorker.perform_async(trip.id)
               { message: 'Trip has been dispatched successfully.' }
             else
               error!(trip.errors.full_messages , 400)
