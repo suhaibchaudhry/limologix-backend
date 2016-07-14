@@ -47,7 +47,8 @@ class Trip < ActiveRecord::Base
     already_requested_drivers = self.request_notifications.collect(&:driver_id)
     # drivers_not_visible = Driver.invisible.collect(&:id)
     drivers_in_active_trips = Dispatch.active.collect(&:driver_id)
-    driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
+    # driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
+    driver_ids = [*already_requested_drivers, *drivers_in_active_trips].uniq
 
     if drivers_geolocation.present?
       drivers_geolocation.each do |key, value|
