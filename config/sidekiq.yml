@@ -1,6 +1,6 @@
 staging:
   :logfile: log/sidekiq.log
-  :concurrency: 25
+  :concurrency: 3
   :pidfile: tmp/pids/sidekiq.pid
   :queues:
     - ["trip_requests", 1]
