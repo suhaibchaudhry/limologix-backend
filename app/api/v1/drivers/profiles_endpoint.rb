@@ -221,7 +221,8 @@ module V1
           desc 'Get channel name' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-            http_codes [ { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
+            http_codes [ { code: 201, message: { status: 'success', message: 'Channel', data: {channel: "sadsad"}}.to_json },
+              { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
           end
           get 'channel' do
             {
@@ -235,7 +236,8 @@ module V1
           desc 'Get topic name' do
             headers 'Auth-Token': { description: 'Validates your identity', required: true }
 
-            http_codes [ { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
+            http_codes [{ code: 201, message: { status: 'success', message: 'Topic', data: {topic: "sadsad"}}.to_json },
+             { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
           end
           get 'topic' do
             {
