@@ -64,9 +64,6 @@ class Driver < ActiveRecord::Base
     end
   end
 
-
-  private
-
   def set_channel
     self.channel = generate_unique_name_for("channel")
   end
