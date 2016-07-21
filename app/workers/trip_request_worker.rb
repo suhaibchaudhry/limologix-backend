@@ -4,17 +4,22 @@ class TripRequestWorker
 
   def perform(trip_id=nil, driver_id=nil)
     trip = Trip.find_by(id: trip_id)
+    trip.dispatch! if trip.pending?
 
-    if driver_id.present?
-      driver = Driver.find_by(id: driver_id)
-      notification = trip.request_notifications.create(driver_id: driver.id, title: "Limo Logix", body: "YOU’VE GOT A RIDE REQUEST.")
-    end
+    unless trip.pick_up_at < Time.now
+      if driver_id.present?
+        driver = Driver.find_by(id: driver_id)
+        notification = trip.request_notifications.create(driver_id: driver.id, title: "Limo Logix", body: "YOU’VE GOT A RIDE REQUEST.")
+      end
 
-    nearest_driver = trip.nearest_driver
-    if nearest_driver.present?
-      TripRequestWorker.perform_in(7.seconds, trip.id, nearest_driver)
+      nearest_driver = trip.nearest_driver
+      if nearest_driver.present?
+        TripRequestWorker.perform_in(7.seconds, trip.id, nearest_driver)
+      else
+        puts "Send notification to admin that no driver is available in 20 miles radius"
+      end
     else
-      puts "Send notification to admin that no driver is available in 20 miles radius"
+      trip.reject!
     end
   end
 end

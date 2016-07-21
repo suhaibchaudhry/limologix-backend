@@ -1,5 +1,5 @@
 class Trip < ActiveRecord::Base
-  STATUSES = ['pending', 'dispatched', 'active', 'closed', 'cancelled']
+  STATUSES = ['pending', 'dispatched', 'rejected', 'active', 'closed', 'cancelled']
 
   STATUSES.each do |status|
     scope status.to_sym, -> { where(status: status) }
@@ -32,6 +32,10 @@ class Trip < ActiveRecord::Base
 
   def dispatch!
     update_status!('dispatched')
+  end
+
+  def reject!
+    update_status!('rejected')
   end
 
   def cancel!

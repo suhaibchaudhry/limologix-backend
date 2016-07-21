@@ -60,6 +60,7 @@ module V1
               requires :pick_up_at, type: DateTime, allow_blank: false
               requires :passengers_count, type: Integer, allow_blank: false
               requires :customer_id, type: Integer, allow_blank: false
+              requires :vehicle_type_id, type: Integer, allow_blank: false
             end
           end
           post 'create' do
@@ -68,10 +69,15 @@ module V1
             customer = current_user.company.customers.where(id: params[:trip][:customer_id]).first
             error!("Customer not found." , 404) unless customer.present?
 
+            vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
+            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
+
             if trip.valid?
               trip.customer = customer
+              trip.vehicle_type = vehicle_type
               trip.save
-
+              # TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
+              TripRequestWorker.perform_async(trip.id)
               {
                 message: 'Trip created successfully.',
                 data: {
@@ -102,10 +108,12 @@ module V1
             requires :trip_status, type: String, allow_blank: false
           end
           post 'index' do
+            error!('Invalid trip status.', 404) unless Trip::STATUSES.include?(params[:trip_status])
+            trips = current_user.trips.send(params[:trip_status])
             {
               message: 'Trips list.',
               data: {
-                trips: serialize_model_object(current_user.trips)
+                trips: serialize_model_object(trips)
               }
             }
           end
@@ -214,42 +222,6 @@ module V1
 
             trip.cancel!
             { message: 'Trip has been cancelled successfully.' }
-          end
-
-          desc 'Trip dispatch API.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been dispatched successfully.'}.to_json },
-            { code: 404,
-              message: {
-                status: 'error',
-                message: 'Trip not found.',
-              }.to_json
-            }]
-          end
-          params do
-            requires :trip, type: Hash do
-              requires :id, type: Integer, allow_blank: false
-              requires :vehicle_type_id, type: Integer, allow_blank: false
-            end
-          end
-          post 'dispatch' do
-            trip = current_user.trips.find_by(id: params[:trip][:id])
-            error!("Trip not found." , 404) unless trip.present?
-
-            vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
-            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
-
-            error!("Trip has been dispatched already." , 404) unless trip.pending?
-
-            trip.vehicle_type = vehicle_type
-
-            if trip.dispatch!
-              TripRequestWorker.perform_async(trip.id)
-              { message: 'Trip has been dispatched successfully.' }
-            else
-              error!(trip.errors.full_messages , 400)
-            end
           end
         end
       end
