@@ -19,7 +19,8 @@ module V1
               message: 'Login successfull.',
               data: {
                 'Auth-Token': driver.auth_token,
-                full_name: driver.full_name
+                full_name: driver.full_name,
+                company: driver.company.name
               }
             }
            else

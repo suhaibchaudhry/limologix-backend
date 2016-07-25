@@ -29,6 +29,16 @@ module V1
         }
       end
 
+      desc 'Returns list of companies' do
+        http_codes [ { code: 201, message: { status: 'success', message: 'Companies list', data: [{ id: 1, name: "Softway" }, { id: 2, name: "TCS"}] }.to_json }]
+      end
+      get 'companies' do
+        {
+          message: 'Companies list',
+          data: Company.all.map{|company| { id: company.id, name: company.name }}
+        }
+      end
+
       namespace :vehicles do
         desc 'List of vehicle types.' do
           http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle types list.',

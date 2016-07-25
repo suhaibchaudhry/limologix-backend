@@ -8,7 +8,7 @@ module V1
           params[:driver][:address_attributes] = params[:driver][:address]
 
           ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name,
-            :password, :email, :mobile_number, :license_number, :license_expiry_date, :license_image, 
+            :password, :email, :mobile_number, :company, :license_number, :license_expiry_date, :license_image, 
             :badge_number, :badge_expiry_date, :ara_number,:ara_image, :ara_expiry_date, :insurance_company, 
             :insurance_policy_number, :insurance_expiry_date,address_attributes: [:street, :city, :zipcode, :state_code, :country_code])
         end
@@ -37,6 +37,7 @@ module V1
             requires :password, type: String, allow_blank: false
             requires :mobile_number, type: String, allow_blank: false
             requires :email, type: String, allow_blank: false
+            requires :company, type: String, allow_blank: false
 
             requires :address, type: Hash do
               requires :street, type: String, allow_blank: false
@@ -77,6 +78,7 @@ module V1
           end
         end
         post 'registration' do
+
           vehicle_type = VehicleType.find_by(id: params[:vehicle][:vehicle_type_id])
           error!("Vehicle type not found." , 404) unless vehicle_type.present?
 
@@ -101,11 +103,13 @@ module V1
             vehicle.driver = driver
             vehicle.save
 
+            UserMailer.delay(:queue => 'mailers').driver_account_creation_mail(driver)
             {
               message: 'Registration successfull.',
               data: {
                 'Auth-Token': driver.auth_token,
-                full_name: driver.full_name
+                full_name: driver.full_name,
+                company: driver.company
               }
             }
           else

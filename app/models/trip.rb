@@ -19,7 +19,8 @@ class Trip < ActiveRecord::Base
   has_many :dispatches
   has_one :active_dispatch, -> { where('status IN (?)', ['yet_to_start','started'])}, class_name: 'Dispatch'
 
-  has_many :request_notifications, -> { where kind: 'request' }, class_name: 'TripNotification'
+  has_many :mobile_notifications, as: :notifiable, dependent: :destroy
+  has_many :request_notifications, -> { where kind: 'trip_request' }, as: :notifiable, class_name: 'MobileNotification'
 
   validates :pick_up_at, :passengers_count, presence: true
   accepts_nested_attributes_for :start_destination

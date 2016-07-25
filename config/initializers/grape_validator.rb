@@ -16,7 +16,7 @@ module Grape
           # We must be the root scope, so no prefix needed.
           message = name.to_s
         end
-        message = message.gsub(/_|\./, ' ')
+        message = message.gsub(/\./, ' ')
       end
     end
   end

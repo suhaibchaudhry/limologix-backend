@@ -9,7 +9,9 @@ class TripRequestWorker
     unless trip.pick_up_at < Time.now
       if driver_id.present?
         driver = Driver.find_by(id: driver_id)
-        notification = trip.request_notifications.create(driver_id: driver.id, title: "Limo Logix", body: "YOU’VE GOT A RIDE REQUEST.")
+        notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now}).to_json
+        notification = trip.request_notifications.create(driver_id: driver.id, title: "Limo Logix", body: "YOU’VE GOT A RIDE REQUEST.",
+          data: notification_data)
       end
 
       nearest_driver = trip.nearest_driver

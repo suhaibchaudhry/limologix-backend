@@ -5,6 +5,7 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :last_name
       t.string :password
       t.string :email
+      t.string :company
       t.string :mobile_number
       t.string :auth_token
       t.datetime :auth_token_expires_at

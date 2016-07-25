@@ -10,7 +10,7 @@ module V1
           params[:driver][:address_attributes] = params[:driver][:address]
 
           ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name, :email, 
-            :mobile_number, address_attributes: [:street, :city, :zipcode, :state_code, :country_code])
+            :company, :mobile_number, address_attributes: [:street, :city, :zipcode, :state_code, :country_code])
         end
 
         def personal_info_params
@@ -106,6 +106,7 @@ module V1
               requires :last_name, type: String, allow_blank: false
               requires :mobile_number, type: String, allow_blank: false
               requires :email, type: String, allow_blank: false
+              requires :company, type: String, allow_blank: false
 
               requires :address, type: Hash do
                 requires :street, type: String, allow_blank: false
@@ -117,7 +118,6 @@ module V1
             end
           end
           post 'update_contact_information' do
-
             if current_driver.update(contact_info_params)
               { message: 'Contact information updated successfully.'}
             else

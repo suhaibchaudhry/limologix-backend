@@ -25,7 +25,7 @@ class Driver < ActiveRecord::Base
   has_many :dispatches
   has_one  :active_dispatch, -> { where('status IN (?)', ['yet_to_start','started'])}, class_name: 'Dispatch'
 
-  validates :first_name, :last_name, :password, :mobile_number, :email, :license_number,
+  validates :first_name, :last_name, :password, :mobile_number, :email, :license_number, :company,
             :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_image,
             :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date, presence: true
   validates :mobile_number, :license_number, :badge_number, :email, :channel, :topic, uniqueness: true
@@ -65,7 +65,7 @@ class Driver < ActiveRecord::Base
   end
 
   def set_channel
-    self.channel = generate_unique_name_for("channel")
+    self.channel = "driver_#{created_at.to_i}"
   end
 
   def set_topic
