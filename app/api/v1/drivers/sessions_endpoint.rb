@@ -20,7 +20,7 @@ module V1
               data: {
                 'Auth-Token': driver.auth_token,
                 full_name: driver.full_name,
-                company: driver.company.name
+                company: driver.company
               }
             }
            else
