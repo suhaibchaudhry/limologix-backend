@@ -3,7 +3,7 @@ module V1
     class SessionsEndpoint < Root
       namespace :drivers do
         desc 'Driver login' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', email: "mahesh@yopmail.com"} }.to_json },
+          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', full_name: "Dummy t", company: "TCS"} }.to_json },
             { code: 401, message: { status: 'error', message: 'Invalid credentails.' }.to_json }]
         end
         params do
