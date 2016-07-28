@@ -107,7 +107,7 @@ module V1
           params do
             requires :trip_status, type: String, allow_blank: false
           end
-          post 'index' do
+          post 'index', each_serializer: TripsArraySerializer  do
             error!('Invalid trip status.', 404) unless Trip::STATUSES.include?(params[:trip_status])
             trips = current_user.trips.send(params[:trip_status])
             {

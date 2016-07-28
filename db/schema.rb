@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160627081443) do
+ActiveRecord::Schema.define(version: 20160728062030) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -27,23 +27,11 @@ ActiveRecord::Schema.define(version: 20160627081443) do
 
   add_index "addresses", ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
 
-  create_table "admins", force: :cascade do |t|
-    t.string   "first_name",             limit: 255
-    t.string   "last_name",              limit: 255
-    t.string   "password",               limit: 255
-    t.string   "email",                  limit: 255
-    t.string   "mobile_number",          limit: 255
-    t.string   "auth_token",             limit: 255
-    t.datetime "auth_token_expires_at"
-    t.string   "reset_password_token",   limit: 255
-    t.datetime "reset_password_sent_at"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+  create_table "advertisements", force: :cascade do |t|
+    t.string   "poster",     limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
-
-  add_index "admins", ["auth_token"], name: "index_admins_on_auth_token", unique: true, using: :btree
-  add_index "admins", ["email"], name: "index_admins_on_email", unique: true, using: :btree
-  add_index "admins", ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true, using: :btree
 
   create_table "companies", force: :cascade do |t|
     t.string   "uid",                    limit: 255
@@ -52,6 +40,7 @@ ActiveRecord::Schema.define(version: 20160627081443) do
     t.string   "email",                  limit: 255
     t.string   "primary_phone_number",   limit: 255
     t.string   "secondary_phone_number", limit: 255
+    t.string   "channel",                limit: 255
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
   end
@@ -77,9 +66,9 @@ ActiveRecord::Schema.define(version: 20160627081443) do
     t.integer  "trip_id",    limit: 4
     t.datetime "started_at"
     t.datetime "ended_at"
-    t.string   "status",     limit: 255, default: "pending"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.string   "status",     limit: 255, default: "yet_to_start"
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
   end
 
   add_index "dispatches", ["driver_id"], name: "index_dispatches_on_driver_id", using: :btree
@@ -90,6 +79,7 @@ ActiveRecord::Schema.define(version: 20160627081443) do
     t.string   "last_name",               limit: 255
     t.string   "password",                limit: 255
     t.string   "email",                   limit: 255
+    t.string   "company",                 limit: 255
     t.string   "mobile_number",           limit: 255
     t.string   "auth_token",              limit: 255
     t.datetime "auth_token_expires_at"
@@ -132,26 +122,28 @@ ActiveRecord::Schema.define(version: 20160627081443) do
 
   add_index "geolocations", ["locatable_type", "locatable_id"], name: "index_geolocations_on_locatable_type_and_locatable_id", using: :btree
 
+  create_table "mobile_notifications", force: :cascade do |t|
+    t.string   "title",           limit: 255
+    t.text     "body",            limit: 65535
+    t.text     "data",            limit: 65535
+    t.integer  "notifiable_id",   limit: 4
+    t.string   "notifiable_type", limit: 255
+    t.integer  "driver_id",       limit: 4
+    t.string   "status",          limit: 255
+    t.string   "response",        limit: 255
+    t.string   "kind",            limit: 255
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "mobile_notifications", ["driver_id"], name: "index_mobile_notifications_on_driver_id", using: :btree
+  add_index "mobile_notifications", ["notifiable_type", "notifiable_id"], name: "index_mobile_notifications_on_notifiable_type_and_notifiable_id", using: :btree
+
   create_table "roles", force: :cascade do |t|
     t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
-
-  create_table "trip_notifications", force: :cascade do |t|
-    t.string   "title",      limit: 255
-    t.text     "body",       limit: 65535
-    t.integer  "trip_id",    limit: 4
-    t.integer  "driver_id",  limit: 4
-    t.string   "status",     limit: 255
-    t.string   "response",   limit: 255
-    t.string   "kind",       limit: 255
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-  end
-
-  add_index "trip_notifications", ["driver_id"], name: "index_trip_notifications_on_driver_id", using: :btree
-  add_index "trip_notifications", ["trip_id"], name: "index_trip_notifications_on_trip_id", using: :btree
 
   create_table "trips", force: :cascade do |t|
     t.datetime "pick_up_at"
@@ -251,5 +243,20 @@ ActiveRecord::Schema.define(version: 20160627081443) do
   add_index "vehicles", ["vehicle_make_id"], name: "index_vehicles_on_vehicle_make_id", using: :btree
   add_index "vehicles", ["vehicle_model_id"], name: "index_vehicles_on_vehicle_model_id", using: :btree
   add_index "vehicles", ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id", using: :btree
+
+  create_table "web_notifications", force: :cascade do |t|
+    t.text     "message",          limit: 65535
+    t.integer  "notifiable_id",    limit: 4
+    t.string   "notifiable_type",  limit: 255
+    t.integer  "publishable_id",   limit: 4
+    t.string   "publishable_type", limit: 255
+    t.boolean  "read_status"
+    t.string   "kind",             limit: 255
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "web_notifications", ["notifiable_type", "notifiable_id"], name: "index_web_notifications_on_notifiable_type_and_notifiable_id", using: :btree
+  add_index "web_notifications", ["publishable_type", "publishable_id"], name: "index_web_notifications_on_publishable_type_and_publishable_id", using: :btree
 
 end

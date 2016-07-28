@@ -10,6 +10,7 @@ gem 'sinatra', require: false
 
 # Authentication & Authorization
 gem "bcrypt"
+gem 'faye'
 
 # API
 gem 'grape'

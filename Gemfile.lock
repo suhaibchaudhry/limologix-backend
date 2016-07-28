@@ -38,6 +38,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    addressable (2.4.0)
     airbrussh (1.0.2)
       sshkit (>= 1.6.1, != 1.7.0)
     arel (6.0.3)
@@ -77,12 +78,32 @@ GEM
       descendants_tracker (~> 0.0.1)
     concurrent-ruby (1.0.1)
     connection_pool (2.2.0)
+    cookiejar (0.3.3)
     daemons (1.2.3)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
+    em-http-request (1.1.4)
+      addressable (>= 2.3.4)
+      cookiejar (!= 0.3.1)
+      em-socksify (>= 0.3)
+      eventmachine (>= 1.0.3)
+      http_parser.rb (>= 0.6.0)
+    em-socksify (0.3.1)
+      eventmachine (>= 1.0.0.beta.4)
     equalizer (0.0.11)
     erubis (2.7.0)
     eventmachine (1.2.0.1)
+    faye (1.1.2)
+      cookiejar (>= 0.3.0)
+      em-http-request (>= 0.3.0)
+      eventmachine (>= 0.12.0)
+      faye-websocket (>= 0.9.1)
+      multi_json (>= 1.0.0)
+      rack (>= 1.0.0)
+      websocket-driver (>= 0.5.1)
+    faye-websocket (0.10.4)
+      eventmachine (>= 0.12.0)
+      websocket-driver (>= 0.5.1)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     grape (0.14.0)
@@ -114,6 +135,7 @@ GEM
     hashie (3.4.4)
     hashie-forbidden_attributes (0.1.1)
       hashie (>= 3.0)
+    http_parser.rb (0.6.0)
     i18n (0.7.0)
     ice_nine (0.11.2)
     json (1.8.3)
@@ -207,6 +229,9 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
+    websocket-driver (0.6.4)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
 
 PLATFORMS
   ruby
@@ -220,6 +245,7 @@ DEPENDENCIES
   capistrano-rvm
   carrierwave
   city-state
+  faye
   grape
   grape-active_model_serializers
   grape-cancan

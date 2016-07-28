@@ -9,11 +9,7 @@ class TripSerializer < ActiveModel::Serializer
     hash = super
     if object.active?
       driver = object.active_dispatch.driver
-      hash[:driver] = {
-        id: driver.id,
-        full_name: driver.full_name,
-        channel: driver.channel
-      }
+      hash[:driver] = DriverVehicleSerializer.new(driver).serializable_hash
     end
     hash
   end
