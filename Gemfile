@@ -11,6 +11,7 @@ gem 'sinatra', require: false
 # Authentication & Authorization
 gem "bcrypt"
 gem 'faye'
+gem 'faye-redis'
 
 # API
 gem 'grape'

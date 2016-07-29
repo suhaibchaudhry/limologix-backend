@@ -12,7 +12,7 @@ module V1
 
           desc 'Advertisement posters list.'
           paginate per_page: 20, max_per_page: 30, offset: false
-          post 'index', authorize: [:index, AdvertisementsEndpoint] do
+          post 'index' do
             advertisements = paginate(Advertisement.all.order(:created_at).reverse_order)
 
             if advertisements.present?
