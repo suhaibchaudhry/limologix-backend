@@ -48,6 +48,25 @@ module V1
             end
           end
 
+          desc 'Remove an advertisement poster.'
+          params do
+            requires :advertisement, type: Hash do
+              requires :id, type: Integer, allow_blank: false
+            end
+          end
+          post 'delete', authorize: [:delete, AdvertisementsEndpoint] do
+
+            advertisement = Advertisement.find_by(id: params[:advertisement][:id])
+
+            if advertisement.present?
+              advertisement.destroy
+
+              {message: "Advertisement poster deleted successfully."}
+            else
+              error!("Advertisement poster not found." , 404)
+            end
+          end
+
         end
       end
 
