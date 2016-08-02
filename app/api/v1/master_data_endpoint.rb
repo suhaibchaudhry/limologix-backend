@@ -39,6 +39,23 @@ module V1
         }
       end
 
+      desc 'Advertisement posters list.'
+      paginate per_page: 20, max_per_page: 30, offset: false
+      post 'advertisements' do
+        advertisements = paginate(Advertisement.all.order(:created_at).reverse_order)
+
+        if advertisements.present?
+          {
+            message: 'Advertisements list.',
+            data: {
+              advertisements: serialize_model_object(advertisements)
+            }
+          }
+        else
+          { message: 'No results found.'}
+        end
+      end
+
       namespace :vehicles do
         desc 'List of vehicle types.' do
           http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle types list.',

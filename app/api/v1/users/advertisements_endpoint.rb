@@ -10,23 +10,6 @@ module V1
       namespace :users do
         namespace :advertisements do
 
-          desc 'Advertisement posters list.'
-          paginate per_page: 20, max_per_page: 30, offset: false
-          post 'index' do
-            advertisements = paginate(Advertisement.all.order(:created_at).reverse_order)
-
-            if advertisements.present?
-              {
-                message: 'Advertisements list.',
-                data: {
-                  advertisements: serialize_model_object(advertisements)
-                }
-              }
-            else
-              { message: 'No results found.'}
-            end
-          end
-
           desc 'Add advertisement posters.'
           params do
             requires :posters, type: Array do
