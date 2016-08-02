@@ -5,6 +5,7 @@ class CreateWebNotifications < ActiveRecord::Migration
       t.references :notifiable, polymorphic: true, index: true
       t.references :publishable, polymorphic: true, index: true
       t.boolean :read_status
+      t.string :response_status
       t.string :kind
 
       t.timestamps null: false

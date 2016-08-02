@@ -26,6 +26,7 @@ module V1
       mount VehiclesEndpoint
       mount DriversEndpoint
       mount AdvertisementsEndpoint
+      mount GroupsEndpoint
     end
   end
 end

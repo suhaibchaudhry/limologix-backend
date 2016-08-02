@@ -2,6 +2,7 @@ class Company < ActiveRecord::Base
   has_many :users
   has_many :customers, through: :users
   has_one :address, as: :addressable, dependent: :destroy
+  has_many :groups
 
   validates :name, :email, presence: true
   validates :email, uniqueness: true

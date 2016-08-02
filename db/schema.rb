@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160728062030) do
+ActiveRecord::Schema.define(version: 20160729065104) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -74,6 +74,16 @@ ActiveRecord::Schema.define(version: 20160728062030) do
   add_index "dispatches", ["driver_id"], name: "index_dispatches_on_driver_id", using: :btree
   add_index "dispatches", ["trip_id"], name: "index_dispatches_on_trip_id", using: :btree
 
+  create_table "driver_groups", force: :cascade do |t|
+    t.integer  "driver_id",  limit: 4
+    t.integer  "group_id",   limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "driver_groups", ["driver_id"], name: "index_driver_groups_on_driver_id", using: :btree
+  add_index "driver_groups", ["group_id"], name: "index_driver_groups_on_group_id", using: :btree
+
   create_table "drivers", force: :cascade do |t|
     t.string   "first_name",              limit: 255
     t.string   "last_name",               limit: 255
@@ -121,6 +131,17 @@ ActiveRecord::Schema.define(version: 20160728062030) do
   end
 
   add_index "geolocations", ["locatable_type", "locatable_id"], name: "index_geolocations_on_locatable_type_and_locatable_id", using: :btree
+
+  create_table "groups", force: :cascade do |t|
+    t.integer  "company_id",  limit: 4
+    t.string   "name",        limit: 255
+    t.text     "description", limit: 65535
+    t.string   "status",      limit: 255
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "groups", ["company_id"], name: "index_groups_on_company_id", using: :btree
 
   create_table "mobile_notifications", force: :cascade do |t|
     t.string   "title",           limit: 255
@@ -251,6 +272,7 @@ ActiveRecord::Schema.define(version: 20160728062030) do
     t.integer  "publishable_id",   limit: 4
     t.string   "publishable_type", limit: 255
     t.boolean  "read_status"
+    t.string   "response_status",  limit: 255
     t.string   "kind",             limit: 255
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
