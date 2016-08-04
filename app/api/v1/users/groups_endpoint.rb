@@ -163,7 +163,7 @@ module V1
             group = current_user.company.groups.find_by(id: params[:group][:id])
             error!("Group not found." , 404) unless group.present?
 
-            drivers = paginate(Driver.where("id NOT IN(?)", group.driver_ids).order(:created_at).reverse_order)
+            drivers = paginate(Driver.where.not(id: group.driver_ids).order(:created_at).reverse_order)
 
             if drivers.present?
               {
