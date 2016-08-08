@@ -10,7 +10,8 @@ module V1
           ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name,
             :password, :email, :mobile_number, :company, :license_number, :license_expiry_date, :license_image, 
             :badge_number, :badge_expiry_date, :ara_number,:ara_image, :ara_expiry_date, :insurance_company, 
-            :insurance_policy_number, :insurance_expiry_date,address_attributes: [:street, :city, :zipcode, :state_code, :country_code])
+            :insurance_policy_number, :insurance_expiry_date, :card_number, :card_expiry_date, :card_code, 
+            address_attributes: [:street, :city, :zipcode, :state_code, :country_code])
         end
 
         def vehicle_params
@@ -46,6 +47,10 @@ module V1
               requires :state_code, type: String, allow_blank: false
               requires :country_code, type: String, allow_blank: false
             end
+
+            requires :card_number, type: String, allow_blank: false
+            requires :card_expiry_date, type: String, allow_blank: false
+            requires :card_code, type: String, allow_blank: false
 
             requires :license_number, type: String, allow_blank: false
             requires :license_expiry_date, type: Date, allow_blank: false
@@ -94,16 +99,14 @@ module V1
           driver = Driver.new(driver_params)
           vehicle = Vehicle.new(vehicle_params)
 
-          if driver.valid? & vehicle.valid?
-            driver.save
+          vehicle.vehicle_type = vehicle_type
+          vehicle.vehicle_make = vehicle_make
+          vehicle.vehicle_model = vehicle_model
+          vehicle.driver = driver
 
-            vehicle.vehicle_type = vehicle_type
-            vehicle.vehicle_make = vehicle_make
-            vehicle.vehicle_model = vehicle_model
-            vehicle.driver = driver
-            vehicle.save
-
+          if driver.valid? & vehicle.valid? && driver.save && vehicle.save
             UserMailer.delay(:queue => 'mailers').driver_account_creation_mail(driver)
+
             {
               message: 'Registration successfull.',
               data: {
@@ -113,8 +116,10 @@ module V1
               }
             }
           else
-            message = "#{driver.errors.full_messages}, #{vehicle.errors.full_messages}"
-            error!(message.gsub(/^,|,$/, ''), 400)
+            message = []
+            message << driver.errors.full_messages  if driver.errors.present?
+            message << vehicle.errors.full_messages  if vehicle.errors.present?
+            error!(message.join(', '), 400)
           end
         end
       end

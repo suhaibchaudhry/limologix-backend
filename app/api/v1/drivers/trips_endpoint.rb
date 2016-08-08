@@ -67,16 +67,16 @@ module V1
             error!('You have already accepted this trip.' , 403) if trip.active? && trip.active_dispatch.driver == current_driver
             error!('You cannot accept this trip because you are part of some other trip.') if current_driver.active_dispatch.present?
             error!('Trip has already been dispatched.' , 403) if trip.active?
-            # error!('Right now you are in Invisible status.' , 403) unless current_driver.visible
-            error!('You have exceeded the time limit to accept.' , 403) if trip.request_notifications.find_by(driver_id: current_driver) && ((Time.now - trip.request_notifications.find_by(driver_id: current_driver).created_at) < 10000.seconds)
+            error!('Right now you are in Invisible status.' , 403) unless current_driver.visible
+            error!('You have exceeded the time limit to accept.' , 403) if trip.request_notifications.find_by(driver_id: current_driver) && ((Time.now - trip.request_notifications.find_by(driver_id: current_driver).created_at) < Settings.delay_between_trip_request.seconds)
+            error!('You do not have enough toll credit to accept a trip.' , 403) unless current_driver.has_enough_toll_credit?
 
-            dispatch = current_driver.dispatches.new(trip_id: trip.id)
-            if dispatch.save && trip.active!
+            if trip.accept!(current_driver)
               {
                 message: 'Trip accepted successfully.',
               }
             else
-              error!(dispatch.errors.full_messages , 400)
+              error!("Error in dispatching a trip." , 400)
             end
           end
 

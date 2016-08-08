@@ -26,9 +26,24 @@ class Trip < ActiveRecord::Base
   accepts_nested_attributes_for :start_destination
   accepts_nested_attributes_for :end_destination
 
-  def active!
-    destroy_scheduled_worker
-    update_status!('active')
+  def accept!(driver)
+    dispatch = driver.dispatches.new(trip_id: trip.id)
+
+    web_notification = WebNotification.create(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip"},
+      publishable: self.user.company, notifiable: self)
+
+    if dispacth.valid? & web_notification.valid? && web_notification.save && dispatch.save && update_status!('active')
+
+      driver.detuct_toll_credit!(Driver::TOLL_AMOUNT_FOR_DISPATCH)
+
+      PaymentTransactionWorker.perform_async(driver) unless driver.has_enough_toll_credit?
+
+      destroy_scheduled_worker
+
+      return true
+    else
+      return false
+    end
   end
 
   def dispatch!
@@ -44,22 +59,25 @@ class Trip < ActiveRecord::Base
     update_status!('cancelled')
   end
 
-  def nearest_driver
+  def find_nearest_driver
     drivers_geolocation = $redis.hgetall("drivers")
     nearest_driver = nil
-    nearest_distance = 20
+    nearest_distance = Settings.driver_search_radius
 
     already_requested_drivers = self.request_notifications.collect(&:driver_id)
-    # drivers_not_visible = Driver.invisible.collect(&:id)
+    drivers_not_visible = Driver.invisible.collect(&:id)
     drivers_in_active_trips = Dispatch.active.collect(&:driver_id)
-    # driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
-    driver_ids = [*already_requested_drivers, *drivers_in_active_trips].uniq
+
+    driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
 
     if drivers_geolocation.present?
       drivers_geolocation.each do |key, value|
         geolocation = JSON.parse(value)
-        if (!driver_ids.include?(key.to_i)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 1800)
+        driver_from_redis = Driver.find_by(channel: key)
+
+        if (driver_from_redis.present? && !driver_ids.include?(driver_from_redis.id) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180)
           distance = self.start_destination.calculate_distance(geolocation['latitude'].to_f, geolocation['longitude'].to_f)
+
           if distance < nearest_distance
             nearest_distance = distance
             nearest_driver = key.to_i
@@ -95,5 +113,8 @@ class Trip < ActiveRecord::Base
   def update_status!(status)
     self.status = status
     self.save
+  end
+
+  def check_and_update_toll_credit(driver)
   end
 end

@@ -1,5 +1,5 @@
 class MobileNotification < ActiveRecord::Base
-  KINDS = ['trip_request', 'trip_cancel']
+  KINDS = ['trip_request', 'trip_cancel', 'payment_success', 'payment_failure']
 
   KINDS.each do |kind|
     scope kind.to_sym, -> { where(kind: kind) }

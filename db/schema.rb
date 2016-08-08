@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160729065104) do
+ActiveRecord::Schema.define(version: 20160804115711) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -85,39 +85,40 @@ ActiveRecord::Schema.define(version: 20160729065104) do
   add_index "driver_groups", ["group_id"], name: "index_driver_groups_on_group_id", using: :btree
 
   create_table "drivers", force: :cascade do |t|
-    t.string   "first_name",              limit: 255
-    t.string   "last_name",               limit: 255
-    t.string   "password",                limit: 255
-    t.string   "email",                   limit: 255
-    t.string   "company",                 limit: 255
-    t.string   "mobile_number",           limit: 255
-    t.string   "auth_token",              limit: 255
+    t.string   "first_name",                  limit: 255
+    t.string   "last_name",                   limit: 255
+    t.string   "password",                    limit: 255
+    t.string   "email",                       limit: 255
+    t.string   "company",                     limit: 255
+    t.string   "mobile_number",               limit: 255
+    t.string   "auth_token",                  limit: 255
     t.datetime "auth_token_expires_at"
-    t.string   "reset_password_token",    limit: 255
+    t.string   "reset_password_token",        limit: 255
     t.datetime "reset_password_sent_at"
-    t.boolean  "visible",                             default: false
-    t.string   "license_number",          limit: 255
-    t.string   "license_image",           limit: 255
+    t.boolean  "visible",                                 default: false
+    t.string   "license_number",              limit: 255
+    t.string   "license_image",               limit: 255
     t.date     "license_expiry_date"
-    t.string   "badge_number",            limit: 255
+    t.string   "badge_number",                limit: 255
     t.date     "badge_expiry_date"
-    t.string   "ara_image",               limit: 255
+    t.string   "ara_image",                   limit: 255
     t.date     "ara_expiry_date"
-    t.string   "insurance_company",       limit: 255
-    t.string   "insurance_policy_number", limit: 255
+    t.string   "insurance_company",           limit: 255
+    t.string   "insurance_policy_number",     limit: 255
     t.date     "insurance_expiry_date"
-    t.string   "channel",                 limit: 255
-    t.string   "topic",                   limit: 255
-    t.string   "status",                  limit: 255, default: "pending"
-    t.datetime "created_at",                                              null: false
-    t.datetime "updated_at",                                              null: false
+    t.string   "merchant_id",                 limit: 255
+    t.string   "customer_profile_id",         limit: 255
+    t.string   "customer_payment_profile_id", limit: 255
+    t.integer  "toll_credit",                 limit: 4,   default: 0
+    t.string   "status",                      limit: 255, default: "pending"
+    t.datetime "created_at",                                                  null: false
+    t.datetime "updated_at",                                                  null: false
   end
 
   add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree
-  add_index "drivers", ["channel"], name: "index_drivers_on_channel", unique: true, using: :btree
   add_index "drivers", ["email"], name: "index_drivers_on_email", unique: true, using: :btree
+  add_index "drivers", ["merchant_id"], name: "index_drivers_on_merchant_id", unique: true, using: :btree
   add_index "drivers", ["reset_password_token"], name: "index_drivers_on_reset_password_token", unique: true, using: :btree
-  add_index "drivers", ["topic"], name: "index_drivers_on_topic", unique: true, using: :btree
 
   create_table "geolocations", force: :cascade do |t|
     t.string   "place",          limit: 255
@@ -165,6 +166,17 @@ ActiveRecord::Schema.define(version: 20160729065104) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  create_table "transactions", force: :cascade do |t|
+    t.integer  "driver_id",          limit: 4
+    t.integer  "amount",             limit: 4
+    t.string   "transaction_number", limit: 255
+    t.boolean  "status",                         default: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+  end
+
+  add_index "transactions", ["driver_id"], name: "index_transactions_on_driver_id", using: :btree
 
   create_table "trips", force: :cascade do |t|
     t.datetime "pick_up_at"

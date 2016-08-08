@@ -22,8 +22,10 @@ class CreateDrivers < ActiveRecord::Migration
       t.string :insurance_company
       t.string :insurance_policy_number
       t.date :insurance_expiry_date
-      t.string :channel
-      t.string :topic
+      t.string :merchant_id
+      t.string :customer_profile_id
+      t.string :customer_payment_profile_id
+      t.integer :toll_credit, default: 0
       t.string :status, default: 'pending'
 
       t.timestamps null: false
@@ -32,8 +34,7 @@ class CreateDrivers < ActiveRecord::Migration
     add_index :drivers, :email, unique: true
     add_index :drivers, :reset_password_token, unique: true
     add_index :drivers, :auth_token, unique: true
-    add_index :drivers, :channel, unique: true
-    add_index :drivers, :topic, unique: true
+    add_index :drivers, :merchant_id, unique: true
 
   end
 end

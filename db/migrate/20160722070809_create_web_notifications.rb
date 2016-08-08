@@ -4,7 +4,7 @@ class CreateWebNotifications < ActiveRecord::Migration
       t.text :message
       t.references :notifiable, polymorphic: true, index: true
       t.references :publishable, polymorphic: true, index: true
-      t.boolean :read_status
+      t.boolean :read_status, default: false
       t.string :response_status
       t.string :kind
 
