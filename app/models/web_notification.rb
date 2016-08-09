@@ -10,7 +10,23 @@ class WebNotification < ActiveRecord::Base
   private
 
   def send_notification
-    response = FayeClient.send_notification(self.publishable.channel, self.message)
-    self.update(response_status: response)
+    channel = self.publishable.channel
+    data = JSON.parse(self.message).merge('id' => self.id)
+
+    EM.run {
+      client = Faye::Client.new("http://localhost:9293/faye")
+
+      publication = client.publish("/publish/#{channel}", data)
+
+      publication.callback do
+        self.update(response_status: "success")
+        client.disconnect();
+      end
+
+      publication.errback do |error|
+        client.disconnect();
+        self.update(response_status: "error")
+      end
+    }
   end
 end

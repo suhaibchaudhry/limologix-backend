@@ -64,6 +64,30 @@ class Driver < ActiveRecord::Base
     [first_name, last_name].join(' ').strip
   end
 
+  def has_enough_toll_credit?
+    self.toll_credit >= MIN_TOLL_CREDIT+TOLL_AMOUNT_FOR_DISPATCH ? true :false
+  end
+
+  def deduct_toll_credit!(amount)
+    self.toll_credit = self.toll_credit-amount
+    self.save
+  end
+
+  def charge_customer!(amount=DEFAULT_AMOUNT_TO_CHARGE)
+    payment_transaction = Payment.charge_customer_profile(self.customer_profile_id, self.customer_payment_profile_id, amount)
+    transaction = self.transactions.new(amount: amount)
+
+    if payment_transaction[:status] == "success"
+      transaction.transaction_number = payment_transaction[:transaction_number]
+      transaction.status = true
+
+      self.toll_credit = self.toll_credit+amount
+    else
+      errors.add(:credit_card, " amount deduction failed.")
+    end
+    transaction.save && self.save
+  end
+
   private
 
   def license_image_size
@@ -107,26 +131,8 @@ class Driver < ActiveRecord::Base
     end
   end
 
-  def charge_customer!(amount=DEFAULT_AMOUNT_TO_CHARGE)
-    payment_transaction = Payment.charge_customer_profile(self.customer_profile_id, self.customer_payment_profile_id, amount)
-    transaction = self.transactions.new(amount: amount)
-    if payment_transaction[:status] == "success"
-      transaction.transaction_number = payment_transaction[:transaction_number]
-      transaction.status = true
-
-      self.toll_credit = self.toll_credit+amount
-    else
-      errors.add(:credit_card, " amount deduction failed.")
-    end
-    transaction.save && self.save
+  def update_payment_profile
   end
 
-  def has_enough_toll_credit?
-    self.toll_credit >= MIN_TOLL_CREDIT+TOLL_AMOUNT_FOR_DISPATCH ? true :false
-  end
 
-  def detuct_toll_credit!(amount)
-    self.toll_credit = self.toll_credit-amount
-    self.save
-  end
 end

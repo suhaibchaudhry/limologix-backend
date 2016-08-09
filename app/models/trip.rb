@@ -27,19 +27,17 @@ class Trip < ActiveRecord::Base
   accepts_nested_attributes_for :end_destination
 
   def accept!(driver)
-    dispatch = driver.dispatches.new(trip_id: trip.id)
+    dispatch = driver.dispatches.new(trip_id: self.id)
 
-    web_notification = WebNotification.create(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip"},
+    web_notification = WebNotification.create(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip", trip: {id: self.id}}.to_json,
       publishable: self.user.company, notifiable: self)
 
-    if dispacth.valid? & web_notification.valid? && web_notification.save && dispatch.save && update_status!('active')
+    if dispatch.valid? & web_notification.valid? && web_notification.save && dispatch.save && update_status!('active')
 
-      driver.detuct_toll_credit!(Driver::TOLL_AMOUNT_FOR_DISPATCH)
-
+      driver.deduct_toll_credit!(Driver::TOLL_AMOUNT_FOR_DISPATCH)
       PaymentTransactionWorker.perform_async(driver) unless driver.has_enough_toll_credit?
 
       destroy_scheduled_worker
-
       return true
     else
       return false
@@ -59,6 +57,10 @@ class Trip < ActiveRecord::Base
     update_status!('cancelled')
   end
 
+  def close!
+    update_status!('closed')
+  end
+
   def find_nearest_driver
     drivers_geolocation = $redis.hgetall("drivers")
     nearest_driver = nil
@@ -75,7 +77,7 @@ class Trip < ActiveRecord::Base
         geolocation = JSON.parse(value)
         driver_from_redis = Driver.find_by(channel: key)
 
-        if (driver_from_redis.present? && !driver_ids.include?(driver_from_redis.id) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180)
+        if (driver_from_redis.present? && !driver_ids.include?(driver_from_redis.id) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180))
           distance = self.start_destination.calculate_distance(geolocation['latitude'].to_f, geolocation['longitude'].to_f)
 
           if distance < nearest_distance

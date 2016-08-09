@@ -2,22 +2,26 @@ class FayeClient
   require 'eventmachine'
 
   def self.send_notification(channel, data)
+    publication_status = false
     EM.run {
-      client = Faye::Client.new("http://localhost:9292/faye")
+      client = Faye::Client.new("http://localhost:9293/faye")
 
       publication = client.publish("/publish/#{channel}", data)
 
       publication.callback do
         client.disconnect();
-        EventMachine::stop_event_loop
-        return "success"
+        publication_status = true
+        EM.stop
       end
 
       publication.errback do |error|
         client.disconnect();
-        EventMachine::stop_event_loop
-        return "error"
+        puts " <<<<<<<<osadsadsad"
+        publication_status = false
+        EM.stop
       end
     }
+
+    publication_status ? "success" : "error"
   end
 end

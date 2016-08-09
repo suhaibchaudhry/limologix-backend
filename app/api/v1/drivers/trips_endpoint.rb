@@ -142,7 +142,7 @@ module V1
             error!('Trip not yet started.' , 403) if trip.active_dispatch.yet_to_start?
             error!('Trip already completed.' , 403) if trip.active_dispatch.completed?
 
-            trip.active_dispatch.stop!
+            trip.active_dispatch.stop! && trip.close!
             { message: 'Trip stoped successfully.' }
           end
         end

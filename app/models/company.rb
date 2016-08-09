@@ -3,6 +3,7 @@ class Company < ActiveRecord::Base
   has_many :customers, through: :users
   has_one :address, as: :addressable, dependent: :destroy
   has_many :groups
+  has_many :web_notifications, as: :publishable, dependent: :destroy
 
   validates :name, :email, presence: true
   validates :email, uniqueness: true
