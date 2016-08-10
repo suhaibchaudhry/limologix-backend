@@ -9,19 +9,7 @@ module V1
       namespace :drivers do
         namespace :trips do
 
-          desc 'Get Trip details..' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 201, message: { status: 'success', message: 'Trip details.',
-                data: {
-                  trip: {id:1,start_destination:{place:'bangalore',latitude:'1.2.31.56',longitude:'123.33'},
-                  end_destination:{place:'bangalore',latitude:'1.2.31.56',longitude:'1.2.31.56'},
-                  pick_up_at:'2016-05-19T15:43:58.000Z',passengers_count:22 }
-                }
-              }.to_json },
-              { code: 404, message: { status: 'error', message: 'Trip not found.' }.to_json }]
-          end
+          desc 'Get Trip details..'
           params do
             requires :trip, type: Hash do
               requires :id, type: Integer, allow_blank: false
@@ -38,23 +26,7 @@ module V1
               }
           end
 
-          desc 'Accept trip.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip accepted successfully.'}.to_json },
-              { code: 404,
-                message: {
-                  status: 'error',
-                  message: 'Trip not found.',
-                }.to_json
-              },
-              { code: 403,
-                message: {
-                  status: 'error',
-                  message: 'Trip has already been dispatched.',
-                }.to_json
-              }]
-          end
+          desc 'Accept trip.'
           params do
             requires :trip, type: Hash do
               requires :id, type: Integer, allow_blank: false
@@ -80,12 +52,7 @@ module V1
             end
           end
 
-          desc 'Deny trip.' do
-          headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-          http_codes [ { code: 201, message: { status: 'success', message: 'Trip denied successfully.'}.to_json },
-            { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
-          end
+          desc 'Deny trip.'
           params do
             requires :trip, type: Hash do
               requires :id, type: Integer, allow_blank: false
@@ -99,12 +66,7 @@ module V1
             { message: 'Trip denied successfully.' }
           end
 
-          desc 'When passenger on board start the trip.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-             http_codes [ { code: 201, message: { status: 'success', message: 'Trip started successfully.'}.to_json },
-              { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
-          end
+          desc 'When passenger on board start the trip.'
           params do
             requires :trip, type: Hash do
               requires :id, type: Integer, allow_blank: false
@@ -122,12 +84,7 @@ module V1
             { message: 'Trip started successfully.' }
           end
 
-          desc 'When passenger off board stop the trip.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Status updated to passenger on board.'}.to_json },
-              { code: 404,message: {status: 'error', message: 'Trip not found.',}.to_json}]
-          end
+          desc 'When passenger off board stop the trip.'
           params do
             requires :trip, type: Hash do
               requires :id, type: Integer, allow_blank: false

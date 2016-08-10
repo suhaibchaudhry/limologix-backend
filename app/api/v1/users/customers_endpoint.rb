@@ -15,18 +15,7 @@ module V1
 
       namespace :users do
         namespace :customers do
-          desc 'Customer creation.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Customer created successfully.', data:
-              {customer: {id: 1, first_name: "customer1", last_name: "t", email:"customer1", mobile_number:"customer1sad", organisation: "sa dasd"}}}.to_json },
-              { code: 401,
-                message: {
-                  status: 'error',
-                  message: 'Customer first name is missing, Customer last name is empty',
-                }.to_json
-              }]
-          end
+          desc 'Customer creation.'
           params do
             requires :customer, type: Hash do
               requires :first_name, type: String, allow_blank: false
@@ -51,27 +40,16 @@ module V1
             end
           end
 
-          desc 'Customers list' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Customers list.',
-                data: {
-                  customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
-                    {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
-                  }
-                }.to_json },
-              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }
-            ]
-          end
-          get 'index' do
-            customers = serialize_model_object(current_user.company.customers)
+          desc 'Customers list'
+          paginate per_page: 20, max_per_page: 30, offset: false
+          post 'index' do
+            customers = paginate(current_user.company.customers.order(:created_at).reverse_order)
 
             if customers.present?
               {
                 message: 'Customers list.',
                 data: {
-                  customers: customers
+                  customers: serialize_model_object(customers)
                 }
               }
             else
@@ -79,30 +57,18 @@ module V1
             end
           end
 
-          desc 'Customers search' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Customers list.',
-                data: {
-                  customers: [ {'id':1,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'},
-                    {'id':2,'first_name':'customer1','last_name':'t','email':'customer1','mobile_number':'customer1sad','organisation':'null'}]
-                  }
-                }.to_json },
-              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }
-            ]
-          end
+          desc 'Customers search'
           params do
             requires :search_string, type: String
           end
           post 'search' do
-            customers = serialize_model_object(current_user.company.customers.where("CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:search_string]}%"))
+            customers = current_user.company.customers.where("CONCAT(customers.first_name,' ', customers.last_name) like ? ", "#{params[:search_string]}%")
 
             if customers.present?
               {
                 message: 'Customers list.',
                 data: {
-                  customers: customers
+                  customers: serialize_model_object(customers)
                 }
               }
             else

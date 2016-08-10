@@ -21,18 +21,7 @@ module V1
       namespace :users do
         namespace :companies do
 
-          desc 'Companies list.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Companies list.',
-                data: {
-                  drivers: [{id: 1, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'},
-                    {id: 2, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'}]
-                  }
-                }.to_json },
-              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
-          end
+          desc 'Companies list.'
           paginate per_page: 20, max_per_page: 30, offset: false
           post 'index', authorize: [:index, CompaniesEndpoint] do
             companies = paginate(Company.all.order(:created_at).reverse_order)
@@ -49,17 +38,7 @@ module V1
             end
           end
 
-          desc 'Company details update.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Company details updated successfully.'}.to_json },
-              { code: 401,
-                message: {
-                  status: 'error',
-                  message: 'company name is missing, company name is empty'
-                }.to_json
-              }]
-          end
+          desc 'Company details update.'
           params do
             requires :company, type: Hash do
               requires :name, type: String, allow_blank: false
@@ -91,41 +70,23 @@ module V1
             end
           end
 
-          desc 'Get Company details.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message:
-              {
-                status: 'success',
-                message: 'Company details updated successfully.',
-                data: {
-                  company: {
-                    id: 2,
-                    name: 'dsad',
-                    logo: {
-                      name: 'image_1463402627.jpeg',
-                      image: '/uploads/company/logo/1/image_1463402627.jpeg'
-                    },
-                    email: 'sadsad',
-                    primary_phone_number: '1231231234',
-                    secondary_phone_number: 'null',
-                    address: {
-                      street: 'LNP',
-                      city: 'Guntur',
-                      zipcode: 522004,
-                      state: { code: 'AL', name: 'Albama' },
-                      country: { code: 'US', name: 'United States' }
-                    }
-                  }
-                }
-              }.to_json },
-              { code: 404, message: { status: 'error', message: 'Company not found.'}.to_json } ]
-          end
+          desc 'Get Company details.'
           get 'show' do
             error!('Company not found.', 404) unless current_user.company
             {
               message: 'Company details.',
               data: {
                 company: serialize_model_object(current_user.company)
+              }
+            }
+          end
+
+          desc 'Get company channel name'
+          get 'channel' do
+            {
+              message: 'Company Channel.',
+              data: {
+                channel: current_user.company.channel
               }
             }
           end

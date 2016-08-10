@@ -2,10 +2,7 @@ module V1
   module Drivers
     class SessionsEndpoint < Root
       namespace :drivers do
-        desc 'Driver login' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', full_name: "Dummy t", company: "TCS"} }.to_json },
-            { code: 401, message: { status: 'error', message: 'Invalid credentails.' }.to_json }]
-        end
+        desc 'Driver login'
         params do
           requires :email, type: String, allow_blank: false
           requires :password, type: String, allow_blank: false
@@ -28,11 +25,7 @@ module V1
            end
         end
 
-        desc 'Driver logout' do
-          headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-          http_codes [ { code: 201, message: { status: 'success', message: 'Logged out successfully.'}.to_json }]
-        end
+        desc 'Driver logout'
         get 'logout' do
           authenticate!
           current_driver.update(auth_token: nil)

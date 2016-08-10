@@ -30,57 +30,7 @@ module V1
 
       namespace :drivers do
         namespace :profile do
-          desc 'Get driver details.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              {
-                code: 200,
-                message: {
-                  status: 'success',
-                  message: 'Drivers details.',
-                  data: {
-                    driver: {
-                      id: 1,
-                      first_name: 'Avinash',
-                      last_name: 'T',
-                      mobile_number: '78787878',
-                      email: 'avinash123@yopmail.com',
-                      license_number: 'L456',
-                      license_expiry_date: '2016-06-08',
-                      license_image: {
-                        name: 'License.jpg',
-                        image: '/uploads/driver/license_image/1/License.jpg'
-                      },
-                      badge_number: 'B456',
-                      badge_expiry_date: '2016-06-08',
-                      ara_image: {
-                        name: 'ARA.jpg',
-                        image: '/uploads/driver/ara_image/1/ARA.jpg'
-                      },
-                      ara_expiry_date: '2016-06-08',
-                      insurance_company: 'LIMO',
-                      insurance_policy_number: 'IN456',
-                      insurance_expiry_date: '2016-06-08',
-                      status: 'pending',
-                      address: {
-                        street: 'adsdasdasdasd',
-                        city: 'texas',
-                        zipcode: 52014,
-                        state: {
-                          code: 'AL',
-                          name: 'Alabama'
-                        },
-                        country: {
-                          code: 'US',
-                          name: 'United States'
-                        }
-                      }
-                    }
-                  }
-                }.to_json
-              }]
-          end
+          desc 'Get driver details.'
           get 'show' , serializer: DriverVehicleSerializer do
             {
               message: 'Drivers details.',
@@ -90,16 +40,7 @@ module V1
             }
           end
 
-          desc 'Update contact information.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Contact Information updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Driver first name is missing, Driver last name is empty'
-                }.to_json
-              }]
-          end
+          desc 'Update contact information.'
           params do
             requires :driver, type: Hash do
               requires :first_name, type: String, allow_blank: false
@@ -125,16 +66,7 @@ module V1
             end
           end
 
-          desc 'Update personal information.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Personal information updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Driver license number is missing, Driver license number is empty'
-                }.to_json
-              }]
-          end
+          desc 'Update personal information.'
           params do
             requires :driver, type: Hash do
               requires :license_number, type: String, allow_blank: false
@@ -166,17 +98,7 @@ module V1
             end
           end
 
-
-          desc 'Update visible status.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-            http_codes [ { code: 201, message: { status: 'success', message: 'Visible status updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Driver visible is missing, Driver visible is empty'
-                }.to_json
-              }]
-          end
+          desc 'Update visible status.'
           params do
             requires :driver, type: Hash do
               requires :visible, type: Boolean, allow_blank: false
@@ -193,17 +115,7 @@ module V1
           end
 
 
-          desc 'Update password' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Driver password is empty'
-                }.to_json
-              }]
-          end
+          desc 'Update password'
           params do
             requires :driver, type: Hash do
               requires :password, type: String, allow_blank: false
@@ -218,12 +130,7 @@ module V1
             end
           end
 
-          desc 'Get channel name' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Channel', data: {channel: "sadsad"}}.to_json },
-              { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
-          end
+          desc 'Get channel name'
           get 'channel' do
             {
               message: 'Channel.',
@@ -233,12 +140,7 @@ module V1
             }
           end
 
-          desc 'Get topic name' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [{ code: 201, message: { status: 'success', message: 'Topic', data: {topic: "sadsad"}}.to_json },
-             { code: 401, message: { status: 'error', message: 'Unauthorized. Invalid or expired token.'}.to_json }]
-          end
+          desc 'Get topic name'
           get 'topic' do
             {
               message: 'Topic.',
@@ -248,17 +150,7 @@ module V1
             }
           end
 
-          desc 'Get vehicle information.' do
-            headers 'Auth-Token' => { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle details.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Vehicle make is missing, Vehicle make is empty'
-                }.to_json
-              }]
-          end
+          desc 'Get vehicle information.'
           get 'get_vehicle' do
             vehicle = current_driver.vehicle
 
@@ -274,17 +166,7 @@ module V1
             end
           end
 
-          desc 'update a vehicle.' do
-            headers 'Auth-Token' => { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Vehicle make is missing, Vehicle make is empty'
-                }.to_json
-              }]
-          end
+          desc 'update a vehicle.' 
           params do
             requires :vehicle, type: Hash do
               requires :vehicle_make_id, type: Integer, allow_blank: false

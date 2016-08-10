@@ -3,10 +3,7 @@ module V1
     class SessionsEndpoint < Root
 
       namespace :users do
-        desc 'User login' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Login successfull.', data: {'Auth-Token': 'HDGHSDGSD4454','full_name': "Avinash T", 'role': 'super_admin'} }.to_json },
-            { code: 401, message: { status: 'error', message: 'Invalid credentails.' }.to_json }]
-        end
+        desc 'User login'
         params do
           requires :email, type: String, allow_blank: false
           requires :password, type: String, allow_blank: false
@@ -30,11 +27,7 @@ module V1
           end
         end
 
-        desc 'User logout' do
-          headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-          http_codes [ { code: 201, message: { status: 'success', message: 'Logged out successfully.'}.to_json }]
-        end
+        desc 'User logout'
         get 'logout' do
           authenticate!
           current_user.update(auth_token: nil)

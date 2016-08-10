@@ -21,16 +21,7 @@ module V1
       end
 
       namespace :drivers do
-        desc 'Creates a driver account' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Registration successfull.', data: {'Auth-Token': 'HDGHSDGSD4454', full_name: "Avinash", company: "Tcs"} }.to_json },
-            { code: 400,
-              message: {
-                status: 'error',
-                message: 'Driver email has already been taken'
-              }.to_json
-            }
-          ]
-        end
+        desc 'Creates a driver account'
         params do
           requires :driver, type: Hash do
             requires :first_name, type: String, allow_blank: false

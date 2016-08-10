@@ -14,17 +14,7 @@ module V1
       namespace :users do
         namespace :profile do
 
-          desc 'Update profile details.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Profile details updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'User first name is missing, User last name is empty'
-                }.to_json
-              }]
-          end
+          desc 'Update profile details.'
           params do
             requires :user, type: Hash do
               requires :first_name, type: String, allow_blank: false
@@ -41,12 +31,7 @@ module V1
             end
           end
 
-          desc 'Get User profile details.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: {"status":"success","message":"User profile details.",
-              "data":{"user":{"first_name":"Surya","last_name":"T","email":"surya12345@yopmail.com","mobile_number":"1231231234"}}}.to_json }]
-          end
+          desc 'Get User profile details.'
           get 'show' do
             {
               message: 'User profile details.',
@@ -56,17 +41,7 @@ module V1
             }
           end
 
-          desc 'Update password' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Password has been updated successfully.'}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'User password is empty'
-                }.to_json
-              }]
-          end
+          desc 'Update password'
           params do
             requires :user, type: Hash do
               requires :password, type: String, allow_blank: false
@@ -79,17 +54,6 @@ module V1
               error!(current_user.errors.full_messages , 400)
             end
           end
-
-          desc 'Get company channel name'
-          get 'company_channel' do
-            {
-              message: 'Company Channel.',
-              data: {
-                channel: current_user.company.channel
-              }
-            }
-          end
-
         end
       end
     end
