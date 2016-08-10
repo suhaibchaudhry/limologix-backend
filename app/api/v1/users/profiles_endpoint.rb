@@ -80,6 +80,16 @@ module V1
             end
           end
 
+          desc 'Get company channel name'
+          get 'company_channel' do
+            {
+              message: 'Company Channel.',
+              data: {
+                channel: current_user.company.channel
+              }
+            }
+          end
+
         end
       end
     end

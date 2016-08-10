@@ -22,6 +22,9 @@ class Trip < ActiveRecord::Base
   has_many :mobile_notifications, as: :notifiable, dependent: :destroy
   has_many :request_notifications, -> { where kind: 'trip_request' }, as: :notifiable, class_name: 'MobileNotification'
 
+  has_many :trip_groups
+  has_many :groups, through: :trip_groups, source: :group
+
   validates :pick_up_at, :passengers_count, presence: true
   accepts_nested_attributes_for :start_destination
   accepts_nested_attributes_for :end_destination

@@ -16,7 +16,7 @@ module V1
             driver.update_auth_token!
 
             {
-              message: 'Login successfull.',
+              message: 'Login successful.',
               data: {
                 'Auth-Token': driver.auth_token,
                 full_name: driver.full_name,
@@ -24,7 +24,7 @@ module V1
               }
             }
            else
-            error!('Invalid credentails', 401)
+            error!('Invalid credentials', 401)
            end
         end
 

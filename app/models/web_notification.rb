@@ -14,7 +14,7 @@ class WebNotification < ActiveRecord::Base
     data = JSON.parse(self.message).merge('id' => self.id)
 
     EM.run {
-      client = Faye::Client.new("http://localhost:9293/faye")
+      client = Faye::Client.new("http://localhost:9292/faye")
 
       publication = client.publish("/publish/#{channel}", data)
 

@@ -26,7 +26,7 @@ module V1
               }
             }
           else
-            error!('Invalid credentails.', 401)
+            error!('Invalid credentials.', 401)
           end
         end
 

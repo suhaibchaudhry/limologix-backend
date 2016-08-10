@@ -40,6 +40,7 @@ module V1
               requires :passengers_count, type: Integer, allow_blank: false
               requires :customer_id, type: Integer, allow_blank: false
               requires :vehicle_type_id, type: Integer, allow_blank: false
+              requires :group_ids, type: Array[Integer], allow_blank: false
             end
           end
           post 'create' do
@@ -51,12 +52,19 @@ module V1
             vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
             error!("Vehicle Type not found." , 404) unless vehicle_type.present?
 
+            begin
+              trip.group_ids = params[:trip][:group_ids]
+            rescue => e
+              error!("Couldn't find all Groups" , 400)
+            end
+
             if trip.valid?
               trip.customer = customer
               trip.vehicle_type = vehicle_type
               trip.save
               # TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
               TripRequestWorker.perform_async(trip.id)
+
               {
                 message: 'Trip created successfully.',
                 data: {
@@ -77,13 +85,16 @@ module V1
             error!('Invalid trip status.', 404) unless Trip::STATUSES.include?(params[:trip_status])
 
             trips = paginate(current_user.trips.send(params[:trip_status]).order(:created_at).reverse_order)
-
-            {
-              message: 'Trips list.',
-              data: {
-                trips: serialize_model_object(trips)
+            if trips.present?
+              {
+                message: 'Trips list.',
+                data: {
+                  trips: serialize_model_object(trips)
+                }
               }
-            }
+            else
+              { message: 'No results found.'}
+            end
           end
 
           desc 'Get Trip details..'

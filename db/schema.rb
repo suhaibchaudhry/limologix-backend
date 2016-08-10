@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160804115711) do
+ActiveRecord::Schema.define(version: 20160810065655) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -177,6 +177,16 @@ ActiveRecord::Schema.define(version: 20160804115711) do
   end
 
   add_index "transactions", ["driver_id"], name: "index_transactions_on_driver_id", using: :btree
+
+  create_table "trip_groups", force: :cascade do |t|
+    t.integer  "trip_id",    limit: 4
+    t.integer  "group_id",   limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "trip_groups", ["group_id"], name: "index_trip_groups_on_group_id", using: :btree
+  add_index "trip_groups", ["trip_id"], name: "index_trip_groups_on_trip_id", using: :btree
 
   create_table "trips", force: :cascade do |t|
     t.datetime "pick_up_at"

@@ -108,7 +108,7 @@ module V1
             UserMailer.delay(:queue => 'mailers').driver_account_creation_mail(driver)
 
             {
-              message: 'Registration successfull.',
+              message: 'Registration successful.',
               data: {
                 'Auth-Token': driver.auth_token,
                 full_name: driver.full_name,

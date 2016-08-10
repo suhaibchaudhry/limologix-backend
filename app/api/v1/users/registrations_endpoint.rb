@@ -46,7 +46,7 @@ module V1
             user.save
 
             {
-              message: 'Registration successfull.',
+              message: 'Registration successful.',
               data: {
                 'Auth-Token': user.auth_token,
                 full_name: user.full_name,
@@ -54,8 +54,10 @@ module V1
               }
             }
           else
-            message = "#{user.errors.full_messages}, #{company.errors.full_messages}"
-            error!(message.gsub(/^,|,$/, ''), 400)
+            message = []
+            message << user.errors.full_messages  if user.errors.present?
+            message << company.errors.full_messages  if company.errors.present?
+            error!(message.join(', '), 400)
           end
         end
       end
