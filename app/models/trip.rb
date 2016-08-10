@@ -80,7 +80,7 @@ class Trip < ActiveRecord::Base
         geolocation = JSON.parse(value)
         driver_from_redis = Driver.find_by(channel: key)
 
-        if (driver_from_redis.present? && !driver_ids.include?(driver_from_redis.id) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180))
+        if (driver_from_redis.present? && (!driver_ids.include?(driver_from_redis.id)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180))
           distance = self.start_destination.calculate_distance(geolocation['latitude'].to_f, geolocation['longitude'].to_f)
 
           if distance < nearest_distance
@@ -118,8 +118,5 @@ class Trip < ActiveRecord::Base
   def update_status!(status)
     self.status = status
     self.save
-  end
-
-  def check_and_update_toll_credit(driver)
   end
 end
