@@ -26,6 +26,10 @@ module V1
           params[:vehicle][:features_attributes] = params[:vehicle][:features].present? ? params[:vehicle][:features].map{|feature| {name: feature}} : []
           ActionController::Parameters.new(params).require(:vehicle).permit(:hll_number, :color, :license_plate_number, features_attributes: [:name])
         end
+
+        def credit_card_params
+          ActionController::Parameters.new(params).require(:driver).permit(:card_number, :card_expiry_date, :card_code)
+        end
       end
 
       namespace :drivers do
@@ -98,6 +102,48 @@ module V1
             end
           end
 
+          desc 'Update credit card details.'
+          params do
+            requires :driver, type: Hash do
+              requires :card_number, type: String, allow_blank: false
+              requires :card_expiry_date, type: String, allow_blank: false
+              requires :card_code, type: String, allow_blank: false
+            end
+          end
+          post 'update_credit_card' do
+            if current_driver.update_payment_profile(credit_card_params)
+
+              unless current_driver.has_enough_toll_credit?
+                if current_driver.charge_customer!
+                  { message: 'Payment details updated successfully.'}
+                else
+                  error!("Payment details updated successfully.But unable to do transactions." , 400)
+                end
+              end
+
+              { message: 'Payment details updated successfully.'}
+            else
+              error!("Error while updating credit card details." , 400)
+            end
+          end
+
+          desc 'Get credit card details.'
+          get 'get_credit_card_info' do
+            payment_profile = Payment.get_customer_payment_profile(current_driver.customer_profile_id, current_driver.customer_payment_profile_id)
+
+            if payment_profile[:status] == "success"
+              {
+                message: "Card details",
+                data: {
+                  card_number: payment_profile[:card_number],
+                  card_type: payment_profile[:card_type]
+                }
+              }
+            else
+              error!("Error while fetching credit card details." , 400)
+            end
+          end
+
           desc 'Update visible status.'
           params do
             requires :driver, type: Hash do
@@ -113,7 +159,6 @@ module V1
               error!(current_driver.errors.full_messages , 400)
             end
           end
-
 
           desc 'Update password'
           params do

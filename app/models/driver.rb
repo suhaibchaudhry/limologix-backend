@@ -88,6 +88,13 @@ class Driver < ActiveRecord::Base
     transaction.save && self.save
   end
 
+  def update_payment_profile(params)
+    payment_profile = Payment.update_customer_payment_profile(self.customer_profile_id, self.customer_payment_profile_id,
+      params[:card_number], params[:card_expiry_date], params[:card_code] )
+
+    payment_profile[:status] == "success" ? true : false
+  end
+
   private
 
   def license_image_size
@@ -130,9 +137,4 @@ class Driver < ActiveRecord::Base
       return false
     end
   end
-
-  def update_payment_profile
-  end
-
-
 end
