@@ -1,5 +1,5 @@
 class Trip < ActiveRecord::Base
-  STATUSES = ['pending', 'dispatched', 'rejected', 'active', 'closed', 'cancelled']
+  STATUSES = ['pending', 'dispatched', 'inactive', 'active', 'closed', 'cancelled']
 
   STATUSES.each do |status|
     scope status.to_sym, -> { where(status: status) }
@@ -51,8 +51,10 @@ class Trip < ActiveRecord::Base
     update_status!('dispatched')
   end
 
-  def reject!
-    update_status!('rejected')
+  def inactive!
+    web_notification = WebNotification.create(message: {title: "Trip moved to inactive", body: "Trip moved to inactive state because no driver interested in this trip."}.to_json,
+        publishable: self.user.company, notifiable: self)
+    update_status!('inactive')
   end
 
   def cancel!
@@ -65,27 +67,30 @@ class Trip < ActiveRecord::Base
   end
 
   def find_nearest_driver
-    drivers_geolocation = $redis.hgetall("drivers")
+    redis_drivers_list = $redis.hgetall("drivers")
     nearest_driver = nil
     nearest_distance = Settings.driver_search_radius
+
+    drivers_in_groups = self.groups.includes(:drivers).flat_map {|group| group.driver_ids}
 
     already_requested_drivers = self.request_notifications.collect(&:driver_id)
     drivers_not_visible = Driver.invisible.collect(&:id)
     drivers_in_active_trips = Dispatch.active.collect(&:driver_id)
 
-    driver_ids = [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
+    driver_ids = drivers_in_groups - [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
 
-    if drivers_geolocation.present?
-      drivers_geolocation.each do |key, value|
-        geolocation = JSON.parse(value)
-        driver_from_redis = Driver.find_by(channel: key)
+    driver_ids.each do |driver_id|
+      driver = Driver.find_by(id: driver_id)
 
-        if (driver_from_redis.present? && (!driver_ids.include?(driver_from_redis.id)) && ((Time.now.to_i - geolocation["timestamp"].to_i) < 180))
-          distance = self.start_destination.calculate_distance(geolocation['latitude'].to_f, geolocation['longitude'].to_f)
+      if (redis_drivers_list["#{driver.channel}"].present? && driver.vehicle.vehicle_type == self.vehicle_type)
+        driver_geolocation = JSON.parse(redis_drivers_list["#{driver.channel}"])
+
+        if ((Time.now.to_i - driver_geolocation["timestamp"].to_i) < 180)
+          distance = self.start_destination.calculate_distance(driver_geolocation['latitude'].to_f, driver_geolocation['longitude'].to_f)
 
           if distance < nearest_distance
             nearest_distance = distance
-            nearest_driver = key.to_i
+            nearest_driver = driver
           end
         end
       end

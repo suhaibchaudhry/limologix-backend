@@ -59,8 +59,7 @@ module V1
             end
 
             if trip.valid?
-              trip.customer = customer
-              trip.vehicle_type = vehicle_type
+              trip.assign_attributes(customer: customer, vehicle_type: vehicle_type)
               trip.save
               # TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
               TripRequestWorker.perform_async(trip.id)

@@ -10,7 +10,7 @@ class Driver < ActiveRecord::Base
     disapprove: 'disapproved'
   }
   DEFAULT_AMOUNT_TO_CHARGE = Settings.default_amount_to_charge_driver
-  MIN_TOLL_CREDIT = Settings.min_toll_credit
+  MIN_TOLL_CREDIT = Settings.min_toll_credit_for_driver
   TOLL_AMOUNT_FOR_DISPATCH = Settings.toll_amount_for_dispatch
 
   STATUSES.each do |status|

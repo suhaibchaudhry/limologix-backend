@@ -90,12 +90,10 @@ module V1
           driver = Driver.new(driver_params)
           vehicle = Vehicle.new(vehicle_params)
 
-          vehicle.vehicle_type = vehicle_type
-          vehicle.vehicle_make = vehicle_make
-          vehicle.vehicle_model = vehicle_model
-          vehicle.driver = driver
+          vehicle.assign_attributes(vehicle_type: vehicle_type, vehicle_make: vehicle_make, 
+            vehicle_model: vehicle_model, driver: driver)
 
-          if driver.valid? & vehicle.valid? && driver.save && vehicle.save
+          if driver.valid? & vehicle.valid? && driver.save
             UserMailer.delay(:queue => 'mailers').driver_account_creation_mail(driver)
 
             {

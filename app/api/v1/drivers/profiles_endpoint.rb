@@ -239,9 +239,7 @@ module V1
             vehicle = current_driver.vehicle
             error!("Vehicle not found." , 404) unless vehicle.present?
 
-            vehicle.vehicle_type = vehicle_type
-            vehicle.vehicle_make = vehicle_make
-            vehicle.vehicle_model = vehicle_model
+            vehicle.assign_attributes(vehicle_type: vehicle_type, vehicle_make: vehicle_make, vehicle_model: vehicle_model)
 
             if vehicle.update(vehicle_params)
               { message: 'Vehicle updated successfully.' }

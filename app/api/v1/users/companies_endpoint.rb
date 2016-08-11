@@ -63,6 +63,7 @@ module V1
           end
           post 'update', authorize: [:update, CompaniesEndpoint] do
             company = current_user.company
+
             if company.update(company_params)
               { message: 'Company details updated successfully.'}
             else
@@ -90,7 +91,6 @@ module V1
               }
             }
           end
-
 
         end
       end

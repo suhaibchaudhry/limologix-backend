@@ -18,12 +18,12 @@ class TripRequestWorker
 
       nearest_driver = trip.find_nearest_driver
       if nearest_driver.present?
-        TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nearest_driver)
+        TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nearest_driver.id)
       else
-        puts "Send notification to admin that no driver is available in 20 miles radius"
+        TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nil)
       end
     else
-      trip.reject! if trip.dispatched?
+      trip.inactive! if trip.dispatched?
     end
   end
 end

@@ -3,7 +3,7 @@
 
 defaults: &defaults
   default_amount_to_charge_driver: 20
-  min_toll_credit: 4
+  min_toll_credit_for_driver: 4
   toll_amount_for_dispatch: 2
   driver_search_radius: 20
   delay_between_trip_request: 14

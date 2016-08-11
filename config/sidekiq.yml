@@ -2,7 +2,8 @@
 :concurrency: 5
 :queues:
   - ["trip_requests", 1]
-  - ["mailers", 2]
+  - ["payment_transactions", 2]
+  - ["mailers", 3]
 staging:
   :logfile: log/sidekiq.log
   :concurrency: 3

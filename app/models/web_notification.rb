@@ -16,7 +16,7 @@ class WebNotification < ActiveRecord::Base
     EM.run {
       client = Faye::Client.new("http://localhost:9292/faye")
 
-      publication = client.publish("#{channel}", data)
+      publication = client.publish("/#{channel}", data)
 
       publication.callback do
         self.update(response_status: "success")

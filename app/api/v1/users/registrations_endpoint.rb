@@ -41,8 +41,7 @@ module V1
           company = Company.new(company_params)
 
           if user.valid? & company.valid?
-            user.role = Role.admin
-            user.company = company
+            user.assign_attributes(role: Role.admin, company: company)
             user.save
 
             {
