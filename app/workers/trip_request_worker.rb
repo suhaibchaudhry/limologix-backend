@@ -4,26 +4,29 @@ class TripRequestWorker
 
   def perform(trip_id=nil, driver_id=nil)
     trip = Trip.find_by(id: trip_id)
-    trip.dispatch! if trip.pending?
 
-    unless trip.pick_up_at < Time.now
-      if driver_id.present?
-        driver = Driver.find_by(id: driver_id)
-        notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now}).to_json
+    if trip.present?
+      trip.dispatch! if trip.pending?
 
-        notification = trip.request_notifications.create(driver_id: driver.id,
-          title: Settings.mobile_notification.trip_request.title, body: Settings.mobile_notification.trip_request.body,
-          data: notification_data)
-      end
+      unless trip.pick_up_at < Time.now
+        if driver_id.present?
+          driver = Driver.find_by(id: driver_id)
+          notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now}).to_json
 
-      nearest_driver = trip.find_nearest_driver
-      if nearest_driver.present?
-        TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nearest_driver.id)
+          notification = trip.request_notifications.create(driver_id: driver.id,
+            title: Settings.mobile_notification.trip_request.title, body: Settings.mobile_notification.trip_request.body,
+            data: notification_data)
+        end
+
+        nearest_driver = trip.find_nearest_driver
+        if nearest_driver.present?
+          TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nearest_driver.id)
+        else
+          TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nil)
+        end
       else
-        TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nil)
+        trip.inactive! if trip.dispatched?
       end
-    else
-      trip.inactive! if trip.dispatched?
     end
   end
 end
