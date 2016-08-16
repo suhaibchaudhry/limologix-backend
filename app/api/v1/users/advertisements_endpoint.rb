@@ -12,7 +12,7 @@ module V1
 
           desc 'Add advertisement posters.'
           params do
-            requires :posters, type: Array[JSON] do
+            requires :posters, type: Array do
               requires :name, type: String, allow_blank: false
               requires :image, type: String, allow_blank: false
             end
