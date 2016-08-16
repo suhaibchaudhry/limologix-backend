@@ -20,7 +20,7 @@ module V1
               {
                 message: 'Notifications list.',
                 data: {
-                  groups: serialize_model_object(notifications)
+                  notifications: serialize_model_object(notifications)
                 }
               }
             else

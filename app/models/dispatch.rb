@@ -15,10 +15,14 @@ class Dispatch < ActiveRecord::Base
   belongs_to :trip
 
   def start!
+    web_notification = WebNotification.create(message: {title: "Trip started", body: "Driver arrived to pick up location."}.to_json,
+        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_start')
     update_status!('started')
   end
 
   def stop!
+    web_notification = WebNotification.create(message: {title: "Trip completed", body: "Driver arrived to drop off location."}.to_json,
+        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_stop')
     update_status!('completed')
   end
 

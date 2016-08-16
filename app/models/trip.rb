@@ -33,7 +33,7 @@ class Trip < ActiveRecord::Base
     dispatch = driver.dispatches.new(trip_id: self.id)
 
     web_notification = WebNotification.create(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip", trip: {id: self.id}}.to_json,
-      publishable: self.user.company, notifiable: self)
+      publishable: self.user.company, notifiable: self, kind: 'trip_accept')
 
     if dispatch.valid? & web_notification.valid? && web_notification.save && dispatch.save && update_status!('active')
 
@@ -48,12 +48,14 @@ class Trip < ActiveRecord::Base
   end
 
   def dispatch!
+    web_notification = WebNotification.create(message: {title: "Trip notification started", body: "Notification for this trip started."}.to_json,
+        publishable: self.user.company, notifiable: self, kind: 'trip_dispatch')
     update_status!('dispatched')
   end
 
   def inactive!
     web_notification = WebNotification.create(message: {title: "Trip moved to inactive", body: "Trip moved to inactive state because no driver interested in this trip."}.to_json,
-        publishable: self.user.company, notifiable: self)
+        publishable: self.user.company, notifiable: self, kind: 'trip_inactive')
     update_status!('inactive')
   end
 

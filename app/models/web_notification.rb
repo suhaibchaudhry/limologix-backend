@@ -1,6 +1,6 @@
 class WebNotification < ActiveRecord::Base
 
-  KINDS = ['trip_accept']
+  KINDS = ['trip_accept', 'trip_dispatch', 'trip_inactive', 'trip_start', 'trip_stop']
 
   belongs_to :notifiable, :polymorphic => true
   belongs_to :publishable, :polymorphic => true
