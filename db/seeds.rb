@@ -3,15 +3,56 @@
 require 'csv'
 
 ROLES = ['super_admin', 'admin', 'manager']
-VEHICLE_TYPE_WITH_ICONS = {
-  'SUV': 'vehicle-icons-suv.png',
-  'Sedan': 'vehicle-icons-sedan.png',
-  'Sprinter Van': 'vehicle-icons-sprinter-van.png',
-  'Van': 'vehicle-icons-van.png',
-  'Shuttle Van': 'vehicle-icons-shuttle-van.png',
+VEHICLE_TYPES = [
+  {
+    name: 'SUV',
+    icon: 'vehicle-icons-suv.png',
+    capacity: 8,
+    description: "A sport utility vehicle (SUV, sometimes called a sports utility wagon) is a passenger 
+      vehicle designed to carry passengers in a traditional front and back seat configuration, as well as 
+      provide additional cargo capacity in the form of a two-box design with shared passenger/cargo volume 
+      with rear cargo access via a liftgate, rather than a separate lower-height trunk (or 'boot') cargo 
+      space with a horizontal lid."
+  },
+  {
+    name: 'Sedan',
+    icon: 'vehicle-icons-sedan.png',
+    capacity: 5,
+    description: "A sedan seats four or more and has a fixed roof that is full-height up to 
+      the rear window. Most commonly it is a four-door; two-door is rarer but they do occur 
+      (more so historically). In the U.S., this term has been used to denote a car with fixed window 
+      frames, as opposed to the hardtop style where the sash, if any, winds down with the glass. 
+      As hardtops have become rarer, this distinction is no longer so important."
+  },
+  {
+    name: 'Sprinter Van',
+    icon: 'vehicle-icons-sprinter-van.png',
+    capacity: 8,
+    description: "The Sprinter is designed primarily for business, not private users, 
+    although recreational vehicle (RV) conversions are available. "
+  },
+  {
+    name: 'Van',
+    icon: 'vehicle-icons-sprinter-van.png',
+    capacity: 6,
+    description: "The Sprinter is designed primarily for business, not private users, 
+    although recreational vehicle (RV) conversions are available. "
+  },
+  {
+    name: 'Shuttle Van',
+    icon: 'vehicle-icons-shuttle-van.png',
+    capacity: 8,
+    description: "Lorem Ipsum is simply dummy text of the printing and 
+    typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 
+    the 1500s, when an unknown printer took a galley of type and scrambled it to make a type 
+    specimen book. It has survived not only five centuries, but also the leap into electronic 
+    typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release 
+    of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+    software like Aldus PageMaker including versions of Lorem Ipsum."
   }
+]
 
-def generate_upload_file_image(filename)
+def generate_upload_file_object(filename)
   image_file = File.open(File.join(Rails.root, "app/assets/images/#{filename}"),'r')
 
   content_type = `file --mime -b #{image_file.path}`.split(";")[0]
@@ -34,7 +75,7 @@ if Role.super_admin.users.count <=0
   user = User.new
   user.first_name = 'Super'
   user.last_name = 'Admin'
-  user.email = 'superadmin@limologix.com'
+  user.email = 'superadminlimo@yopmail.com'
   user.mobile_number = 7878787878
   user.password = 'Limologix@1234'
   user.role = Role.super_admin
@@ -42,18 +83,12 @@ if Role.super_admin.users.count <=0
 end
 
 if VehicleType.count <= 0
-  VEHICLE_TYPE_WITH_ICONS.each do |name, icon|
+  VEHICLE_TYPES.each do |vehicle|
     vehicle_type = VehicleType.new
-    vehicle_type.name = name
-    vehicle_type.description = "Lorem Ipsum is simply dummy text of the printing and 
-    typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 
-    the 1500s, when an unknown printer took a galley of type and scrambled it to make a type 
-    specimen book. It has survived not only five centuries, but also the leap into electronic 
-    typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release 
-    of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
-    software like Aldus PageMaker including versions of Lorem Ipsum."
-    vehicle_type.capacity = (1..10).to_a.sample
-    vehicle_type.image = generate_upload_file_image(icon)
+    vehicle_type.name = vehicle[:name]
+    vehicle_type.description = vehicle[:description]
+    vehicle_type.capacity = vehicle[:capacity]
+    vehicle_type.image = generate_upload_file_object(vehicle[:icon])
     puts "One Vehicle type is created with name #{vehicle_type.name}" if vehicle_type.save!
   end
 end

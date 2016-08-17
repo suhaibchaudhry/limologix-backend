@@ -23,8 +23,10 @@ module V1
       mount CompaniesEndpoint
       mount CustomersEndpoint
       mount TripsEndpoint
-      mount VehiclesEndpoint
       mount DriversEndpoint
+      mount AdvertisementsEndpoint
+      mount GroupsEndpoint
+      mount WebNotificationsEndpoint
     end
   end
 end

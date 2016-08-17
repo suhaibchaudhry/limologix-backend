@@ -1,9 +1,7 @@
 module V1
   class MasterDataEndpoint < Base
     namespace :master_data do
-      desc 'Returns list of countries' do
-        http_codes [ { code: 201, message: { status: 'success', message: 'Countries list', data: [{ code: "US", name: "United States" }, { code: "CA", name: "Canada"}] }.to_json }]
-      end
+      desc 'Returns list of countries'
       get 'countries' do
         {
           message: 'Countries list',
@@ -14,9 +12,7 @@ module V1
         }
       end
 
-      desc 'Returns list of states in country' do
-        http_codes [ { code: 201, message: { status: 'success', message: 'States list', data: [{ "code": "AB","name": "Alberta"},{"code": "BC", "name": "British Columbia"}] }.to_json } ]
-      end
+      desc 'Returns list of states in country'
       params do
         requires :country_code, type: String, allow_blank: false
       end
@@ -29,15 +25,36 @@ module V1
         }
       end
 
-      namespace :vehicles do
-        desc 'List of vehicle types.' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle types list.',
+      # desc 'Returns list of companies' do
+      #   http_codes [ { code: 201, message: { status: 'success', message: 'Companies list', data: [{ id: 1, name: "Softway" }, { id: 2, name: "TCS"}] }.to_json }]
+      # end
+      # paginate per_page: 20, max_per_page: 30, offset: false
+      # post 'companies' do
+      #   {
+      #     message: 'Companies list',
+      #     data: Company.all.map{|company| { id: company.id, name: company.name }}
+      #   }
+      # end
+
+      desc 'Advertisement posters list.'
+      paginate per_page: 20, max_per_page: 30, offset: false
+      post 'advertisements' do
+        advertisements = paginate(Advertisement.all.order(:created_at).reverse_order)
+
+        if advertisements.present?
+          {
+            message: 'Advertisements list.',
             data: {
-              vehicle_types: [{"id":1,"name":"suv","description":"Hic odit distinctio cum sequi dolores tempore.","capacity":9,"image":"/uploads/vehicle_type/image/1/dummy_image_9.png"},
-                {"id":2,"name":"van","description":"Optio sed et veniam eum.","capacity":7,"image":"/uploads/vehicle_type/image/2/dummy_image_7.png"}]
+              advertisements: serialize_model_object(advertisements)
             }
-          }.to_json }]
+          }
+        else
+          { message: 'No results found.'}
         end
+      end
+
+      namespace :vehicles do
+        desc 'List of vehicle types.'
         get 'types' do
           {
             message: 'Vehicle types list.',
@@ -48,13 +65,7 @@ module V1
           }
         end
 
-        desc 'List of vehicle makes.' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle makes list..',
-            data: {
-              vehicle_makes: [{"id":16,"name":"Chevy"},{"id":17,"name":"Hyundai"}]
-            }
-          }.to_json }]
-        end
+        desc 'List of vehicle makes.'
         params do
           requires :vehicle_type_id, type: Integer, allow_blank: false
         end
@@ -75,13 +86,7 @@ module V1
           end
         end
 
-        desc 'List of vehicle models.' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Vehicle models list.',
-            data: {
-              vehicle_models: [{"id":16,"name":"3 Series"},{"id":17,"name":"4 Series"}]
-            }
-          }.to_json }]
-        end
+        desc 'List of vehicle models.'
         params do
           requires :vehicle_type_id, type: Integer, allow_blank: false
           requires :vehicle_make_id, type: Integer, allow_blank: false

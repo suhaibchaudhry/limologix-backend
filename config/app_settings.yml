@@ -1,0 +1,33 @@
+# Access the following keys from the application by using
+# Settings.example_key #=> 'Just an Example'
+
+defaults: &defaults
+  default_amount_to_charge_driver: 20
+  min_toll_credit_for_driver: 4
+  toll_amount_for_dispatch: 2
+  driver_search_radius: 20
+  delay_between_trip_request: 14
+
+  mobile_notification:
+    trip_request:
+      title: 'Limo-logix'
+      body: 'YOU’VE GOT A RIDE REQUEST.'
+    payment_success:
+      title: 'Limo-logix'
+      body: 'We have deducted 20$ from your credit card.'
+    payment_failure:
+      title: 'Limo-logix'
+      body: 'Failure in deducting 20$ from your account, Please update credit card.'
+
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

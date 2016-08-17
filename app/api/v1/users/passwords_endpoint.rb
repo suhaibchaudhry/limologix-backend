@@ -2,10 +2,7 @@ module V1
   module Users
     class PasswordsEndpoint < Root
       namespace :users do
-        desc 'Verifies email and send reset password mail' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Email has been sent to registered email address.' }.to_json },
-            { code: 401, message: { status: 'error', message: 'Email not found.' }.to_json }]
-        end
+        desc 'Verifies email and send reset password mail'
         params do
           requires :email, type: String, allow_blank: false
         end
@@ -20,15 +17,7 @@ module V1
           end
         end
 
-        desc 'Creates new password by verifying password token' do
-          http_codes [ { code: 201, message: { status: 'success', message: 'Password has been set successfully.', data: {auth_token: 'HDGHSDGSD4454'} }.to_json },
-            { code: 401,
-              message: {
-                status: 'error',
-                message: 'User password is empty'
-              }.to_json
-            }]
-        end
+        desc 'Creates new password by verifying password token'
         params do
           requires :user, type: Hash do
             requires :password, type: String, allow_blank: false

@@ -5,16 +5,28 @@ class TripRequestWorker
   def perform(trip_id=nil, driver_id=nil)
     trip = Trip.find_by(id: trip_id)
 
-    if driver_id.present?
-      driver = Driver.find_by(id: driver_id)
-      notification = trip.request_notifications.create(driver_id: driver.id, title: "Limo Logix", body: "YOU’VE GOT A RIDE REQUEST.")
-    end
+    if trip.present?
+      trip.dispatch! if trip.pending?
 
-    nearest_driver = trip.nearest_driver
-    if nearest_driver.present?
-      TripRequestWorker.perform_in(7.seconds, trip.id, nearest_driver)
-    else
-      puts "Send notification to admin that no driver is available in 20 miles radius"
+      unless trip.pick_up_at < Time.now
+        if driver_id.present?
+          driver = Driver.find_by(id: driver_id)
+          notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now}).to_json
+
+          notification = trip.request_notifications.create(driver_id: driver.id,
+            title: Settings.mobile_notification.trip_request.title, body: Settings.mobile_notification.trip_request.body,
+            data: notification_data)
+        end
+
+        nearest_driver = trip.find_nearest_driver
+        if nearest_driver.present?
+          TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nearest_driver.id)
+        else
+          TripRequestWorker.perform_in(Settings.delay_between_trip_request, trip.id, nil)
+        end
+      else
+        trip.inactive! if trip.dispatched?
+      end
     end
   end
 end

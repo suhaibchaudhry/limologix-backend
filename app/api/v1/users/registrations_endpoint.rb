@@ -41,12 +41,11 @@ module V1
           company = Company.new(company_params)
 
           if user.valid? & company.valid?
-            user.role = Role.admin
-            user.company = company
+            user.assign_attributes(role: Role.admin, company: company)
             user.save
 
             {
-              message: 'Registration successfull.',
+              message: 'Registration successful.',
               data: {
                 'Auth-Token': user.auth_token,
                 full_name: user.full_name,
@@ -54,8 +53,10 @@ module V1
               }
             }
           else
-            message = "#{user.errors.full_messages}, #{company.errors.full_messages}"
-            error!(message.gsub(/^,|,$/, ''), 400)
+            message = []
+            message << user.errors.full_messages  if user.errors.present?
+            message << company.errors.full_messages  if company.errors.present?
+            error!(message.join(', '), 400)
           end
         end
       end

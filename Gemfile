@@ -5,11 +5,15 @@ gem 'rails', '4.2.6'
 gem 'thin'
 gem 'mysql2', '0.4.4'
 gem 'sidekiq'
-
 gem 'sinatra', require: false
+gem 'faye'
+gem 'faye-redis'
 
-# Authentication & Authorization
+# Authentication
 gem "bcrypt"
+
+# Config
+gem 'settingslogic'
 
 # API
 gem 'grape'
@@ -22,6 +26,9 @@ gem 'grape-kaminari'
 gem 'cancancan', '~> 1.13.1'
 gem 'grape-cancan'
 
+# PaymentGateway
+gem 'authorizenet'
+
 # View
 # gem 'coffee-rails', '~> 4.1.0'
 # gem 'jquery-rails'
@@ -30,7 +37,11 @@ gem 'grape-cancan'
 # gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'turbolinks'
 # gem 'uglifier', '>= 1.3.0'
+
+# Country Master Data
 gem 'city-state'
+
+# Cross-Origin Resource Sharing
 gem 'rack-cors'
 
 # Uploads & Imports

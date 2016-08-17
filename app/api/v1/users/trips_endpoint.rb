@@ -25,28 +25,7 @@ module V1
       namespace :users do
         namespace :trips do
 
-          desc 'Trip creation.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip created successfully.',
-                data: {
-                  trip: {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
-                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
-                  "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
-                  }}.to_json },
-              { code: 404,
-                message: {
-                  status: 'error',
-                  message: 'Customer not found.',
-                }.to_json
-              },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Trip start destination is missing, Trip end destination is empty',
-                }.to_json
-              }]
-          end
+          desc 'Trip creation.'
           params do
             requires :trip, type: Hash do
               requires :start_destination, type: Hash do
@@ -60,6 +39,8 @@ module V1
               requires :pick_up_at, type: DateTime, allow_blank: false
               requires :passengers_count, type: Integer, allow_blank: false
               requires :customer_id, type: Integer, allow_blank: false
+              requires :vehicle_type_id, type: Integer, allow_blank: false
+              requires :group_ids, type: Array[Integer], allow_blank: false
             end
           end
           post 'create' do
@@ -68,9 +49,20 @@ module V1
             customer = current_user.company.customers.where(id: params[:trip][:customer_id]).first
             error!("Customer not found." , 404) unless customer.present?
 
+            vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
+            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
+
+            begin
+              trip.group_ids = params[:trip][:group_ids]
+            rescue => e
+              error!("Couldn't find all Groups" , 400)
+            end
+
             if trip.valid?
-              trip.customer = customer
+              trip.assign_attributes(customer: customer, vehicle_type: vehicle_type)
               trip.save
+              # TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
+              TripRequestWorker.perform_async(trip.id)
 
               {
                 message: 'Trip created successfully.',
@@ -83,50 +75,28 @@ module V1
             end
           end
 
-          desc 'Trips list based on status.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trips list.',
-              data: {
-                trips: [{"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
-                "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
-                "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 ,
-                "customer":{"id":7,"first_name":"customer1","last_name":"t","email":"ac@gmail.com","mobile_number":"123","full_name":"customer1 t","organisation":"tcs"}},
-                {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
-                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},"pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22,
-                  "customer":{"id":7,"first_name":"customer1","last_name":"t","email":"ac@gmail.com","mobile_number":"123","full_name":"customer1 t","organisation":"tcs"}}]
-              }
-            }.to_json }]
-          end
+          desc 'Trips list based on status.'
           params do
             requires :trip_status, type: String, allow_blank: false
           end
-          post 'index' do
-            {
-              message: 'Trips list.',
-              data: {
-                trips: serialize_model_object(current_user.trips)
+          paginate per_page: 20, max_per_page: 30, offset: false
+          post 'index', each_serializer: TripsArraySerializer  do
+            error!('Invalid trip status.', 404) unless Trip::STATUSES.include?(params[:trip_status])
+
+            trips = paginate(current_user.trips.send(params[:trip_status]).order(:created_at).reverse_order)
+            if trips.present?
+              {
+                message: 'Trips list.',
+                data: {
+                  trips: serialize_model_object(trips)
+                }
               }
-            }
+            else
+              { message: 'No results found.'}
+            end
           end
 
-          desc 'Get Trip details..' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip details.',
-              data: {
-                trip: {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
-                "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
-                "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
-              }
-            }.to_json },
-            { code: 404,
-              message: {
-                status: 'error',
-                message: 'Trip not found.',
-              }.to_json
-            }]
-          end
+          desc 'Get Trip details..'
           params do
             requires :trip_id, type: Integer, allow_blank: false
           end
@@ -145,112 +115,19 @@ module V1
             end
           end
 
-          desc 'Trip Update.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
+          # desc 'Trip cancel API.'
+          # params do
+          #   requires :trip, type: Hash do
+          #     requires :id, type: Integer, allow_blank: false
+          #   end
+          # end
+          # post 'cancel' do
+          #   trip = current_user.trips.find_by(id: params[:trip][:id])
+          #   error!("Trip not found." , 404) unless trip.present?
 
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip updated successfully.',
-                data: {
-                  trip: {"id":1,"start_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"123.33"},
-                  "end_destination":{"place":"bangalore","latitude":"1.2.31.56","longitude":"1.2.31.56"},
-                  "pick_up_at":"2016-05-19T15:43:58.000Z","passengers_count":22 }
-                  }}.to_json },
-              { code: 400,
-                message: {
-                  status: 'error',
-                  message: 'Trip start destination is missing, Trip end destination is empty',
-                }.to_json
-              }]
-          end
-          params do
-            requires :trip, type: Hash do
-              requires  :id, type: Integer, allow_blank: false
-              requires :start_destination, type: Hash do
-                use :geolocation
-              end
-
-              requires :end_destination, type: Hash do
-                use :geolocation
-              end
-
-              requires :pick_up_at, type: DateTime, allow_blank: false
-              requires :passengers_count, type: Integer, allow_blank: false
-            end
-          end
-          post 'update' do
-            trip  = current_user.trips.find_by(id: params[:trip][:id])
-            error!("Trip not found." , 404) unless trip.present?
-
-            if trip.update(trip_params)
-              {
-                message: 'Trip updated successfully.',
-                data: {
-                  trip: serialize_model_object(trip)
-                }
-              }
-            else
-              error!(trip.errors.full_messages , 400)
-            end
-          end
-
-          desc 'Trip cancel API.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been  cancelled successfully.'}.to_json },
-            { code: 404,
-              message: {
-                status: 'error',
-                message: 'Trip not found.',
-              }.to_json
-            }]
-          end
-          params do
-            requires :trip, type: Hash do
-              requires :id, type: Integer, allow_blank: false
-            end
-          end
-          post 'cancel' do
-            trip = current_user.trips.find_by(id: params[:trip][:id])
-            error!("Trip not found." , 404) unless trip.present?
-
-            trip.cancel!
-            { message: 'Trip has been cancelled successfully.' }
-          end
-
-          desc 'Trip dispatch API.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [ { code: 201, message: { status: 'success', message: 'Trip has been dispatched successfully.'}.to_json },
-            { code: 404,
-              message: {
-                status: 'error',
-                message: 'Trip not found.',
-              }.to_json
-            }]
-          end
-          params do
-            requires :trip, type: Hash do
-              requires :id, type: Integer, allow_blank: false
-              requires :vehicle_type_id, type: Integer, allow_blank: false
-            end
-          end
-          post 'dispatch' do
-            trip = current_user.trips.find_by(id: params[:trip][:id])
-            error!("Trip not found." , 404) unless trip.present?
-
-            vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
-            error!("Vehicle Type not found." , 404) unless vehicle_type.present?
-
-            error!("Trip has been dispatched already." , 404) unless trip.pending?
-
-            trip.vehicle_type = vehicle_type
-
-            if trip.dispatch!
-              TripRequestWorker.perform_async(trip.id)
-              { message: 'Trip has been dispatched successfully.' }
-            else
-              error!(trip.errors.full_messages , 400)
-            end
-          end
+          #   trip.cancel!
+          #   { message: 'Trip has been cancelled successfully.' }
+          # end
         end
       end
     end

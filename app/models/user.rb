@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   include Authentication
+  scope :super_admin, -> { find_by(role: Role.super_admin) }
 
   belongs_to :role
   belongs_to :company

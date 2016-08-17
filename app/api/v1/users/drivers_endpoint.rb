@@ -9,20 +9,9 @@ module V1
 
       namespace :users do
         namespace :drivers do
-          desc 'Drivers list' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              { code: 200, message: { status: 'success', message: 'Drivers list.',
-                data: {
-                  drivers: [{id: 1, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'},
-                    {id: 2, first_name: 'Avinash', last_name: 'T', mobile_number: '78787878', email: 'avinash123@yopmail.com', status: 'pending'}]
-                  }
-                }.to_json },
-              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
-          end
+          desc 'Drivers list'
           paginate per_page: 20, max_per_page: 30, offset: false
-          post 'index', each_serializer: DriverVehicleSerializer, authorize: [:index, DriversEndpoint] do
+          post 'index', each_serializer: DriverVehicleSerializer do
             drivers = paginate(Driver.all.order(:created_at).reverse_order)
 
             if drivers.present?
@@ -37,58 +26,7 @@ module V1
             end
           end
 
-          desc 'Get driver details.' do
-            headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-            http_codes [
-              {
-                code: 200,
-                message: {
-                  status: 'success',
-                  message: 'Drivers details.',
-                  data: {
-                    driver: {
-                      id: 1,
-                      first_name: 'Avinash',
-                      last_name: 'T',
-                      mobile_number: '78787878',
-                      email: 'avinash123@yopmail.com',
-                      license_number: 'L456',
-                      license_expiry_date: '2016-06-08',
-                      license_image: {
-                        name: 'License.jpg',
-                        image: '/uploads/driver/license_image/1/License.jpg'
-                      },
-                      badge_number: 'B456',
-                      badge_expiry_date: '2016-06-08',
-                      ara_image: {
-                        name: 'ARA.jpg',
-                        image: '/uploads/driver/ara_image/1/ARA.jpg'
-                      },
-                      ara_expiry_date: '2016-06-08',
-                      insurance_company: 'LIMO',
-                      insurance_policy_number: 'IN456',
-                      insurance_expiry_date: '2016-06-08',
-                      status: 'pending',
-                      address: {
-                        street: 'adsdasdasdasd',
-                        city: 'texas',
-                        zipcode: 52014,
-                        state: {
-                          code: 'AL',
-                          name: 'Alabama'
-                        },
-                        country: {
-                          code: 'US',
-                          name: 'United States'
-                        }
-                      }
-                    }
-                  }
-                }.to_json
-              },
-              { code: 201, message: { status: 'success', message: 'No results found.'}.to_json }]
-          end
+          desc 'Get driver details.'
           params do
             requires :driver, type: Hash do
               requires :id, type: Integer, allow_blank: false
@@ -110,13 +48,7 @@ module V1
           end
 
           Driver::SUPER_ADMIN_ACTIONS.each do |action, status|
-            desc "#{action} a driver." do
-              headers 'Auth-Token': { description: 'Validates your identity', required: true }
-
-              http_codes [
-                { code: 200, message: { status: 'success', message: "Driver #{status} successfully."}.to_json },
-                { code: 404, message: { status: 'success', message: 'Driver not found.'}.to_json }]
-            end
+            desc "#{action} a driver."
             params do
               requires :driver, type: Hash do
                 requires :id, type: Integer, allow_blank: false
@@ -124,13 +56,12 @@ module V1
             end
             post "#{action}", authorize: [:status_update, DriversEndpoint] do
               driver = Driver.find_by(id: params[:driver][:id])
+              error!('Driver not found.', 404) unless driver.present?
 
-              if driver.present?
-                driver.send("#{action}!")
-
+              if driver.send("#{action}!")
                 { message: "Driver #{status} successfully." }
               else
-                error!('Driver not found.', 404)
+                error!(driver.errors.full_messages , 400)
               end
             end
           end
