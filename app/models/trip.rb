@@ -32,7 +32,7 @@ class Trip < ActiveRecord::Base
   def accept!(driver)
     dispatch = driver.dispatches.new(trip_id: self.id)
 
-    web_notification = WebNotification.create(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip", trip: {id: self.id}}.to_json,
+    web_notification = WebNotification.new(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip", trip: {id: self.id}}.to_json,
       publishable: self.user.company, notifiable: self, kind: 'trip_accept')
 
     if dispatch.valid? & web_notification.valid? && web_notification.save && dispatch.save && update_status!('active')
