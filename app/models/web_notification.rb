@@ -21,11 +21,13 @@ class WebNotification < ActiveRecord::Base
       publication.callback do
         self.update(response_status: "success")
         client.disconnect();
+        EM.stop if self.kind == 'trip_dispatch' || self.kind == 'trip_inactive'
       end
 
       publication.errback do |error|
-        client.disconnect();
         self.update(response_status: "error")
+        client.disconnect();
+        EM.stop if self.kind == 'trip_dispatch' || self.kind == 'trip_inactive'
       end
     }
   end
