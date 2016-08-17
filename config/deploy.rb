@@ -5,7 +5,7 @@ set :repo_url, 'git@bitbucket.org:uitouxteam/limologix-backend.git'
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 set :scm, :git
 
-set :linked_files, fetch(:linked_files, []).push('config/database.yml')
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/uploads')
 
 
