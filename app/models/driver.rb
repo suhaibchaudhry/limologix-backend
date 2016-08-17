@@ -51,8 +51,8 @@ class Driver < ActiveRecord::Base
 
   SUPER_ADMIN_ACTIONS.each do |action, status|
     define_method("#{action}!") do
-      if action.to_s == "approve" && !self.has_enough_toll_credit? && self.pending?
-        charge_customer!
+      if action.to_s == "approve"
+        PaymentTransactionWorker.perform_async(driver) unless driver.has_enough_toll_credit?
       end
 
       self.status = status
