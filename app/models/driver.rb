@@ -65,27 +65,29 @@ class Driver < ActiveRecord::Base
   end
 
   def has_enough_toll_credit?
-    self.toll_credit >= MIN_TOLL_CREDIT+TOLL_AMOUNT_FOR_DISPATCH ? true :false
+    self.toll_credit >= MIN_TOLL_CREDIT + TOLL_AMOUNT_FOR_DISPATCH
   end
 
   def deduct_toll_credit!(amount)
-    self.toll_credit = self.toll_credit-amount
+    self.toll_credit = self.toll_credit - amount
     self.save
   end
 
   def charge_customer!(amount=DEFAULT_AMOUNT_TO_CHARGE)
     payment_transaction = Payment.charge_customer_profile(self.customer_profile_id, self.customer_payment_profile_id, amount)
-    transaction = self.transactions.new(amount: amount)
 
     if payment_transaction[:status] == "success"
-      transaction.transaction_number = payment_transaction[:transaction_number]
-      transaction.status = true
+      transaction = self.transactions.create(amount: amount,
+                      transaction_number: payment_transaction[:transaction_number],
+                      status: true
+                    )
 
-      self.toll_credit = self.toll_credit+amount
+      self.update_attribute(:toll_credit, self.toll_credit + amount)
+      return true
     else
       errors.add(:credit_card, " amount deduction failed.")
+      return false
     end
-    transaction.save && self.save
   end
 
   def update_payment_profile(params)
@@ -93,6 +95,25 @@ class Driver < ActiveRecord::Base
       params[:card_number], params[:card_expiry_date], params[:card_code] )
 
     payment_profile[:status] == "success" ? true : false
+  end
+
+  def manage_toll_insufficiency
+    MobileNotification.create(
+      driver_id: self.id,
+      title: Settings.mobile_notification.insufficient_balance.title,
+      body: Settings.mobile_notification.insufficient_balance.body,
+      data: {
+        status: 'insufficient_balance'
+      }.to_json
+    )
+  end
+
+  def visible!
+    self.update_attribute(:visible, true)
+  end
+
+  def invisible!
+    self.update_attribute(:visible, false)
   end
 
   private
@@ -133,7 +154,7 @@ class Driver < ActiveRecord::Base
         return false
       end
     else
-      errors.add(:credit_card, "information  rovided is not valid.")
+      errors.add(:credit_card, "information provided is not valid.")
       return false
     end
   end

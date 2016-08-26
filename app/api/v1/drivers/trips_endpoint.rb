@@ -40,7 +40,7 @@ module V1
             error!('You cannot accept this trip because you are part of some other trip.') if current_driver.active_dispatch.present?
             error!('Trip has already been dispatched.' , 403) if trip.active?
             error!('Right now you are in Invisible status.' , 403) unless current_driver.visible
-            error!('You have exceeded the time limit to accept.' , 403) unless trip.request_notifications.find_by(driver_id: current_driver).present? && ((Time.now - trip.request_notifications.find_by(driver_id: current_driver).created_at) < 60)
+            error!('You have exceeded the time limit to accept.' , 403) unless trip.request_notifications.find_by(driver_id: current_driver).present? && ((Time.now - trip.request_notifications.find_by(driver_id: current_driver).updated_at) < 14)
             error!('You do not have enough toll credit to accept a trip.' , 403) unless current_driver.has_enough_toll_credit?
 
             if trip.accept!(current_driver)
@@ -61,6 +61,8 @@ module V1
           post 'deny' do
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
+
+            trip.active_dispatch.deny!
 
             trip.reschedule_worker_to_run_now
             { message: 'Trip denied successfully.' }

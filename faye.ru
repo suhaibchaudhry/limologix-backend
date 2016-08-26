@@ -25,7 +25,20 @@ bayeux = Faye::RackAdapter.new(
   }
 )
 
+log = Logger.new(STDOUT)
+log.level = Logger::INFO
+
+bayeux.on(:subscribe) do |client_id, channel|
+  log.info("Subscribe client---#{client_id}, channel---#{channel} ")
+end
+
+bayeux.on(:unsubscribe) do |client_id|
+  log.info(" UN Subscribe client---#{client_id} ")
+end
+
 bayeux.on(:publish) do |client_id, channel, data|
+  log.info("Publish client---#{client_id}, channel---#{channel}, data---#{data}")
+
   if channel.include?("driver")
     $redis.hset("drivers", channel.split("/").last, data.merge("timestamp" => "#{Time.now.to_i}").to_json)
   end

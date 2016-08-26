@@ -30,21 +30,25 @@ class Trip < ActiveRecord::Base
   accepts_nested_attributes_for :end_destination
 
   def accept!(driver)
-    dispatch = driver.dispatches.new(trip_id: self.id)
+    dispatch = driver.dispatches.create(trip_id: self.id)
 
-    web_notification = WebNotification.new(message: {title: "Trip Accept", body: "#{driver.full_name} accepted the trip", trip: {id: self.id}}.to_json,
-      publishable: self.user.company, notifiable: self, kind: 'trip_accept')
+    WebNotification.create(
+      message: {
+        title: "Trip Accept",
+        body: "#{driver.full_name} accepted the trip",
+        trip: {
+          id: self.id
+        }
+      }.to_json,
+      publishable: self.user.company,
+      notifiable: self,
+      kind: 'trip_accept'
+    )
 
-    if dispatch.valid? & web_notification.valid? && web_notification.save && dispatch.save && update_status!('active')
+    driver.deduct_toll_credit!(Driver::TOLL_AMOUNT_FOR_DISPATCH)
 
-      driver.deduct_toll_credit!(Driver::TOLL_AMOUNT_FOR_DISPATCH)
-      PaymentTransactionWorker.perform_async(driver) unless driver.has_enough_toll_credit?
-
-      destroy_scheduled_worker
-      return true
-    else
-      return false
-    end
+    destroy_scheduled_worker
+    return true
   end
 
   def dispatch!
@@ -118,7 +122,6 @@ class Trip < ActiveRecord::Base
     job = find_scheduled_worker
     job.add_to_queue if job.present?
   end
-
 
   private
 
