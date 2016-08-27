@@ -21,6 +21,9 @@ defaults: &defaults
     insufficient_balance:
       title: 'Insufficient Balance'
       body: 'You do not have sufficient toll. Please recharge.'
+    account_approved:
+      title: 'Account Approved'
+      body: 'Account has been approved and toll credit recharged to 20$'
 
 
 development:

@@ -144,12 +144,29 @@ module V1
             end
           end
 
+          desc 'Recharge account'
+          post 'recharge_account' do
+            if current_driver.charge_customer!
+              current_driver.visible!
+
+              {
+                message: 'Account Recharged',
+                data: {
+                  toll_credit: current_driver.toll_credit
+                }
+              }
+            else
+              error!(current_driver.errors.full_messages , 400)
+            end
+          end
+
           desc 'Update visible status.'
           params do
             requires :driver, type: Hash do
               requires :visible, type: Boolean, allow_blank: false
             end
           end
+
           post 'update_visible_status' do
             check_whether_driver_approved
 
@@ -211,7 +228,7 @@ module V1
             end
           end
 
-          desc 'update a vehicle.' 
+          desc 'update a vehicle.'
           params do
             requires :vehicle, type: Hash do
               requires :vehicle_make_id, type: Integer, allow_blank: false

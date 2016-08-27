@@ -7,11 +7,15 @@ class PaymentTransactionWorker
 
     if driver.present?
       if driver.charge_customer!
+        notification_data = { status: 'account_approved'}.reverse_merge!(
+          TransactionSerializer.new(driver.transactions.last).serializable_hash
+        )
+
         MobileNotification.create(
           driver_id: driver.id,
-          title: Settings.mobile_notification.payment_success.title,
-          body: Settings.mobile_notification.payment_success.body,
-          data: TransactionSerializer.new(driver.transactions.last).to_json
+          title: Settings.mobile_notification.account_approved.title,
+          body: Settings.mobile_notification.account_approved.body,
+          data: notification_data.to_json
         )
       else
         MobileNotification.create(

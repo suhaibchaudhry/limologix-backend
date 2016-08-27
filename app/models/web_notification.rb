@@ -6,8 +6,13 @@ class WebNotification < ActiveRecord::Base
   belongs_to :publishable, :polymorphic => true
 
   after_create :send_notification
+  before_create :add_default_read_status
 
   private
+
+  def add_default_read_status
+    self.read_status = 0
+  end
 
   def send_notification
     channel = self.publishable.channel

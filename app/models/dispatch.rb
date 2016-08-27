@@ -16,19 +16,19 @@ class Dispatch < ActiveRecord::Base
 
   def start!
     web_notification = WebNotification.create(message: {title: "Trip started", body: "Driver arrived to pick up location."}.to_json,
-        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_start')
+        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_start', read_status: false)
     update_status!('started')
   end
 
   def stop!
     web_notification = WebNotification.create(message: {title: "Trip completed", body: "Driver arrived to drop off location."}.to_json,
-        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_stop')
+        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_stop', read_status: false)
     update_status!('completed')
   end
 
   def deny!
     web_notification = WebNotification.create(message: {title: "Trip denied", body: "Driver has denied the trip. New Driver being fetched"}.to_json,
-        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_deny')
+        publishable: self.trip.user.company, notifiable: self.trip, kind: 'trip_deny', read_status: false)
     update_status!('cancelled')
   end
 

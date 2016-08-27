@@ -43,6 +43,8 @@ module V1
             error!('You have exceeded the time limit to accept.' , 403) unless trip.request_notifications.find_by(driver_id: current_driver).present? && ((Time.now - trip.request_notifications.find_by(driver_id: current_driver).updated_at) < 14)
             error!('You do not have enough toll credit to accept a trip.' , 403) unless current_driver.has_enough_toll_credit?
 
+            trip.active!
+
             if trip.accept!(current_driver)
               {
                 message: 'Trip accepted successfully.',
@@ -102,7 +104,7 @@ module V1
             error!('Trip already completed.' , 403) if trip.active_dispatch.completed?
 
             trip.active_dispatch.stop! && trip.close!
-            { message: 'Trip stoped successfully.' }
+            { message: 'Trip stopped successfully.' }
           end
         end
       end

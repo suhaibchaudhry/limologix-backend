@@ -25,8 +25,8 @@ class TripRequestWorker
         else
 
           if nearest_driver.present?
-            nearest_driver.manage_toll_insufficiency
             nearest_driver.invisible!
+            nearest_driver.manage_toll_insufficiency
           end
 
           TripRequestWorker.perform_in(Settings.delay_between_trip_request.seconds, trip.id, nil)

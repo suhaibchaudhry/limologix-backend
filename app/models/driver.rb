@@ -49,10 +49,11 @@ class Driver < ActiveRecord::Base
   alias_attribute :topic, :merchant_id
   alias_attribute :channel, :merchant_id
 
-  SUPER_ADMIN_ACTIONS.each do |action, status|
+  Driver::SUPER_ADMIN_ACTIONS.each do |action, status|
     define_method("#{action}!") do
       if action.to_s == "approve"
-        PaymentTransactionWorker.perform_async(self) unless self.has_enough_toll_credit?
+        self.visible!
+        PaymentTransactionWorker.perform_async(self.id) unless self.has_enough_toll_credit?
       end
 
       self.status = status
@@ -69,11 +70,12 @@ class Driver < ActiveRecord::Base
   end
 
   def deduct_toll_credit!(amount)
-    self.toll_credit = self.toll_credit - amount
-    self.save
+    self.update_attribute(:toll_credit, self.toll_credit - amount)
   end
 
   def charge_customer!(amount=DEFAULT_AMOUNT_TO_CHARGE)
+    amount = amount - self.toll_credit
+
     payment_transaction = Payment.charge_customer_profile(self.customer_profile_id, self.customer_payment_profile_id, amount)
 
     if payment_transaction[:status] == "success"

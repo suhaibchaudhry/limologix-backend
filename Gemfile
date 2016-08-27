@@ -52,6 +52,7 @@ group :development do
   gem 'capistrano', '~> 3.4'
   gem 'capistrano-rails', '~> 1.1'
   gem 'capistrano-rvm'
+  gem 'pry-rails'
 end
 
 group :staging, :development do

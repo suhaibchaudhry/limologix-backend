@@ -31,6 +31,7 @@ class Trip < ActiveRecord::Base
 
   def accept!(driver)
     dispatch = driver.dispatches.create(trip_id: self.id)
+    self.active!
 
     WebNotification.create(
       message: {
@@ -55,6 +56,10 @@ class Trip < ActiveRecord::Base
     web_notification = WebNotification.create(message: {title: "Trip notification started", body: "Notification for this trip started."}.to_json,
         publishable: self.user.company, notifiable: self, kind: 'trip_dispatch')
     update_status!('dispatched')
+  end
+
+  def active!
+    update_status!('active')
   end
 
   def inactive!
