@@ -32,6 +32,10 @@ class Dispatch < ActiveRecord::Base
     update_status!('cancelled')
   end
 
+  def cancel!
+    update_status!('cancelled')
+  end
+
   private
 
   def update_status!(status)

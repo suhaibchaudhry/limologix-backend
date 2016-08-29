@@ -20,15 +20,10 @@ class TripRequestWorker
 
         nearest_driver = trip.find_nearest_driver
 
-        if nearest_driver.present? && nearest_driver.has_enough_toll_credit?
+        if nearest_driver.present?
           TripRequestWorker.perform_in(Settings.delay_between_trip_request.seconds, trip.id, nearest_driver.id)
+          nearest_driver.manage_toll_insufficiency if !nearest_driver.has_enough_toll_credit?
         else
-
-          if nearest_driver.present?
-            nearest_driver.invisible!
-            nearest_driver.manage_toll_insufficiency
-          end
-
           TripRequestWorker.perform_in(Settings.delay_between_trip_request.seconds, trip.id, nil)
         end
       else

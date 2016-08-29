@@ -12,6 +12,9 @@ defaults: &defaults
     trip_request:
       title: 'Limo-logix'
       body: 'YOU’VE GOT A RIDE REQUEST.'
+    trip_cancellation:
+      title: 'Trip cancelled'
+      body: 'Trip has been cancelled. Please wait for a new trip request'
     payment_success:
       title: 'Limo-logix'
       body: 'We have deducted 20$ from your credit card.'
@@ -20,7 +23,7 @@ defaults: &defaults
       body: 'Failure in deducting 20$ from your account, Please update credit card.'
     insufficient_balance:
       title: 'Insufficient Balance'
-      body: 'You do not have sufficient toll. Please recharge.'
+      body: 'Your account was recharged back to 20$'
     account_approved:
       title: 'Account Approved'
       body: 'Account has been approved and toll credit recharged to 20$'

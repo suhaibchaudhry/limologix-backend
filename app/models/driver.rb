@@ -100,14 +100,16 @@ class Driver < ActiveRecord::Base
   end
 
   def manage_toll_insufficiency
-    MobileNotification.create(
-      driver_id: self.id,
-      title: Settings.mobile_notification.insufficient_balance.title,
-      body: Settings.mobile_notification.insufficient_balance.body,
-      data: {
-        status: 'insufficient_balance'
-      }.to_json
-    )
+    if self.charge_customer!
+      MobileNotification.create(
+        driver_id: self.id,
+        title: Settings.mobile_notification.insufficient_balance.title,
+        body: Settings.mobile_notification.insufficient_balance.body,
+        data: {
+          status: 'insufficient_balance'
+        }.to_json
+      )
+    end
   end
 
   def visible!

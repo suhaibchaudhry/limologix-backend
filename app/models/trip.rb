@@ -70,6 +70,7 @@ class Trip < ActiveRecord::Base
 
   def cancel!
     destroy_scheduled_worker
+
     update_status!('cancelled')
   end
 

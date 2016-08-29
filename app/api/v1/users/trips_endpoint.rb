@@ -115,19 +115,32 @@ module V1
             end
           end
 
-          # desc 'Trip cancel API.'
-          # params do
-          #   requires :trip, type: Hash do
-          #     requires :id, type: Integer, allow_blank: false
-          #   end
-          # end
-          # post 'cancel' do
-          #   trip = current_user.trips.find_by(id: params[:trip][:id])
-          #   error!("Trip not found." , 404) unless trip.present?
+          desc 'Trip cancel API.'
+          params do
+            requires :trip_id, type: Integer, allow_blank: false
+          end
+          post 'cancel' do
+            trip = current_user.trips.find_by(id: params[:trip][:id])
 
-          #   trip.cancel!
-          #   { message: 'Trip has been cancelled successfully.' }
-          # end
+            error!("Trip not found.", 404) unless trip.present?
+
+            if trip.active_dispatch.present?
+              trip.mobile_notifications.create(
+                driver_id: trip.active_dispatch.driver_id,
+                title: Settings.mobile_notification.trip_cancellation.title,
+                body: Settings.mobile_notification.trip_cancellation.body,
+                data: {
+                  status: 'trip_cancellation'
+                }.to_json
+              )
+
+              trip.active_dispatch.cancel!
+            end
+
+            trip.cancel!
+
+            { message: 'Trip has been cancelled successfully.' }
+          end
         end
       end
     end
