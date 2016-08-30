@@ -120,7 +120,7 @@ module V1
             requires :trip_id, type: Integer, allow_blank: false
           end
           post 'cancel' do
-            trip = current_user.trips.find_by(id: params[:trip][:id])
+            trip = current_user.trips.find_by(id: params[:trip_id])
 
             error!("Trip not found.", 404) unless trip.present?
 
