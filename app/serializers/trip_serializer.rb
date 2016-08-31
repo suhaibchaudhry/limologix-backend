@@ -5,15 +5,14 @@ class TripSerializer < ActiveModel::Serializer
   has_one :customer
   has_one :vehicle_type
 
-
-  def attributes
-    hash = super
-    if object.active?
-      driver = object.active_dispatch.driver
-      hash[:driver] = DriverVehicleSerializer.new(driver).serializable_hash
-    end
-    hash
-  end
+  # def attributes
+  #   hash = super
+  #   if object.active?
+  #     driver = object.active_dispatch.driver
+  #     hash[:driver] = DriverVehicleSerializer.new(driver).serializable_hash
+  #   end
+  #   hash
+  # end
 
   def vehicle_type
     {
