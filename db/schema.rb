@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810065655) do
+ActiveRecord::Schema.define(version: 20160831082128) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",   limit: 4
@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(version: 20160810065655) do
     t.string   "status",           limit: 255, default: "pending"
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
+    t.float    "price",            limit: 24
   end
 
   add_index "trips", ["customer_id"], name: "index_trips_on_customer_id", using: :btree

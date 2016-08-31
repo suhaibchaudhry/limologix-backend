@@ -17,7 +17,7 @@ module V1
           params[:trip][:start_destination_attributes] = params[:trip][:start_destination]
           params[:trip][:end_destination_attributes] = params[:trip][:end_destination]
 
-          ActionController::Parameters.new(params).require(:trip).permit(:pick_up_at, :passengers_count, start_destination_attributes: [:place,
+          ActionController::Parameters.new(params).require(:trip).permit(:pick_up_at, :passengers_count, :price, start_destination_attributes: [:place,
             :latitude, :longitude], end_destination_attributes: [:place, :latitude, :longitude])
         end
       end
@@ -36,8 +36,9 @@ module V1
                 use :geolocation
               end
 
+              optional :passengers_count, type: Integer
+              optional :price, type: Float
               requires :pick_up_at, type: DateTime, allow_blank: false
-              requires :passengers_count, type: Integer, allow_blank: false
               requires :customer_id, type: Integer, allow_blank: false
               requires :vehicle_type_id, type: Integer, allow_blank: false
               requires :group_ids, type: Array[Integer], allow_blank: false

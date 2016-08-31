@@ -25,7 +25,7 @@ class Trip < ActiveRecord::Base
   has_many :trip_groups
   has_many :groups, through: :trip_groups, source: :group
 
-  validates :pick_up_at, :passengers_count, presence: true
+  validates :pick_up_at, presence: true
   accepts_nested_attributes_for :start_destination
   accepts_nested_attributes_for :end_destination
 
