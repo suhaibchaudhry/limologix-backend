@@ -12,7 +12,6 @@ class TripRequestWorker
         if driver_id.present?
           driver = Driver.find_by(id: driver_id)
           notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now}).to_json
-
           notification = trip.request_notifications.create(driver_id: driver.id,
             title: Settings.mobile_notification.trip_request.title, body: Settings.mobile_notification.trip_request.body,
             data: notification_data)

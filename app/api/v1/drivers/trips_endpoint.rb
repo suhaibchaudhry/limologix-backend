@@ -64,7 +64,7 @@ module V1
             trip  = Trip.find_by(id: params[:trip][:id])
             error!('Trip not found.' , 404) unless trip.present?
 
-            trip.active_dispatch.deny!
+            trip.active_dispatch.deny! if trip.active_dispatch.present?
 
             trip.reschedule_worker_to_run_now
             { message: 'Trip denied successfully.' }
