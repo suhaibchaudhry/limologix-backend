@@ -87,7 +87,7 @@ Rails.application.configure do
     address: "smtp.gmail.com",
     port: 587,
     user_name: 'softway.g@gmail.com',
-    password: 'g.softway',
+    password: '$0ftway123',
     authentication: 'plain',
     enable_starttls_auto: true
   }
