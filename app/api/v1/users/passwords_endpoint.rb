@@ -22,14 +22,15 @@ module V1
           requires :user, type: Hash do
             requires :password, type: String, allow_blank: false
             requires :reset_password_token, type: String, allow_blank: false
+            requires :user_type, type: String, allow_blank: false
           end
         end
         post 'reset_password' do
-          user = User.find_by(reset_password_token: params[:user][:reset_password_token])
+          user = params[:user][:user_type].titleize.constantize.find_by(reset_password_token: params[:user][:reset_password_token])
 
           if user.present? && !user.password_token_expired?
             if user.update(password: params[:user][:password], reset_password_token: nil)
-              { message: 'Password has been set successfully.' }
+              { message: 'Password has been set successfully.', type: params[:user][:user_type].titleize }
             else
               error!(user.errors.full_messages , 401)
             end

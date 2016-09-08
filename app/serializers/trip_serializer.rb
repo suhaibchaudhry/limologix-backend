@@ -14,6 +14,10 @@ class TripSerializer < ActiveModel::Serializer
     hash
   end
 
+  def price
+    number_with_precision(object.price, precision: 2)
+  end
+
   def company_name
     object.user.company.name rescue nil
   end
