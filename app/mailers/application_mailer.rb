@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "softway.g@gmail.com"
+  default from: "support@limologix.com"
   layout 'mailer'
 end

@@ -9,17 +9,16 @@ module V1
         def contact_info_params
           params[:driver][:address_attributes] = params[:driver][:address]
 
-          ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name, :email, 
-            :company, :mobile_number, address_attributes: [:street, :city, :zipcode, :state_code, :country_code])
+          ActionController::Parameters.new(params).require(:driver).permit(:first_name, :last_name, :email,
+            :company, :mobile_number, address_attributes: [:street, :city, :zipcode, :state_code, :country_code, :secondary_address])
         end
 
         def personal_info_params
           params[:driver][:license_image] = params[:driver][:license_image].present? ? decode_base64_image(params[:driver][:license_image][:name], params[:driver][:license_image][:image]) : nil
+          params[:driver][:insurance_image] = params[:driver][:insurance_image].present? ? decode_base64_image(params[:driver][:insurance_image][:name], params[:driver][:insurance_image][:image]) : nil
           params[:driver][:ara_image] = params[:driver][:ara_image].present? ? decode_base64_image(params[:driver][:ara_image][:name], params[:driver][:ara_image][:image]) : nil
 
-          ActionController::Parameters.new(params).require(:driver).permit(:license_number, :license_expiry_date, :license_image,
-            :badge_number, :badge_expiry_date,:ara_image, :ara_expiry_date, :insurance_company, 
-            :insurance_policy_number, :insurance_expiry_date)
+          ActionController::Parameters.new(params).require(:driver).permit(:license_number, :license_expiry_date, :license_image, :insurance_image, :badge_number, :badge_expiry_date,:ara_image, :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date)
         end
 
         def vehicle_params
@@ -59,6 +58,7 @@ module V1
                 requires :zipcode, type: Integer, allow_blank: false
                 requires :state_code, type: String, allow_blank: false
                 requires :country_code, type: String, allow_blank: false
+                optional :secondary_address, type: String, allow_blank: false
               end
             end
           end
@@ -76,6 +76,11 @@ module V1
               requires :license_number, type: String, allow_blank: false
               requires :license_expiry_date, type: Date, allow_blank: false
               requires :license_image, type: Hash do
+                requires :name, type: String, allow_blank: false
+                requires :image, type: String, allow_blank: false
+              end
+
+              requires :insurance_image, type: Hash do
                 requires :name, type: String, allow_blank: false
                 requires :image, type: String, allow_blank: false
               end

@@ -17,8 +17,7 @@ module V1
           params[:trip][:start_destination_attributes] = params[:trip][:start_destination]
           params[:trip][:end_destination_attributes] = params[:trip][:end_destination]
 
-          ActionController::Parameters.new(params).require(:trip).permit(:pick_up_at, :passengers_count, :price, start_destination_attributes: [:place,
-            :latitude, :longitude], end_destination_attributes: [:place, :latitude, :longitude])
+          ActionController::Parameters.new(params).require(:trip).permit(:first_name, :last_name, :pick_up_at, :passengers_count, :price, start_destination_attributes: [:place, :latitude, :longitude], end_destination_attributes: [:place, :latitude, :longitude])
         end
       end
 
@@ -36,10 +35,12 @@ module V1
                 use :geolocation
               end
 
+              requires :first_name, type: String, allow_blank: false
+              requires :last_name, type: String, allow_blank: false
               optional :passengers_count, type: Integer
               optional :price, type: Float
               requires :pick_up_at, type: DateTime, allow_blank: false
-              requires :customer_id, type: Integer, allow_blank: false
+              # requires :customer_id, type: Integer, allow_blank: false
               requires :vehicle_type_id, type: Integer, allow_blank: false
               requires :group_ids, type: Array[Integer], allow_blank: false
             end
@@ -47,8 +48,8 @@ module V1
           post 'create' do
             trip  = current_user.trips.new(trip_params)
 
-            customer = current_user.company.customers.where(id: params[:trip][:customer_id]).first
-            error!("Customer not found." , 404) unless customer.present?
+            # customer = current_user.company.customers.where(id: params[:trip][:customer_id]).first
+            # error!("Customer not found." , 404) unless customer.present?
 
             vehicle_type = VehicleType.find_by(id: params[:trip][:vehicle_type_id])
             error!("Vehicle Type not found." , 404) unless vehicle_type.present?
@@ -60,7 +61,7 @@ module V1
             end
 
             if trip.valid?
-              trip.assign_attributes(customer: customer, vehicle_type: vehicle_type)
+              trip.assign_attributes(vehicle_type: vehicle_type)
               trip.save
               # TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
               TripRequestWorker.perform_async(trip.id)

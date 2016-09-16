@@ -11,18 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160907083532) do
+ActiveRecord::Schema.define(version: 20160916100405) do
 
   create_table "addresses", force: :cascade do |t|
-    t.integer  "addressable_id",   limit: 4
-    t.string   "addressable_type", limit: 255
-    t.string   "street",           limit: 255
-    t.string   "city",             limit: 255
-    t.integer  "zipcode",          limit: 4
-    t.string   "state_code",       limit: 255
-    t.string   "country_code",     limit: 255
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.integer  "addressable_id",    limit: 4
+    t.string   "addressable_type",  limit: 255
+    t.string   "street",            limit: 255
+    t.string   "city",              limit: 255
+    t.integer  "zipcode",           limit: 4
+    t.string   "state_code",        limit: 255
+    t.string   "country_code",      limit: 255
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.string   "secondary_address", limit: 255
   end
 
   add_index "addresses", ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
@@ -113,6 +114,7 @@ ActiveRecord::Schema.define(version: 20160907083532) do
     t.string   "status",                      limit: 255, default: "pending"
     t.datetime "created_at",                                                  null: false
     t.datetime "updated_at",                                                  null: false
+    t.string   "insurance_image",             limit: 255
   end
 
   add_index "drivers", ["auth_token"], name: "index_drivers_on_auth_token", unique: true, using: :btree
@@ -192,15 +194,15 @@ ActiveRecord::Schema.define(version: 20160907083532) do
     t.datetime "pick_up_at"
     t.integer  "passengers_count", limit: 4
     t.integer  "user_id",          limit: 4
-    t.integer  "customer_id",      limit: 4
     t.integer  "vehicle_type_id",  limit: 4
     t.string   "status",           limit: 255, default: "pending"
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
     t.float    "price",            limit: 24
+    t.string   "first_name",       limit: 255
+    t.string   "last_name",        limit: 255
   end
 
-  add_index "trips", ["customer_id"], name: "index_trips_on_customer_id", using: :btree
   add_index "trips", ["user_id"], name: "index_trips_on_user_id", using: :btree
   add_index "trips", ["vehicle_type_id"], name: "index_trips_on_vehicle_type_id", using: :btree
 

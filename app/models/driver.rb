@@ -33,11 +33,12 @@ class Driver < ActiveRecord::Base
   has_many :transactions
 
   validates :first_name, :last_name, :password, :mobile_number, :email, :license_number, :company,
-            :license_expiry_date, :license_image, :badge_number, :badge_expiry_date, :ara_image,
+            :license_expiry_date, :license_image, :insurance_image, :badge_number, :badge_expiry_date, :ara_image,
             :ara_expiry_date, :insurance_company, :insurance_policy_number, :insurance_expiry_date, presence: true
   validates :mobile_number, :license_number, :badge_number, :email, uniqueness: true
-  validate :license_image_size, :ara_image_size
+  validate :license_image_size, :ara_image_size, :insurance_image_size
 
+  mount_uploader :insurance_image, ImageUploader
   mount_uploader :license_image, ImageUploader
   mount_uploader :ara_image, ImageUploader
 
@@ -131,6 +132,12 @@ class Driver < ActiveRecord::Base
   def ara_image_size
     if ara_image.size > 5.megabytes
       errors.add(:ara_image, "size should be less than 5MB")
+    end
+  end
+
+  def insurance_image_size
+    if insurance_image.size > 5.megabytes
+      errors.add(:insurance_image, "size should be less than 5MB")
     end
   end
 

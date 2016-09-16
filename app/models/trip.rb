@@ -11,7 +11,7 @@ class Trip < ActiveRecord::Base
   end
 
   belongs_to :user
-  belongs_to :customer
+  # belongs_to :customer
   belongs_to :vehicle_type
 
   has_one :start_destination, as: :locatable, dependent: :destroy

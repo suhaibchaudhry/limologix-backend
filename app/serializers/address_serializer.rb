@@ -1,5 +1,5 @@
 class AddressSerializer < ActiveModel::Serializer
-  attributes :street, :city, :zipcode, :state, :country
+  attributes :street, :city, :zipcode, :state, :country, :secondary_address
 
   def state
     if object.country_code.present? && object.state_code.present?

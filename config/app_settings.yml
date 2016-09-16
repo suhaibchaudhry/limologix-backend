@@ -2,7 +2,7 @@
 # Settings.example_key #=> 'Just an Example'
 
 defaults: &defaults
-  default_amount_to_charge_driver: 20
+  default_amount_to_charge_driver: 22
   min_toll_credit_for_driver: 4
   toll_amount_for_dispatch: 2
   driver_search_radius: 20
@@ -17,16 +17,16 @@ defaults: &defaults
       body: 'Trip has been cancelled. Please wait for a new trip request'
     payment_success:
       title: 'Limo-logix'
-      body: 'We have deducted 20$ from your credit card.'
+      body: 'We have deducted 22$ from your credit card.'
     payment_failure:
       title: 'Limo-logix'
-      body: 'Failure in deducting 20$ from your account, Please update credit card.'
+      body: 'Failure in deducting 22$ from your account, Please update credit card.'
     insufficient_balance:
       title: 'Insufficient Balance'
-      body: 'Your account was recharged back to 20$'
+      body: 'Your account was recharged back to 22$'
     account_approved:
       title: 'Account Approved'
-      body: 'Account has been approved and toll credit recharged to 20$'
+      body: 'Account has been approved and toll credit recharged to 22$'
 
 
 development:
