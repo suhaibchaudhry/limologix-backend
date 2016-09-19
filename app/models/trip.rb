@@ -1,6 +1,6 @@
 class Trip < ActiveRecord::Base
   STATUSES = ['pending', 'dispatched', 'inactive', 'active', 'closed', 'cancelled']
-  ACCEPTANCE_TIME = 17
+  ACCEPTANCE_TIME = 20
 
   STATUSES.each do |status|
     scope status.to_sym, -> { where(status: status) }
