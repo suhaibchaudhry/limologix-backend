@@ -17,6 +17,8 @@ module V1
               data: {
                 'Auth-Token': driver.auth_token,
                 full_name: driver.full_name,
+                first_name: driver.first_name,
+                last_name: driver.last_name,
                 company: driver.company
               }
             }
