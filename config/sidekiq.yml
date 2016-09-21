@@ -6,7 +6,7 @@
   - ["mailers", 3]
 staging:
   :logfile: log/sidekiq.log
-  :concurrency: 4
+  :concurrency: 10
 production:
   :concurrency: 20
   :logfile: ./log/sidekiq.log
