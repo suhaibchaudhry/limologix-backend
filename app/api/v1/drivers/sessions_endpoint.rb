@@ -30,6 +30,9 @@ module V1
         desc 'Driver logout'
         get 'logout' do
           authenticate!
+          puts "removing this driver from redis"
+          $redis.call [:hdel, "drivers", current_driver.merchant_id]
+          puts "removed this driver from redis"
           current_driver.update(auth_token: nil)
           {
             message: 'Logged out successfully.',
