@@ -1,4 +1,6 @@
 class VehicleType < ActiveRecord::Base
+  enum name: { SUV: 'SUV', Sedan: 'Sedan' }
+
   has_many :vehicles
   has_many :vehicle_make_types, dependent: :destroy
   has_many :vehicle_makes, through: :vehicle_make_types, source: :vehicle_make
