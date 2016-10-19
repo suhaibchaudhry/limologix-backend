@@ -40,6 +40,7 @@ module V1
 
     mount Users::Root
     mount Drivers::Root
+    mount ClearDispatch
     mount MasterDataEndpoint
   end
 end
