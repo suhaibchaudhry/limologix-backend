@@ -84,18 +84,19 @@ class Trip < ActiveRecord::Base
     nearest_driver = nil
     nearest_distance = Settings.driver_search_radius
 
-    drivers_in_groups = self.groups.includes(:drivers).flat_map {|group| group.driver_ids}
+    drivers_in_groups = groups.includes(:drivers).flat_map {|group| group.driver_ids}
 
-    already_requested_drivers = self.request_notifications.collect(&:driver_id)
+    already_requested_drivers = request_notifications.collect(&:driver_id)
     drivers_not_visible = Driver.invisible.collect(&:id)
     drivers_in_active_trips = Dispatch.active.collect(&:driver_id)
 
     driver_ids = drivers_in_groups - [*already_requested_drivers, *drivers_not_visible, *drivers_in_active_trips].uniq
+    vehicle_types_considered = vehicle_type.Sedan? ? VehicleType.names.values : [VehicleType.names[:SUV]]
 
     driver_ids.each do |driver_id|
       driver = Driver.find_by(id: driver_id)
 
-      if (redis_drivers_list["#{driver.channel}"].present? && driver.vehicle.vehicle_type == self.vehicle_type)
+      if (redis_drivers_list["#{driver.channel}"].present? && vehicle_types_considered.include?(driver.vehicle.vehicle_type.name))
         driver_geolocation = JSON.parse(redis_drivers_list["#{driver.channel}"])
 
         if ((Time.now.to_i - driver_geolocation["timestamp"].to_i) < 180)
