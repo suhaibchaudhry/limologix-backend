@@ -64,7 +64,7 @@ module V1
               trip.assign_attributes(vehicle_type: vehicle_type)
               trip.save
               # TripRequestWorker.perform_at((trip.pick_up_at-15.minutes), trip.id)
-              TripRequestWorker.perform_async(trip.id)
+              TripRequestWorker.perform_async(params[:trip][:source_place][:place_id], params[:trip][:destination_place][:place_id], trip.id)
 
               {
                 message: 'Trip created successfully.',
