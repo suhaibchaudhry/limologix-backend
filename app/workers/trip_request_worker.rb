@@ -8,7 +8,7 @@ class TripRequestWorker
     if trip.present?
       trip.dispatch! if trip.pending?
 
-      unless trip.pick_up_at.utc + 10.minutes < Time.now.utc
+      unless trip.pick_up_at.utc + 10.minutes < Time.zone.now.utc
         if driver_id.present?
           driver = Driver.find_by(id: driver_id)
           notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now, source_place_id: source_place_id, destination_place_id: end_place_id}).to_json
