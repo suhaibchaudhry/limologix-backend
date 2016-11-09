@@ -99,14 +99,14 @@ class Trip < ActiveRecord::Base
       if (redis_drivers_list["#{driver.channel}"].present? && vehicle_types_considered.include?(driver.vehicle.vehicle_type.name))
         driver_geolocation = JSON.parse(redis_drivers_list["#{driver.channel}"])
 
-        # if ((Time.now.to_i - driver_geolocation["timestamp"].to_i) < 180)
-        distance = self.start_destination.calculate_distance(driver_geolocation['latitude'].to_f, driver_geolocation['longitude'].to_f)
+        if ((Time.now.to_i - driver_geolocation["timestamp"].to_i) < 180)
+          distance = self.start_destination.calculate_distance(driver_geolocation['latitude'].to_f, driver_geolocation['longitude'].to_f)
 
-        if distance < nearest_distance
-          nearest_distance = distance
-          nearest_driver = driver
+          if distance < nearest_distance
+            nearest_distance = distance
+            nearest_driver = driver
+          end
         end
-        # end
       end
     end
     nearest_driver
