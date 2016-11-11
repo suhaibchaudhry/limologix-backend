@@ -6,7 +6,7 @@ defaults: &defaults
   min_toll_credit_for_driver: 4
   toll_amount_for_dispatch: 2
   driver_search_radius: 20
-  delay_between_trip_request: 14
+  delay_between_trip_request: 20
 
   mobile_notification:
     trip_request:
