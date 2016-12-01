@@ -17,7 +17,7 @@ class MobileNotification < ActiveRecord::Base
   private
 
   def send_notification
-    response = Fcm.publish_to_topic(driver.topic, title, body, JSON.parse(data))
+    response = Fcm.publish_to_topic(driver.topic, title, body, JSON.parse(data).merge('content-available'=> 1))
     self.update(status: response[:status], response: response[:message], updated_at: Time.now)
   end
 end
