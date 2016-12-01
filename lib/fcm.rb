@@ -16,7 +16,8 @@ class Fcm
           body: body,
           sound: "default",
           click_action: "FCM_PLUGIN_ACTIVITY",
-          icon: "fcm_push_icon"
+          icon: "fcm_push_icon",
+          'content-available': 1
         }
       }
       response = do_post_request(args)
