@@ -1,6 +1,6 @@
 class Fcm
   HEADERS = {
-    "Authorization" => "key=#{Rails.application.secrets.fcm_authorization_key}",
+    "Authorization" => "key=AIzaSyAHuvxUmIhWtjWgckG5vm1Va_pf_fF8QA0",
     "Content-Type" => "application/json"
   }
   URL = 'https://fcm.googleapis.com/fcm/send'
