@@ -10,12 +10,12 @@ class Fcm
       args = {
         to: "/topics/#{topic}",
         priority: 'high',
-        data: data.merge(
+        data: {
           title: title,
           body: body,
           sound: "default",
           click_action: "FCM_PLUGIN_ACTIVITY"
-        )
+        }
       }
       response = do_post_request(args)
 
