@@ -10,13 +10,11 @@ class Fcm
       args = {
         to: "/topics/#{topic}",
         priority: 'high',
-        data: data,
-        notification: {
+        data: {
           title: title,
           body: body,
           sound: "default",
-          click_action: "FCM_PLUGIN_ACTIVITY",
-          icon: "fcm_push_icon"
+          click_action: "FCM_PLUGIN_ACTIVITY"
         }
       }
       response = do_post_request(args)
