@@ -2,17 +2,19 @@ class Fcm
   URL = 'https://fcm.googleapis.com/fcm/send'
 
   def self.publish_to_topic(topic, title, body, data )
+    # Android takes only the data block, hence merging title and body into data key.
+    notification_block = {
+      title: title,
+      body: body,
+      sound: "default",
+      click_action: "FCM_PLUGIN_ACTIVITY"
+    }
     begin
       args = {
         to: "/topics/#{topic}",
         priority: 'high',
-        data: data,
-        notification: {
-          title: title,
-          body: body,
-          sound: "default",
-          click_action: "FCM_PLUGIN_ACTIVITY"
-        }
+        data: data.merge(notification_block),
+        notification: notification_block
       }
 
       driver_record = $redis.hgetall("drivers")[topic]
