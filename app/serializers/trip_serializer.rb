@@ -1,5 +1,5 @@
 class TripSerializer < ActiveModel::Serializer
-  attributes :id, :first_name, :last_name, :start_destination, :end_destination, :pick_up_at, :passengers_count, :status, :price, :company_name
+  attributes :id, :first_name, :last_name, :full_name, :start_destination, :end_destination, :pick_up_at, :passengers_count, :status, :price, :company_name
   has_one :start_destination, serializer: GeolocationSerializer
   has_one :end_destination, serializer: GeolocationSerializer
   # has_one :customer
@@ -28,4 +28,9 @@ class TripSerializer < ActiveModel::Serializer
       name: object.vehicle_type.name
     }
   end
+
+  def full_name
+    [object.first_name, object.last_name].join(' ').strip
+  end
+
 end
