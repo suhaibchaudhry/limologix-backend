@@ -30,7 +30,7 @@ class TripSerializer < ActiveModel::Serializer
   end
 
   def full_name
-    [object.first_name, object.last_name].join(' ').strip
+    [object.first_name, object.last_name.first].join(' ').strip
   end
 
 end
