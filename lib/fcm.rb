@@ -10,7 +10,8 @@ class Fcm
       args = {
         to: "/topics/#{topic}",
         priority: 'high',
-        data: {
+        data: data,
+        notification: {
           title: title,
           body: body,
           sound: "default",
