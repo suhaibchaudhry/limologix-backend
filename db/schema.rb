@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160916100405) do
+ActiveRecord::Schema.define(version: 20161207081932) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "addressable_id",    limit: 4
@@ -195,12 +195,13 @@ ActiveRecord::Schema.define(version: 20160916100405) do
     t.integer  "passengers_count", limit: 4
     t.integer  "user_id",          limit: 4
     t.integer  "vehicle_type_id",  limit: 4
-    t.string   "status",           limit: 255, default: "pending"
-    t.datetime "created_at",                                       null: false
-    t.datetime "updated_at",                                       null: false
+    t.string   "status",           limit: 255,   default: "pending"
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.float    "price",            limit: 24
     t.string   "first_name",       limit: 255
     t.string   "last_name",        limit: 255
+    t.text     "note",             limit: 65535
   end
 
   add_index "trips", ["user_id"], name: "index_trips_on_user_id", using: :btree
@@ -296,11 +297,11 @@ ActiveRecord::Schema.define(version: 20160916100405) do
     t.string   "notifiable_type",  limit: 255
     t.integer  "publishable_id",   limit: 4
     t.string   "publishable_type", limit: 255
-    t.boolean  "read_status"
+    t.boolean  "read_status",                    default: false
     t.string   "response_status",  limit: 255
     t.string   "kind",             limit: 255
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
   end
 
   add_index "web_notifications", ["notifiable_type", "notifiable_id"], name: "index_web_notifications_on_notifiable_type_and_notifiable_id", using: :btree

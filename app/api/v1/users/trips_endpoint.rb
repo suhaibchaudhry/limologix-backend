@@ -17,7 +17,7 @@ module V1
           params[:trip][:start_destination_attributes] = params[:trip][:start_destination]
           params[:trip][:end_destination_attributes] = params[:trip][:end_destination]
 
-          ActionController::Parameters.new(params).require(:trip).permit(:first_name, :last_name, :pick_up_at, :passengers_count, :price, start_destination_attributes: [:place, :latitude, :longitude], end_destination_attributes: [:place, :latitude, :longitude])
+          ActionController::Parameters.new(params).require(:trip).permit(:first_name, :last_name, :note, :pick_up_at, :passengers_count, :price, start_destination_attributes: [:place, :latitude, :longitude], end_destination_attributes: [:place, :latitude, :longitude])
         end
       end
 
@@ -39,6 +39,7 @@ module V1
               requires :last_name, type: String, allow_blank: false
               optional :passengers_count, type: Integer
               optional :price, type: Float
+              optional :note, type: String
               requires :pick_up_at, type: DateTime, allow_blank: false
               # requires :customer_id, type: Integer, allow_blank: false
               requires :vehicle_type_id, type: Integer, allow_blank: false
