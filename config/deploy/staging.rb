@@ -1,4 +1,4 @@
-server 'limologix.softwaystaging.com', user: 'appserver', password: 'Jri$345LiwqB', roles: %w{app db web}
+server 'api.limologix.com', user: 'appserver', password: 'Jri$345LiwqB', roles: %w{app db web}
 
 set :deploy_to, '/home/web/limologix.softwaystaging'
 set :keep_releases, 5
