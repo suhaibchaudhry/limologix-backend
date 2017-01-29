@@ -1,4 +1,4 @@
-lock '3.5.0'
+lock '3.7.2'
 
 set :application, 'limo-logix'
 set :repo_url, 'git@bitbucket.org:uitouxteam/limologix-backend.git'
