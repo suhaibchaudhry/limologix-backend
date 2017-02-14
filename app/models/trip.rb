@@ -120,7 +120,7 @@ class Trip < ActiveRecord::Base
   def find_scheduled_worker
     scheduled = Sidekiq::ScheduledSet.new
     scheduled.each do |job|
-      if job.klass == 'TripRequestWorker' && job.args.first == self.id
+      if job.klass == 'TripRequestWorker' && job.args[2] == self.id
         return job
       end
     end
