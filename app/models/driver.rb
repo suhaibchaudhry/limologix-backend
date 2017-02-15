@@ -142,7 +142,7 @@ class Driver < ActiveRecord::Base
   end
 
   def set_merchant_id
-    merchant_id = "driver_#{Time.now.to_i}"
+    merchant_id = "driver_#{Time.zone.now.to_i}"
     loop do
       break merchant_id unless Driver.find_by(merchant_id: merchant_id).present?
       merchant_id-=1

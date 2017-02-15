@@ -11,7 +11,7 @@ class TripRequestWorker
       unless trip.pick_up_at + 10.minutes < Time.now.utc
         if driver_id.present?
           driver = Driver.find_by(id: driver_id)
-          notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.now, source_place_id: source_place_id, destination_place_id: end_place_id}).to_json
+          notification_data = TripSerializer.new(trip).serializable_hash.merge({notified_at: Time.zone.now, source_place_id: source_place_id, destination_place_id: end_place_id}).to_json
           notification = trip.request_notifications.create(driver_id: driver.id,
             title: Settings.mobile_notification.trip_request.title, body: Settings.mobile_notification.trip_request.body,
             data: notification_data)
