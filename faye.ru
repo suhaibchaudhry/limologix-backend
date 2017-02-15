@@ -40,7 +40,7 @@ bayeux.on(:publish) do |client_id, channel, data|
    log.info("Publish client---#{client_id}, channel---#{channel}, data---#{data}")
 
   if channel.include?("driver")
-    $redis.hset("drivers", channel.split("/").last, data.merge("timestamp" => "#{Time.zone.now.to_i}").to_json)
+    $redis.hset("drivers", channel.split("/").last, data.merge("timestamp" => "#{Time.now.to_i}").to_json)
      log.info("Listening to faye ************************************ #{data} **********")
      log.info("_________________________________________________________________________________________________________")
   end
