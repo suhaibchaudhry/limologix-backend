@@ -1,6 +1,6 @@
 class TripRequestWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'trip_requests', retry: false
+  sidekiq_options queue: 'trip_requests', retry: 5
 
   def perform(source_place_id, end_place_id, trip_id=nil, driver_id=nil)
     trip = Trip.find_by(id: trip_id)
